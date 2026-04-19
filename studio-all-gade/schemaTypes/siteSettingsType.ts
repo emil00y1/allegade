@@ -444,6 +444,17 @@ export const siteSettingsType = defineType({
               title: 'Brødtekst CSS navn',
               type: 'string',
             }),
+            defineField({
+              name: 'accentFontUrl',
+              title: 'Accent skrifttype fil',
+              type: 'string',
+              components: {input: FontFileUploadInput},
+            }),
+            defineField({
+              name: 'accentFontFamily',
+              title: 'Accent skrifttype CSS navn',
+              type: 'string',
+            }),
           ],
         }),
       ],
