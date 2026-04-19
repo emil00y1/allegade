@@ -150,7 +150,8 @@ export const hotelPageType = defineType({
       title: 'Faciliteter Beskrivelse',
       type: 'text',
       rows: 2,
-      initialValue: 'Historisk atmosfære betyder ikke mangel på komfort. Vi har sørget for alt det essentielle.',
+      initialValue:
+        'Historisk atmosfære betyder ikke mangel på komfort. Vi har sørget for alt det essentielle.',
       group: 'facilities',
     }),
     defineField({
@@ -165,7 +166,7 @@ export const hotelPageType = defineType({
             defineField({
               name: 'iconName',
               title: 'Ikon (Lucide)',
-              type: 'icon.picker',
+              type: 'iconPicker',
               options: {
                 providers: ['lucide'],
               },
@@ -281,7 +282,11 @@ export const hotelPageType = defineType({
           type: 'object',
           fields: [
             defineField({name: 'title', title: 'Titel', type: 'string'}),
-            defineField({name: 'walkTime', title: 'Gangtid (f.eks. "2 min. gang")', type: 'string'}),
+            defineField({
+              name: 'walkTime',
+              title: 'Gangtid (f.eks. "2 min. gang")',
+              type: 'string',
+            }),
             defineField({name: 'description', title: 'Beskrivelse', type: 'text', rows: 2}),
           ],
           preview: {select: {title: 'title', subtitle: 'walkTime'}},
@@ -372,7 +377,6 @@ export const hotelPageType = defineType({
         {_type: 'hotelRestaurantTeaserSection'},
       ],
     }),
-
   ],
   preview: {
     prepare: () => ({title: 'Hotel Side'}),
