@@ -57,7 +57,7 @@ const QUERY = `{
   },
   "siteSettings": *[_type == "siteSettings"][0]{
     address, phone, email, footerDescription, socialLinks,
-    restaurantHours, kitchenHours, ctaBookTableUrl,
+    restaurantHours, kitchenClosingNote, ctaBookTableUrl,
     breadcrumbHomeLabel
   }
 }`;

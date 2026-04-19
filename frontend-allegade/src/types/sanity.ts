@@ -52,11 +52,6 @@ export interface SanityHours {
   hours: string;
 }
 
-export interface SanityKitchenHours {
-  label?: string;
-  hours: string;
-}
-
 export interface SanitySocialLink {
   platform: string;
   url: string;
@@ -68,7 +63,7 @@ export interface SiteSettings {
   email?: string;
   footerDescription?: string;
   restaurantHours?: SanityHours[];
-  kitchenHours?: SanityKitchenHours[];
+  kitchenClosingNote?: string;
   socialLinks?: SanitySocialLink[];
   newsletterLabel?: string;
   newsletterSubtext?: string;

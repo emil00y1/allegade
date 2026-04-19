@@ -13,7 +13,6 @@ import RestaurantHero from "./RestaurantHero";
 import RestaurantStory from "./RestaurantStory";
 import RestaurantMenuTeaser from "./RestaurantMenuTeaser";
 import RestaurantPhilosophy from "./RestaurantPhilosophy";
-import RestaurantGallery from "./RestaurantGallery";
 import HotelHero from "./HotelHero";
 import HotelFacilities from "./HotelFacilities";
 import HotelRoomShowcase from "./HotelRoomShowcase";
@@ -59,7 +58,6 @@ const sectionComponents: Record<string, React.ComponentType<Record<string, unkno
   restaurantStorySection: RestaurantStory as React.ComponentType<Record<string, unknown>>,
   restaurantMenuTeaserSection: RestaurantMenuTeaser as React.ComponentType<Record<string, unknown>>,
   restaurantPhilosophySection: RestaurantPhilosophy as React.ComponentType<Record<string, unknown>>,
-  restaurantGallerySection: RestaurantGallery as React.ComponentType<Record<string, unknown>>,
   hotelHeroSection: HotelHero as React.ComponentType<Record<string, unknown>>,
   hotelFacilitiesSection: HotelFacilities as React.ComponentType<Record<string, unknown>>,
   hotelRoomShowcaseSection: HotelRoomShowcase as React.ComponentType<Record<string, unknown>>,

@@ -70,7 +70,7 @@ const EVENTS_QUERY = `*[_type == "event" && defined(slug.current) && (!defined(p
   }`;
 const SITE_SETTINGS_QUERY = `*[_type == "siteSettings" && _id == "siteSettings"][0]{
   address, phone, email, footerDescription, socialLinks,
-  restaurantHours, kitchenHours, ctaBookTableUrl,
+  restaurantHours, kitchenClosingNote, ctaBookTableUrl,
   newsletterLabel, newsletterSubtext, newsletterButtonLabel
 }`;
 

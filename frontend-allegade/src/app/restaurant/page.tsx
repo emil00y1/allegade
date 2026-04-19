@@ -69,7 +69,6 @@ const QUERY = `{
       _type == "restaurantStorySection" => { ..., storyImage{ ..., asset-> } },
       _type == "restaurantMenuTeaserSection" => { ..., menuServices[]{ ..., image{ ..., asset-> } } },
       _type == "restaurantPhilosophySection" => { ..., philosophyImage{ ..., asset-> } },
-      _type == "restaurantGallerySection" => { ..., galleryImages[]{ ..., asset-> } },
       ${SECTIONS_QUERY_FRAGMENT}
     },
     // Fallbacks
