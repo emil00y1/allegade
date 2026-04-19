@@ -15,7 +15,6 @@ import {
   Jost,
   Fraunces,
 } from "next/font/google";
-// @ts-expect-error CSS import handled by Next.js
 import "./globals.css";
 import { draftMode } from "next/headers";
 import Header from "@/components/Header";
