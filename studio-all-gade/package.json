@@ -21,6 +21,7 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "sanity": "^5.20.0",
+    "sanity-plugin-icon-picker": "^4.0.0",
     "sanity-plugin-media": "^4.1.1",
     "sharp": "^0.34.5",
     "styled-components": "^6.1.18"

@@ -162,7 +162,15 @@ export const hotelPageType = defineType({
         defineArrayMember({
           type: 'object',
           fields: [
-            defineField({name: 'icon', title: 'Ikon (SVG/PNG)', type: 'image'}),
+            defineField({
+              name: 'iconName',
+              title: 'Ikon (Lucide)',
+              type: 'icon.picker',
+              options: {
+                providers: ['lucide'],
+              },
+            }),
+            defineField({name: 'icon', title: 'Ikon (Billede)', type: 'image'}),
             defineField({name: 'title', title: 'Titel', type: 'string'}),
             defineField({name: 'description', title: 'Beskrivelse', type: 'text', rows: 2}),
           ],

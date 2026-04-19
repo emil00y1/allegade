@@ -61,7 +61,11 @@
       "Bash(grep:*)",
       "Bash(gh repo *)",
       "Bash(mv frontend-allegade *)",
-      "Bash(mv studio-all-gade *)"
+      "Bash(mv studio-all-gade *)",
+      "mcp__Sanity__get_document",
+      "mcp__Sanity__patch_document_from_json",
+      "mcp__Sanity__publish_documents",
+      "Bash(npm run *)"
     ]
   }
 }

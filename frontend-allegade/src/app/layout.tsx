@@ -2,11 +2,20 @@ import React from "react";
 import Script from "next/script";
 import type { Metadata } from "next";
 import {
-  Geist, Geist_Mono, Inter, Newsreader, Cormorant_Garamond,
-  DM_Sans, Playfair_Display, EB_Garamond,
-  Work_Sans, Libre_Baskerville,
-  Jost, Fraunces,
+  Geist,
+  Geist_Mono,
+  Inter,
+  Newsreader,
+  Cormorant_Garamond,
+  DM_Sans,
+  Playfair_Display,
+  EB_Garamond,
+  Work_Sans,
+  Libre_Baskerville,
+  Jost,
+  Fraunces,
 } from "next/font/google";
+// @ts-expect-error CSS import handled by Next.js
 import "./globals.css";
 import { draftMode } from "next/headers";
 import Header from "@/components/Header";
@@ -25,23 +34,68 @@ import StructuredData from "@/components/StructuredData";
 // ─── Fonts ────────────────────────────────────────────────────────────────────
 // Classic pairing (current defaults)
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
-const newsreader = Newsreader({ variable: "--font-newsreader", subsets: ["latin"], weight: ["200", "300"], style: ["normal", "italic"] });
-const cormorantGaramond = Cormorant_Garamond({ variable: "--font-cormorant", subsets: ["latin"], weight: ["300"], style: ["normal", "italic"] });
+const newsreader = Newsreader({
+  variable: "--font-newsreader",
+  subsets: ["latin"],
+  weight: ["200", "300"],
+  style: ["normal", "italic"],
+});
+const cormorantGaramond = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  subsets: ["latin"],
+  weight: ["300"],
+  style: ["normal", "italic"],
+});
 
 // Elegant pairing
-const dmSans = DM_Sans({ variable: "--font-dm-sans", subsets: ["latin"], weight: ["300", "400"] });
-const playfairDisplay = Playfair_Display({ variable: "--font-playfair", subsets: ["latin"], weight: ["400"], style: ["normal", "italic"] });
-const ebGaramond = EB_Garamond({ variable: "--font-eb-garamond", subsets: ["latin"], weight: ["400"], style: ["normal", "italic"] });
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
+  subsets: ["latin"],
+  weight: ["300", "400"],
+});
+const playfairDisplay = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+});
+const ebGaramond = EB_Garamond({
+  variable: "--font-eb-garamond",
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+});
 
 // Nordic pairing
-const workSans = Work_Sans({ variable: "--font-work-sans", subsets: ["latin"], weight: ["300", "400"] });
-const libreBaskerville = Libre_Baskerville({ variable: "--font-libre-baskerville", subsets: ["latin"], weight: ["400"], style: ["normal", "italic"] });
+const workSans = Work_Sans({
+  variable: "--font-work-sans",
+  subsets: ["latin"],
+  weight: ["300", "400"],
+});
+const libreBaskerville = Libre_Baskerville({
+  variable: "--font-libre-baskerville",
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+});
 
 // Dramatic pairing
-const jost = Jost({ variable: "--font-jost", subsets: ["latin"], weight: ["300", "400"] });
-const fraunces = Fraunces({ variable: "--font-fraunces", subsets: ["latin"], weight: ["300"], style: ["normal", "italic"] });
+const jost = Jost({
+  variable: "--font-jost",
+  subsets: ["latin"],
+  weight: ["300", "400"],
+});
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
+  subsets: ["latin"],
+  weight: ["300"],
+  style: ["normal", "italic"],
+});
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 const NAV_QUERY = `*[_type == "siteSettings" && _id == "siteSettings"][0]{
@@ -104,14 +158,26 @@ export default async function RootLayout({
   }
 
   const themeVars = getThemeVars(navSettings?.colorTheme);
-  const fontVars = getFontVars(navSettings?.fontPairing, navSettings?.customFontPairings);
-  const fontFaceCSS = generateFontFaceCSS(navSettings?.fontPairing, navSettings?.customFontPairings);
+  const fontVars = getFontVars(
+    navSettings?.fontPairing,
+    navSettings?.customFontPairings,
+  );
+  const fontFaceCSS = generateFontFaceCSS(
+    navSettings?.fontPairing,
+    navSettings?.customFontPairings,
+  );
 
   const allFontVariables = cn(
-    inter.variable, newsreader.variable, cormorantGaramond.variable,
-    dmSans.variable, playfairDisplay.variable, ebGaramond.variable,
-    workSans.variable, libreBaskerville.variable,
-    jost.variable, fraunces.variable,
+    inter.variable,
+    newsreader.variable,
+    cormorantGaramond.variable,
+    dmSans.variable,
+    playfairDisplay.variable,
+    ebGaramond.variable,
+    workSans.variable,
+    libreBaskerville.variable,
+    jost.variable,
+    fraunces.variable,
   );
 
   return (
@@ -120,7 +186,9 @@ export default async function RootLayout({
       className={cn("font-sans", allFontVariables)}
       style={{ ...themeVars, ...fontVars } as React.CSSProperties}
     >
-      {fontFaceCSS && <style dangerouslySetInnerHTML={{ __html: fontFaceCSS }} />}
+      {fontFaceCSS && (
+        <style dangerouslySetInnerHTML={{ __html: fontFaceCSS }} />
+      )}
       {siteInfo?.googleAnalyticsId && (
         <>
           <Script
@@ -132,27 +200,35 @@ export default async function RootLayout({
           </Script>
         </>
       )}
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden pb-mobile-bar lg:pb-0`}>
-        <StructuredData data={{
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          name: siteInfo?.logoText || "Allégade 10",
-          url: "https://allegade10.dk",
-          ...(siteInfo?.logoImageUrl && { logo: siteInfo.logoImageUrl }),
-          ...(siteInfo?.footerDescription && { description: siteInfo.footerDescription }),
-          address: {
-            "@type": "PostalAddress",
-            streetAddress: "Allégade 10",
-            addressLocality: "Frederiksberg",
-            postalCode: "2000",
-            addressCountry: "DK",
-          },
-          ...(siteInfo?.phone && { telephone: siteInfo.phone }),
-          ...(siteInfo?.email && { email: siteInfo.email }),
-          ...(siteInfo?.socialLinks?.length && {
-            sameAs: siteInfo.socialLinks.map((l: any) => l.url).filter(Boolean),
-          }),
-        }} />
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden max-lg:pb-mobile-bar`}
+      >
+        <StructuredData
+          data={{
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: siteInfo?.logoText || "Allégade 10",
+            url: "https://allegade10.dk",
+            ...(siteInfo?.logoImageUrl && { logo: siteInfo.logoImageUrl }),
+            ...(siteInfo?.footerDescription && {
+              description: siteInfo.footerDescription,
+            }),
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: "Allégade 10",
+              addressLocality: "Frederiksberg",
+              postalCode: "2000",
+              addressCountry: "DK",
+            },
+            ...(siteInfo?.phone && { telephone: siteInfo.phone }),
+            ...(siteInfo?.email && { email: siteInfo.email }),
+            ...(siteInfo?.socialLinks?.length && {
+              sameAs: siteInfo.socialLinks
+                .map((l: { url?: string | null }) => l.url)
+                .filter(Boolean),
+            }),
+          }}
+        />
         <Header
           navLinks={navSettings?.navigation}
           ctaBookTableLabel={navSettings?.ctaBookTableLabel}

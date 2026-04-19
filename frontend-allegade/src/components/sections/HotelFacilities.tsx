@@ -2,6 +2,8 @@ import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 import { type SanityImage } from "@/types/sanity";
 import { dataAttr } from "@/sanity/lib/visual-editing";
+import * as LucideIcons from "lucide-react";
+import { LucideProps } from "lucide-react";
 
 interface HotelFacilitiesProps {
   _key?: string;
@@ -10,7 +12,13 @@ interface HotelFacilitiesProps {
   facilitiesHeading?: string;
   facilitiesHeadingItalic?: string;
   facilitiesDescription?: string;
-  facilities?: Array<{ _key: string; icon?: SanityImage; title?: string; description?: string }>;
+  facilities?: Array<{
+    _key: string;
+    icon?: SanityImage;
+    iconName?: { name: string; provider: string };
+    title?: string;
+    description?: string;
+  }>;
 }
 
 export default function HotelFacilities({
@@ -34,7 +42,7 @@ export default function HotelFacilities({
               {facilitiesHeading ?? "Faciliteter "}
             </span>
             <span className="font-cormorant font-light italic text-brand-mid">
-              {facilitiesHeadingItalic ?? "& Bekvemmeligheder"}
+              {facilitiesHeadingItalic}
             </span>
           </h2>
           {facilitiesDescription && (
@@ -47,18 +55,31 @@ export default function HotelFacilities({
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-12 gap-y-16">
           {list.map((f: any) => {
             const iconUrl = f.icon?.asset ? urlFor(f.icon).width(56).height(56).url() : null;
+
+            // Resolve Lucide Icon
+            let IconComponent: React.ComponentType<LucideProps> | null = null;
+            if (f.iconName?.name) {
+              // Convert kebab-case or similar to PascalCase if necessary,
+              // but sanity-plugin-icon-picker usually returns the exact Lucide name (e.g. "Wifi")
+              const name = f.iconName.name;
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              IconComponent = (LucideIcons as any)[name] || null;
+            }
+
             return (
               <div key={f._key} className="flex flex-col gap-0">
-                {iconUrl ? (
-                  <div
-                    className="w-7 h-7 mb-[28px] relative shrink-0"
-                    data-sanity={dataAttr(documentId, documentType, `sections[_key=="${_key}"].facilities[_key=="${f._key}"].icon`)}
-                  >
+                <div
+                  className="w-7 h-7 mb-[28px] relative shrink-0 flex items-center"
+                  data-sanity={dataAttr(documentId, documentType, `sections[_key=="${_key}"].facilities[_key=="${f._key}"].icon`)}
+                >
+                  {IconComponent ? (
+                    <IconComponent size={28} strokeWidth={1.5} className="text-brand-mid" />
+                  ) : iconUrl ? (
                     <Image src={iconUrl} alt={f.title ?? ""} width={28} height={28} className="object-contain" />
-                  </div>
-                ) : (
-                  <div className="w-7 h-7 mb-[28px] bg-border-warm/40 rounded-sm" />
-                )}
+                  ) : (
+                    <div className="w-7 h-7 bg-border-warm/40 rounded-sm" />
+                  )}
+                </div>
                 <h3 className="text-[12px] tracking-[1.2px] uppercase font-bold text-dark-stone mb-2">
                   {f.title}
                 </h3>

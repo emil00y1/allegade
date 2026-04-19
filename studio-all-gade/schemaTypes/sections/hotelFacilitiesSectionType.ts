@@ -16,7 +16,15 @@ export const hotelFacilitiesSectionType = defineType({
         defineArrayMember({
           type: 'object',
           fields: [
-            defineField({name: 'icon', title: 'Ikon', type: 'image'}),
+            defineField({
+              name: 'iconName',
+              title: 'Ikon (Lucide)',
+              type: 'icon.picker',
+              options: {
+                providers: ['lucide'],
+              },
+            }),
+            defineField({name: 'icon', title: 'Ikon (Billede)', type: 'image', description: 'Brug enten Lucide ikon ovenfor eller upload et billede her.'}),
             defineField({name: 'title', title: 'Titel', type: 'string'}),
             defineField({name: 'description', title: 'Beskrivelse', type: 'text', rows: 2}),
           ],

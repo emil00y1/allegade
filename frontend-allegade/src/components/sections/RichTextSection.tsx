@@ -16,28 +16,16 @@ const bgMap = {
   dark: "bg-stone-900",
 };
 
-const textColorMap = {
-  white: "text-stone-900",
-  beige: "text-stone-900",
-  dark: "text-stone-50",
-};
-
-const accentColorMap = {
-  white: "text-stone-400",
-  beige: "text-stone-500",
-  dark: "text-stone-400",
-};
-
 const dividerColorMap = {
-  white: "bg-stone-300",
-  beige: "bg-stone-400",
+  white: "bg-border-warm/40",
+  beige: "bg-border-warm/60",
   dark: "bg-stone-600",
 };
 
 const maxWidthMap = {
   narrow: "max-w-2xl",
-  medium: "max-w-4xl",
-  full: "max-w-6xl",
+  medium: "max-w-3xl",
+  full: "max-w-5xl",
 };
 
 export default function RichTextSection({
@@ -49,22 +37,19 @@ export default function RichTextSection({
   backgroundColor = "white",
 }: RichTextSectionProps) {
   const centered = alignment === "center";
+  const isDark = backgroundColor === "dark";
 
   return (
     <section className={`${bgMap[backgroundColor]} py-14 md:py-24 lg:py-32`}>
       <div className={`${maxWidthMap[maxWidth]} mx-auto px-6 lg:px-16 ${centered ? "text-center" : ""}`}>
         {eyebrow && (
-          <span
-            className={`block text-xs tracking-[0.25em] uppercase font-medium mb-6 ${accentColorMap[backgroundColor]}`}
-          >
+          <span className={`block text-[10px] tracking-[2px] uppercase mb-4 ${isDark ? "text-stone-400" : "text-brand"}`}>
             {eyebrow}
           </span>
         )}
 
         {heading && (
-          <h2
-            className={`font-serif text-3xl md:text-4xl xl:text-5xl font-light leading-[1.1] mb-7 ${textColorMap[backgroundColor]}`}
-          >
+          <h2 className={`font-newsreader font-extralight text-[clamp(1.75rem,3vw,2.5rem)] leading-tight mb-7 ${isDark ? "text-white" : "text-dark-stone"}`}>
             {heading}
           </h2>
         )}
@@ -74,9 +59,9 @@ export default function RichTextSection({
         {body && body.length > 0 && (
           <div
             className={`prose prose-base max-w-none font-light leading-relaxed ${
-              backgroundColor === "dark"
+              isDark
                 ? "prose-invert prose-p:text-stone-300"
-                : "prose-stone prose-p:text-stone-600"
+                : "prose-p:text-warm-brown"
             }`}
           >
             <PortableText value={body} />
