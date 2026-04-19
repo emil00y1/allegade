@@ -19,7 +19,7 @@ export const hotelFacilitiesSectionType = defineType({
             defineField({
               name: 'iconName',
               title: 'Ikon (Lucide)',
-              type: 'icon.picker',
+              type: 'iconPicker',
               options: {
                 providers: ['lucide'],
               },
