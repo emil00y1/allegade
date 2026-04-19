@@ -1,4 +1,5 @@
 import {pageType} from './pageType'
+import {postType} from './postType'
 import {reusableBlockType} from './reusableBlockType'
 import {eventType} from './eventType'
 import {eventsPageType} from './eventsPageType'
@@ -70,6 +71,7 @@ export const schemaTypes = [
 
   // ── Content documents ─────────────────────────────────────────────────────
   pageType,
+  postType,
   reusableBlockType,
   eventType,
   venueType,
