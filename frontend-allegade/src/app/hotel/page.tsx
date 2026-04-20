@@ -82,7 +82,7 @@ const HOTEL_PAGE_QUERY = `{
     heroFloatingStarText, heroFloatingSubtext,
     bookingCtaLabel, bookingCtaUrl,
     facilitiesHeading, facilitiesHeadingItalic, facilitiesDescription,
-    facilities[]{ _key, icon{ ..., asset-> }, title, description },
+    facilities[]{ _key, iconName, icon{ ..., asset-> }, title, description },
     roomShowcaseHeading,
     practicalInfoHeading, practicalInfoHeadingItalic,
     faqItems[]{ _key, question, answer },
