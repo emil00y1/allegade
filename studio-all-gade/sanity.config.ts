@@ -6,6 +6,7 @@ import {schemaTypes} from './schemaTypes'
 import {resolve} from './presentation/resolve'
 import {media} from 'sanity-plugin-media'
 import {iconPicker} from 'sanity-plugin-icon-picker'
+import {analyticsDashboard} from './plugins/analytics-dashboard'
 
 // Document types that should only ever have one instance
 const SINGLETONS = ['homepage', 'siteSettings', 'menuPage', 'hotelPage', 'selskaberPage', 'eventsPage', 'restaurantPage']
@@ -113,6 +114,7 @@ export default defineConfig({
           ]),
     }),
     visionTool(),
+    analyticsDashboard(),
     presentationTool({
       resolve,
       previewUrl: {
