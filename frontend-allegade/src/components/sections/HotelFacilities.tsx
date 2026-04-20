@@ -59,11 +59,14 @@ export default function HotelFacilities({
             // Resolve Lucide Icon
             let IconComponent: React.ComponentType<LucideProps> | null = null;
             if (f.iconName?.name) {
-              // Convert kebab-case or similar to PascalCase if necessary,
-              // but sanity-plugin-icon-picker usually returns the exact Lucide name (e.g. "Wifi")
-              const name = f.iconName.name;
+              // sanity-plugin-icon-picker stores kebab-case names by default ("shower-head"),
+              // but lucide-react exports PascalCase components ("ShowerHead").
+              const pascalName = f.iconName.name
+                .split('-')
+                .map((s: string) => s.charAt(0).toUpperCase() + s.slice(1))
+                .join('');
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              IconComponent = (LucideIcons as any)[name] || null;
+              IconComponent = (LucideIcons as any)[pascalName] || null;
             }
 
             return (
