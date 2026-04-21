@@ -2,8 +2,7 @@ import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 import { type SanityImage } from "@/types/sanity";
 import { dataAttr } from "@/sanity/lib/visual-editing";
-import * as LucideIcons from "lucide-react";
-import { LucideProps } from "lucide-react";
+import { DynamicIcon, type IconName } from "lucide-react/dynamic";
 
 interface HotelFacilitiesProps {
   _key?: string;
@@ -15,7 +14,7 @@ interface HotelFacilitiesProps {
   facilities?: Array<{
     _key: string;
     icon?: SanityImage;
-    iconName?: { name: string; provider: string };
+    iconName?: string;
     title?: string;
     description?: string;
   }>;
@@ -53,30 +52,22 @@ export default function HotelFacilities({
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-12 gap-y-16">
-          {list.map((f: any) => {
+          {list.map((f) => {
             const iconUrl = f.icon?.asset ? urlFor(f.icon).width(56).height(56).url() : null;
-
-            // Resolve Lucide Icon
-            let IconComponent: React.ComponentType<LucideProps> | null = null;
-            if (f.iconName?.name) {
-              // sanity-plugin-icon-picker stores kebab-case names by default ("shower-head"),
-              // but lucide-react exports PascalCase components ("ShowerHead").
-              const pascalName = f.iconName.name
-                .split('-')
-                .map((s: string) => s.charAt(0).toUpperCase() + s.slice(1))
-                .join('');
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              IconComponent = (LucideIcons as any)[pascalName] || null;
-            }
 
             return (
               <div key={f._key} className="flex flex-col gap-0">
                 <div
                   className="w-7 h-7 mb-[28px] relative shrink-0 flex items-center"
-                  data-sanity={dataAttr(documentId, documentType, `sections[_key=="${_key}"].facilities[_key=="${f._key}"].icon`)}
+                  data-sanity={dataAttr(documentId, documentType, _key ? `sections[_key=="${_key}"].facilities[_key=="${f._key}"].iconName` : `facilities[_key=="${f._key}"].iconName`)}
                 >
-                  {IconComponent ? (
-                    <IconComponent size={28} strokeWidth={1.5} className="text-brand-mid" />
+                  {typeof f.iconName === "string" && f.iconName ? (
+                    <DynamicIcon
+                      name={f.iconName as IconName}
+                      size={28}
+                      strokeWidth={1.5}
+                      className="text-brand-mid"
+                    />
                   ) : iconUrl ? (
                     <Image src={iconUrl} alt={f.title ?? ""} width={28} height={28} className="object-contain" />
                   ) : (

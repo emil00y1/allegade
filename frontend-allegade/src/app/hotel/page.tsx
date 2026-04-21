@@ -37,7 +37,7 @@ interface HotelPageData {
   facilitiesHeading?: string;
   facilitiesHeadingItalic?: string;
   facilitiesDescription?: string;
-  facilities?: Array<{ _key: string; icon?: SanityImage; title?: string; description?: string }>;
+  facilities?: Array<{ _key: string; icon?: SanityImage; iconName?: string; title?: string; description?: string }>;
   roomShowcaseHeading?: string;
   practicalInfoHeading?: string;
   practicalInfoHeadingItalic?: string;

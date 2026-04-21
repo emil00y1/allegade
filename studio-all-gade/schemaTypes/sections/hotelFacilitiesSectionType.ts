@@ -19,10 +19,7 @@ export const hotelFacilitiesSectionType = defineType({
             defineField({
               name: 'iconName',
               title: 'Ikon (Lucide)',
-              type: 'iconPicker',
-              options: {
-                providers: ['lucide'],
-              },
+              type: 'lucide-icon',
             }),
             defineField({name: 'icon', title: 'Ikon (Billede)', type: 'image', description: 'Brug enten Lucide ikon ovenfor eller upload et billede her.'}),
             defineField({name: 'title', title: 'Titel', type: 'string'}),
