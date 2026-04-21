@@ -18,7 +18,7 @@ export default function SelskaberSection({
   backgroundImage,
 }: SelskaberSectionProps) {
   return (
-    <section className="relative w-full flex items-center justify-center overflow-hidden py-28">
+    <section className="relative w-full flex items-center justify-center overflow-hidden min-h-[400px] py-28">
       {/* Background */}
       {backgroundImage ? (
         <SanityImage

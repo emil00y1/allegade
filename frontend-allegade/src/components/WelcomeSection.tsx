@@ -29,7 +29,7 @@ export default function WelcomeSection({
   image,
 }: WelcomeSectionProps) {
   return (
-    <section className="bg-warm-white px-8 lg:px-20 lg:min-h-[calc(100vh-80px)] flex items-center py-16 lg:py-0">
+    <section className="bg-warm-white px-8 lg:px-20 min-h-[400px] lg:min-h-[calc(100vh-80px)] flex items-center py-16 lg:py-0">
       <div className="max-w-[1280px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center w-full">
         {/* Text column */}
         <div className="lg:col-span-7 flex flex-col gap-8">

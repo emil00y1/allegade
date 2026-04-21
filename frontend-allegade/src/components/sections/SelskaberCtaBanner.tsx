@@ -17,7 +17,7 @@ export default function SelskaberCtaBanner({
     : null;
 
   return (
-    <section className="relative w-full py-24 md:py-32 overflow-hidden flex items-center justify-center">
+    <section className="relative w-full py-24 md:py-32 overflow-hidden flex items-center justify-center min-h-[300px] md:min-h-[400px]">
       {imageUrl ? (
         <Image src={imageUrl} alt={ctaBannerHeading ?? "CTA"} fill className="object-cover" />
       ) : (
