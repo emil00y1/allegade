@@ -59,7 +59,7 @@ export default function HotelFacilities({
               <div key={f._key} className="flex flex-col gap-0">
                 <div
                   className="w-7 h-7 mb-[28px] relative shrink-0 flex items-center"
-                  data-sanity={dataAttr(documentId, documentType, `sections[_key=="${_key}"].facilities[_key=="${f._key}"].iconName`)}
+                  data-sanity={dataAttr(documentId, documentType, _key ? `sections[_key=="${_key}"].facilities[_key=="${f._key}"].iconName` : `facilities[_key=="${f._key}"].iconName`)}
                 >
                   {typeof f.iconName === "string" && f.iconName ? (
                     <DynamicIcon
