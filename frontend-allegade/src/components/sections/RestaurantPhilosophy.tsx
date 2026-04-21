@@ -25,7 +25,7 @@ export default function RestaurantPhilosophy({
     : null;
 
   return (
-    <section className="relative overflow-hidden py-16 md:py-32 lg:py-48 bg-dark-stone min-h-[300px] md:min-h-[500px] max-h-[calc(100vh-80px)] flex items-center justify-center">
+    <section className="relative overflow-hidden py-14 md:py-24 lg:py-32 bg-dark-stone min-h-[300px] md:min-h-[500px] max-h-[calc(100vh-80px)] flex items-center justify-center">
       {philosophyImageUrl && (
         <>
           <div

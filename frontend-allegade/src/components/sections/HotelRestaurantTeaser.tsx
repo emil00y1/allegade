@@ -29,7 +29,7 @@ export default function HotelRestaurantTeaser({
   restaurantImage,
 }: HotelRestaurantTeaserProps) {
   return (
-    <section className="bg-warm-white border-t border-b border-border-warm/20 px-10 lg:px-16 py-16">
+    <section className="bg-warm-white border-t border-b border-border-warm/20 px-10 lg:px-16 py-14 md:py-24 lg:py-32">
       <div className="max-w-6xl mx-auto">
         <div className="bg-warm-gray p-8">
           <div className="flex flex-col md:flex-row gap-12 items-center">

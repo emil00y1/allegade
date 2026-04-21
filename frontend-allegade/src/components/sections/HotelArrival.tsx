@@ -35,7 +35,7 @@ export default function HotelArrival({
   const items = arrivalItems && arrivalItems.length > 0 ? arrivalItems : DEFAULT_ITEMS;
 
   return (
-    <section className="bg-warm-gray py-24 lg:py-32 border-t border-border-warm/20">
+    <section className="bg-warm-gray py-14 md:py-24 lg:py-32 border-t border-border-warm/20">
       <div className="max-w-6xl mx-auto px-10 lg:px-16">
         <div className="max-w-xl mb-16">
           <SectionHeading

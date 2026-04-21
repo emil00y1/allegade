@@ -220,7 +220,7 @@ export default function SectionRenderer({
 
   return (
     <div
-      className="flex flex-col [&>div:not(:first-child)>*]:!pt-0"
+      className="flex flex-col"
       data-sanity={createDataAttribute({
         ...dataAttrConfig,
         id: documentId,

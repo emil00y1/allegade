@@ -31,7 +31,7 @@ export default function RestaurantStory({
     : null;
 
   return (
-    <section className="bg-warm-white pt-24 pb-24 lg:pt-32 lg:pb-32 border-t border-border-warm/20">
+    <section className="bg-warm-white py-14 md:py-24 lg:py-32 border-t border-border-warm/20">
       <div className="max-w-6xl mx-auto px-10 lg:px-16">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div

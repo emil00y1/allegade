@@ -146,7 +146,7 @@ export default function GallerySection({
   })), [validImages]);
 
   return (
-    <section className="bg-warm-white py-16 md:py-24 lg:py-32">
+    <section className="bg-warm-white py-14 md:py-24 lg:py-32">
       <div className="max-w-7xl mx-auto px-6 lg:px-16">
         {/* Section header */}
         {(eyebrow || heading || subheading) && (

@@ -32,7 +32,7 @@ export default function HotelNeighborhood({
         }
       />
 
-      <div className="flex flex-col justify-center px-12 lg:px-24 py-24">
+      <div className="flex flex-col justify-center px-12 lg:px-24 py-14 md:py-24 lg:py-32">
         <p className="text-[10px] tracking-[2px] uppercase text-warm-brown mb-8">
           {mapEyebrow ?? "Beliggenhed"}
         </p>
