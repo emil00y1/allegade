@@ -48,7 +48,7 @@ export default function CtaBannerSection({
   const s = styleConfig[style];
 
   return (
-    <section className={`${s.bg} py-20 lg:py-28`}>
+    <section className={`${s.bg} py-14 md:py-24 lg:py-32`}>
       <div className="max-w-4xl mx-auto px-6 lg:px-16 text-center">
         {heading && (
           <h2 className={`font-serif text-3xl md:text-4xl lg:text-5xl font-light leading-[1.1] mb-5 ${s.heading}`}>

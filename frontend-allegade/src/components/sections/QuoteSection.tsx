@@ -44,7 +44,7 @@ export default function QuoteSection({
   const hasImage = !!backgroundImage?.asset;
 
   return (
-    <section className={`relative overflow-hidden py-28 lg:py-40 ${hasImage ? "" : bgMap[backgroundColor]}`}>
+    <section className={`relative overflow-hidden py-14 md:py-24 lg:py-32 ${hasImage ? "" : bgMap[backgroundColor]}`}>
       {hasImage && (
         <>
           <div
