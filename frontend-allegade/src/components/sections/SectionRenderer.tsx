@@ -1,3 +1,4 @@
+import React from "react";
 import { createDataAttribute } from "@sanity/visual-editing";
 import TextImageSection from "@/components/TextImageSection";
 import BannerSection from "./BannerSection";
@@ -219,7 +220,7 @@ export default function SectionRenderer({
 
   return (
     <div
-      className="flex flex-col [&>div:not(:first-child)>*]:!pt-0 [&>div:not(:last-child)>*]:!pb-0"
+      className="flex flex-col [&>div:not(:first-child)>*]:!pt-0"
       data-sanity={createDataAttribute({
         ...dataAttrConfig,
         id: documentId,
@@ -233,7 +234,7 @@ export default function SectionRenderer({
           const blockContent = section.block?.content;
           if (!blockContent || !Array.isArray(blockContent)) return null;
           return (
-            <div key={section._key} className="flex flex-col [&>div:not(:first-child)>*]:!pt-0 [&>div:not(:last-child)>*]:!pb-0">
+            <React.Fragment key={section._key}>
               {blockContent.map((nestedSection: SectionBlock) => {
                 const NestedComponent = sectionComponents[nestedSection._type];
                 if (!NestedComponent) return null;
@@ -252,7 +253,7 @@ export default function SectionRenderer({
                   </div>
                 );
               })}
-            </div>
+            </React.Fragment>
           );
         }
 
