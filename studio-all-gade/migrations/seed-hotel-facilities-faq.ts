@@ -51,25 +51,25 @@ function key() {
 const facilities = [
   {
     _key: key(),
-    iconName: { _type: "iconPicker", name: "ShowerHead", provider: "lucide" },
+    iconName: "shower-head",
     title: "Bad & Toilet",
     description: "Eget badeværelse med bruser og toilet inkluderet på alle værelser.",
   },
   {
     _key: key(),
-    iconName: { _type: "iconPicker", name: "Wifi", provider: "lucide" },
+    iconName: "wifi",
     title: "WiFi & TV",
     description: "Gratis højhastigheds-WiFi samt fladskærms-TV på alle værelser.",
   },
   {
     _key: key(),
-    iconName: { _type: "iconPicker", name: "Coffee", provider: "lucide" },
+    iconName: "coffee",
     title: "Morgenmad",
     description: "Dansk morgenmad serveres dagligt fra kl. 7:30–10:00 i vores historiske stuer.",
   },
   {
     _key: key(),
-    iconName: { _type: "iconPicker", name: "Luggage", provider: "lucide" },
+    iconName: "luggage",
     title: "Bagageopbevaring",
     description: "Vi opbevarer gerne din bagage før check-in og efter check-out.",
   },

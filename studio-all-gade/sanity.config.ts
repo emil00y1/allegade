@@ -5,7 +5,7 @@ import {presentationTool} from 'sanity/presentation'
 import {schemaTypes} from './schemaTypes'
 import {resolve} from './presentation/resolve'
 import {media} from 'sanity-plugin-media'
-import {iconPicker} from 'sanity-plugin-icon-picker'
+import {lucideIconPicker} from 'sanity-plugin-lucide-icon-picker'
 
 // Document types that should only ever have one instance
 const SINGLETONS = ['homepage', 'siteSettings', 'menuPage', 'hotelPage', 'selskaberPage', 'eventsPage', 'restaurantPage']
@@ -20,7 +20,7 @@ export default defineConfig({
 
   plugins: [
     media(),
-    iconPicker(),
+    lucideIconPicker(),
     structureTool({
       structure: (S) =>
         S.list()
