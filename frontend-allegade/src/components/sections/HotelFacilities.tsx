@@ -1,6 +1,3 @@
-import Image from "next/image";
-import { urlFor } from "@/sanity/lib/image";
-import { type SanityImage } from "@/types/sanity";
 import { dataAttr } from "@/sanity/lib/visual-editing";
 import { DynamicIcon, type IconName } from "lucide-react/dynamic";
 
@@ -13,7 +10,6 @@ interface HotelFacilitiesProps {
   facilitiesDescription?: string;
   facilities?: Array<{
     _key: string;
-    icon?: SanityImage;
     iconName?: string;
     title?: string;
     description?: string;
@@ -53,8 +49,6 @@ export default function HotelFacilities({
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-12 gap-y-16">
           {list.map((f) => {
-            const iconUrl = f.icon?.asset ? urlFor(f.icon).width(56).height(56).url() : null;
-
             return (
               <div key={f._key} className="flex flex-col gap-0">
                 <div
@@ -68,8 +62,6 @@ export default function HotelFacilities({
                       strokeWidth={1.5}
                       className="text-brand-mid"
                     />
-                  ) : iconUrl ? (
-                    <Image src={iconUrl} alt={f.title ?? ""} width={28} height={28} className="object-contain" />
                   ) : (
                     <div className="w-7 h-7 bg-border-warm/40 rounded-sm" />
                   )}

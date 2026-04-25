@@ -37,7 +37,7 @@ interface HotelPageData {
   facilitiesHeading?: string;
   facilitiesHeadingItalic?: string;
   facilitiesDescription?: string;
-  facilities?: Array<{ _key: string; icon?: SanityImage; iconName?: string; title?: string; description?: string }>;
+  facilities?: Array<{ _key: string; iconName?: string; title?: string; description?: string }>;
   roomShowcaseHeading?: string;
   practicalInfoHeading?: string;
   practicalInfoHeadingItalic?: string;
@@ -70,7 +70,7 @@ const HOTEL_PAGE_QUERY = `{
     sections[]{
       ...,
       _type == "hotelHeroSection" => { ..., heroImage{ ..., asset-> } },
-      _type == "hotelFacilitiesSection" => { ..., facilities[]{ ..., icon{ ..., asset-> } } },
+      _type == "hotelFacilitiesSection" => { ..., facilities[]{ _key, iconName, title, description } },
       _type == "hotelRestaurantTeaserSection" => { ..., restaurantImage{ ..., asset-> } },
       ${SECTIONS_QUERY_FRAGMENT}
     },
@@ -82,7 +82,7 @@ const HOTEL_PAGE_QUERY = `{
     heroFloatingStarText, heroFloatingSubtext,
     bookingCtaLabel, bookingCtaUrl,
     facilitiesHeading, facilitiesHeadingItalic, facilitiesDescription,
-    facilities[]{ _key, iconName, icon{ ..., asset-> }, title, description },
+    facilities[]{ _key, iconName, title, description },
     roomShowcaseHeading,
     practicalInfoHeading, practicalInfoHeadingItalic,
     faqItems[]{ _key, question, answer },

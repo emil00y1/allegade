@@ -166,12 +166,8 @@ export const hotelPageType = defineType({
             defineField({
               name: 'iconName',
               title: 'Ikon (Lucide)',
-              type: 'iconPicker',
-              options: {
-                providers: ['lucide'],
-              },
+              type: 'lucide-icon',
             }),
-            defineField({name: 'icon', title: 'Ikon (Billede)', type: 'image'}),
             defineField({name: 'title', title: 'Titel', type: 'string'}),
             defineField({name: 'description', title: 'Beskrivelse', type: 'text', rows: 2}),
           ],

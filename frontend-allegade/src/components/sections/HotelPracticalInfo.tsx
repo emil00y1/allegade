@@ -20,11 +20,13 @@ export default function HotelPracticalInfo({
       <div className="max-w-3xl mx-auto">
         <h2 className="text-[clamp(1.75rem,3vw,2.5rem)] text-center mb-16 leading-none">
           <span className="font-newsreader font-extralight text-dark-stone">
-            {practicalInfoHeading ?? "Godt at "}{" "}
+            {practicalInfoHeading}{" "}
           </span>
-          <span className="font-cormorant font-light italic text-dark-stone">
-            {practicalInfoHeadingItalic ?? "Vide"}
-          </span>
+          {practicalInfoHeadingItalic && (
+            <span className="font-cormorant font-light italic text-dark-stone">
+              {practicalInfoHeadingItalic}
+            </span>
+          )}
         </h2>
         <HotelFaqAccordion items={items} />
       </div>
