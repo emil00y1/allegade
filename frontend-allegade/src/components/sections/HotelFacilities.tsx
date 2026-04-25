@@ -1,3 +1,5 @@
+"use client";
+
 import { dataAttr } from "@/sanity/lib/visual-editing";
 import { DynamicIcon, type IconName } from "lucide-react/dynamic";
 
