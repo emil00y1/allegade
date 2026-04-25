@@ -1,9 +1,4 @@
-import { draftMode } from "next/headers";
 import type { Metadata } from "next";
-import Hero from "@/components/Hero";
-import WelcomeSection from "@/components/WelcomeSection";
-import EventsSection from "@/components/EventsSection";
-import SelskaberSection from "@/components/SelskaberSection";
 import { SectionRenderer } from "@/components/sections";
 import { sanityFetch } from "@/sanity/lib/live";
 import { urlFor } from "@/sanity/lib/image";
@@ -40,26 +35,6 @@ const HOMEPAGE_QUERY = `*[_type == "homepage" && _id == "homepage"][0]{
       ...,
       images[]{ ..., asset-> }
     }
-  },
-  // Fallbacks for existing data (just in case)
-  hero{
-    tagline, heading, headingItalic,
-    ctaPrimaryLabel, ctaPrimaryUrl,
-    ctaSecondaryLabel, ctaSecondaryUrl,
-    sideText,
-    backgroundVideo{ asset->{ url } },
-    backgroundImage{ ..., asset-> }
-  },
-  welcomeSection{
-    eyebrow, heading, paragraph1, paragraph2, linkLabel, linkUrl,
-    image{ ..., asset-> }
-  },
-  eventsSection{
-    eyebrow, heading, description, allEventsLabel, allEventsUrl, eventCtaLabel
-  },
-  selskaberTeaser{
-    heading, description, ctaLabel, ctaUrl,
-    backgroundImage{ ..., asset-> }
   }
 }`;
 
@@ -79,14 +54,14 @@ export async function generateMetadata(): Promise<Metadata> {
   const { data: siteSettings } = await sanityFetch<any>({ query: SITE_SETTINGS_QUERY });
 
   const seo = homepage?.seo;
-  const hero = homepage?.sections?.find((s: any) => s._type === "homeHeroSection") || homepage?.hero;
+  const hero = homepage?.sections?.find((s: any) => s._type === "homeHeroSection");
 
   const title = seo?.metaTitle || homepage?.title || "Forside";
   const description = seo?.metaDescription || hero?.tagline || siteSettings?.footerDescription;
-  
-  const ogImage = seo?.shareImage 
+
+  const ogImage = seo?.shareImage
     ? urlFor(seo.shareImage).width(1200).height(630).url()
-    : hero?.backgroundImage 
+    : hero?.backgroundImage
       ? urlFor(hero.backgroundImage).width(1200).height(630).url()
       : undefined;
 
@@ -162,57 +137,6 @@ export default async function IndexPage() {
       menu: "https://allegade10.dk/menukort",
     },
   ];
-
-  // If no sections are defined in the new Page Builder, use the old fixed layout as fallback
-  const hasSections = homepage?.sections && homepage.sections.length > 0;
-
-  if (!hasSections) {
-    const hero = homepage?.hero;
-    const welcome = homepage?.welcomeSection;
-    const eventsSection = homepage?.eventsSection;
-    const selskaber = homepage?.selskaberTeaser;
-
-    return (
-      <main>
-        <StructuredData data={hotelRestaurantSchema} />
-        <Hero
-          tagline={hero?.tagline}
-          heading={hero?.heading}
-          headingItalic={hero?.headingItalic}
-          cta={{ label: hero?.ctaPrimaryLabel, url: hero?.ctaPrimaryUrl || globalBookTableUrl }}
-          ctaSecondary={{ label: hero?.ctaSecondaryLabel, url: hero?.ctaSecondaryUrl }}
-          sideText={hero?.sideText}
-          backgroundVideoUrl={hero?.backgroundVideo?.asset?.url}
-          backgroundImage={hero?.backgroundImage}
-        />
-        <WelcomeSection
-          eyebrow={welcome?.eyebrow}
-          heading={welcome?.heading}
-          paragraph1={welcome?.paragraph1}
-          paragraph2={welcome?.paragraph2}
-          linkLabel={welcome?.linkLabel}
-          linkUrl={welcome?.linkUrl}
-          image={welcome?.image}
-        />
-        <EventsSection
-          events={events || []}
-          eyebrow={eventsSection?.eyebrow}
-          heading={eventsSection?.heading}
-          description={eventsSection?.description}
-          allEventsLabel={eventsSection?.allEventsLabel}
-          allEventsUrl={eventsSection?.allEventsUrl}
-          eventCtaLabel={eventsSection?.eventCtaLabel}
-        />
-        <SelskaberSection
-          heading={selskaber?.heading}
-          description={selskaber?.description}
-          ctaLabel={selskaber?.ctaLabel}
-          ctaUrl={selskaber?.ctaUrl}
-          backgroundImage={selskaber?.backgroundImage}
-        />
-      </main>
-    );
-  }
 
   return (
     <main>

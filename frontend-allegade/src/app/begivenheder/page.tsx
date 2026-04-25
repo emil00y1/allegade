@@ -1,10 +1,6 @@
-import { draftMode } from "next/headers";
 import type { Metadata } from "next";
 import { sanityFetch } from "@/sanity/lib/live";
 import { urlFor } from "@/sanity/lib/image";
-import EventsHero from "@/components/sections/EventsHero";
-import EventsList from "@/components/sections/EventsList";
-import EventsArchive from "@/components/sections/EventsArchive";
 import { SectionRenderer } from "@/components/sections";
 import { SECTIONS_QUERY_FRAGMENT } from "@/sanity/lib/sections-query";
 import StructuredData from "@/components/StructuredData";
@@ -21,11 +17,6 @@ const QUERY = `{
       ...,
       ${SECTIONS_QUERY_FRAGMENT}
     },
-    // Fallbacks
-    heroEyebrow, heroHeading, heroHeadingItalic, heroDescription, heroCtaLabel,
-    heroImage{ ..., asset-> },
-    upcomingHeading, emptyStateHeading, emptyStateText,
-    freeLabel, archiveEyebrow, archiveHeading
   },
   "events": *[_type == "event" && defined(slug.current) && (!defined(publishAt) || publishAt <= now()) && (!defined(unpublishAt) || unpublishAt > now())] | order(startDate asc){
     _id, title, slug, startDate, endDate, price, priceDescription, category, excerpt,
@@ -46,8 +37,9 @@ export async function generateMetadata(): Promise<Metadata> {
   const siteSettings = result?.siteSettings;
 
   const seo = page?.seo;
+  const heroSection = page?.sections?.find((s: any) => s._type === "eventsHeroSection");
   const title = seo?.metaTitle || page?.title || "Begivenheder";
-  const description = seo?.metaDescription || page?.heroDescription || "Oplev begivenheder på Allégade 10";
+  const description = seo?.metaDescription || heroSection?.heroDescription || "Oplev begivenheder på Allégade 10";
   const ogImage = seo?.shareImage ? urlFor(seo.shareImage).width(1200).height(630).url() : undefined;
 
   return {
@@ -111,37 +103,6 @@ export default async function BegivenhedPage() {
       url: "https://allegade10.dk",
     },
   }));
-
-  const hasSections = page?.sections && page.sections.length > 0;
-
-  if (!hasSections && page) {
-    return (
-      <main>
-        {eventSchemas.length > 0 && <StructuredData data={eventSchemas} />}
-        <EventsHero
-          heroHeading={page.heroHeading}
-          heroHeadingItalic={page.heroHeadingItalic}
-          heroDescription={page.heroDescription}
-          heroCtaLabel={page.heroCtaLabel}
-          heroImage={page.heroImage}
-          featuredEvent={featuredEvent}
-          breadcrumbHomeLabel={breadcrumbHomeLabel}
-        />
-        <EventsList
-          upcomingHeading={page.upcomingHeading}
-          emptyStateHeading={page.emptyStateHeading}
-          emptyStateText={page.emptyStateText}
-          freeLabel={page.freeLabel}
-          upcomingEvents={upcomingEvents}
-        />
-        <EventsArchive
-          archiveEyebrow={page.archiveEyebrow}
-          archiveHeading={page.archiveHeading}
-          pastEvents={pastEvents}
-        />
-      </main>
-    );
-  }
 
   return (
     <main>

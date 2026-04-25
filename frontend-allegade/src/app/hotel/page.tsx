@@ -1,16 +1,9 @@
-import { draftMode } from "next/headers";
 import type { Metadata } from "next";
 import type { TypedObject } from "sanity";
 import { sanityFetch } from "@/sanity/lib/live";
 import { urlFor } from "@/sanity/lib/image";
-import HotelHero from "@/components/sections/HotelHero";
-import HotelFacilities from "@/components/sections/HotelFacilities";
-import HotelRoomShowcase from "@/components/sections/HotelRoomShowcase";
-import HotelPracticalInfo from "@/components/sections/HotelPracticalInfo";
-import HotelNeighborhood from "@/components/sections/HotelNeighborhood";
-import HotelRestaurantTeaser from "@/components/sections/HotelRestaurantTeaser";
 import { SectionRenderer } from "@/components/sections";
-import { type SiteSettings, type SanitySeo, type SanityImage, type SanitySection, type StatItem } from "@/types/sanity";
+import { type SiteSettings, type SanitySeo, type SanitySection } from "@/types/sanity";
 import { type HotelRoom } from "@/components/RoomCarousel";
 import { SECTIONS_QUERY_FRAGMENT } from "@/sanity/lib/sections-query";
 import StructuredData from "@/components/StructuredData";
@@ -21,42 +14,6 @@ interface HotelPageData {
   title?: string;
   seo?: SanitySeo;
   sections?: SanitySection[];
-  heroImage?: SanityImage;
-  heroHeading?: string;
-  heroHeadingItalic?: string;
-  heroDescription?: string;
-  heroStats?: StatItem[];
-  heroPrimaryCtaLabel?: string;
-  heroPrimaryCtaUrl?: string;
-  heroSecondaryCtaLabel?: string;
-  heroSecondaryCtaUrl?: string;
-  heroFloatingStarText?: string;
-  heroFloatingSubtext?: string;
-  bookingCtaLabel?: string;
-  bookingCtaUrl?: string;
-  facilitiesHeading?: string;
-  facilitiesHeadingItalic?: string;
-  facilitiesDescription?: string;
-  facilities?: Array<{ _key: string; iconName?: string; title?: string; description?: string }>;
-  roomShowcaseHeading?: string;
-  practicalInfoHeading?: string;
-  practicalInfoHeadingItalic?: string;
-  faqItems?: Array<{ _key: string; question?: string; answer?: TypedObject[] | string }>;
-  neighborhoodHeading?: string;
-  neighborhoodHeadingItalic?: string;
-  neighborhoodAddress?: string;
-  neighborhoodCity?: string;
-  neighborhoodMapUrl?: string;
-  neighborhoodItems?: Array<{ _key: string; title?: string; walkTime?: string; description?: string }>;
-  mapEyebrow?: string;
-  directionsLabel?: string;
-  restaurantEyebrow?: string;
-  restaurantHeading?: string;
-  restaurantHeadingItalic?: string;
-  restaurantDescription?: string;
-  restaurantCtaLabel?: string;
-  restaurantCtaUrl?: string;
-  restaurantImage?: SanityImage;
 }
 
 // ─── Query ────────────────────────────────────────────────────────────────────
@@ -74,24 +31,6 @@ const HOTEL_PAGE_QUERY = `{
       _type == "hotelRestaurantTeaserSection" => { ..., restaurantImage{ ..., asset-> } },
       ${SECTIONS_QUERY_FRAGMENT}
     },
-    // Fallbacks
-    heroImage{ ..., asset-> },
-    heroHeading, heroHeadingItalic, heroDescription,
-    heroStats[]{ _key, label, value },
-    heroPrimaryCtaLabel, heroPrimaryCtaUrl, heroSecondaryCtaLabel, heroSecondaryCtaUrl,
-    heroFloatingStarText, heroFloatingSubtext,
-    bookingCtaLabel, bookingCtaUrl,
-    facilitiesHeading, facilitiesHeadingItalic, facilitiesDescription,
-    facilities[]{ _key, iconName, title, description },
-    roomShowcaseHeading,
-    practicalInfoHeading, practicalInfoHeadingItalic,
-    faqItems[]{ _key, question, answer },
-    neighborhoodHeading, neighborhoodHeadingItalic,
-    neighborhoodAddress, neighborhoodCity, neighborhoodMapUrl,
-    neighborhoodItems[]{ _key, title, walkTime, description },
-    mapEyebrow, directionsLabel,
-    restaurantEyebrow, restaurantHeading, restaurantHeadingItalic, restaurantDescription,
-    restaurantCtaLabel, restaurantCtaUrl, restaurantImage{ ..., asset-> }
   },
   "rooms": *[_type == "hotelRoom"] | order(order asc, title asc){
     _id, title, slug, roomType, pricePerNight, priceLabel, description, note, features, ctaLabel, ctaUrl,
@@ -114,12 +53,13 @@ export async function generateMetadata(): Promise<Metadata> {
   const siteSettings = result?.siteSettings;
 
   const seo = page?.seo;
+  const heroSection = (page?.sections as any[])?.find((s) => s._type === "hotelHeroSection");
   const title = seo?.metaTitle || page?.title || "Hotel";
-  const description = seo?.metaDescription || page?.heroDescription || siteSettings?.footerDescription;
-  const ogImage = seo?.shareImage 
+  const description = seo?.metaDescription || heroSection?.heroDescription || siteSettings?.footerDescription;
+  const ogImage = seo?.shareImage
     ? urlFor(seo.shareImage).width(1200).height(630).url()
-    : page?.heroImage 
-      ? urlFor(page.heroImage).width(1200).height(630).url()
+    : heroSection?.heroImage
+      ? urlFor(heroSection.heroImage).width(1200).height(630).url()
       : undefined;
 
   return {
@@ -140,7 +80,8 @@ export default async function HotelPage() {
 
   const globalBookTableUrl = siteSettings?.ctaBookTableUrl || "https://allegade10.suitcasebooking.com/da";
 
-  const faqItems = (page?.faqItems || (page?.sections?.find((s: any) => s._type === "hotelPracticalInfoSection") as any)?.faqItems) as Array<{ question?: string; answer?: string }> | undefined;
+  const faqItems = ((page?.sections?.find((s: any) => s._type === "hotelPracticalInfoSection") as any)?.faqItems) as Array<{ question?: string; answer?: string }> | undefined;
+  const heroSection = page?.sections?.find((s: any) => s._type === "hotelHeroSection") as any;
 
   const structuredData: Record<string, unknown>[] = [
     {
@@ -148,7 +89,7 @@ export default async function HotelPage() {
       "@type": "Hotel",
       name: page?.title || "Hotel Allégade 10",
       url: "https://allegade10.dk/hotel",
-      description: page?.heroDescription,
+      description: heroSection?.heroDescription,
       address: {
         "@type": "PostalAddress",
         streetAddress: "Allégade 10",
@@ -202,66 +143,6 @@ export default async function HotelPage() {
         };
       }),
     });
-  }
-
-  const hasSections = page?.sections && page.sections.length > 0;
-
-  if (!hasSections && page) {
-    return (
-      <main>
-        <StructuredData data={structuredData} />
-        <HotelHero
-          heroImage={page.heroImage}
-          heroHeading={page.heroHeading}
-          heroHeadingItalic={page.heroHeadingItalic}
-          heroDescription={page.heroDescription}
-          heroStats={page.heroStats}
-          heroPrimaryCtaLabel={page.heroPrimaryCtaLabel}
-          heroPrimaryCtaUrl={page.heroPrimaryCtaUrl}
-          heroSecondaryCtaLabel={page.heroSecondaryCtaLabel}
-          heroSecondaryCtaUrl={page.heroSecondaryCtaUrl}
-          heroFloatingStarText={page.heroFloatingStarText}
-          heroFloatingSubtext={page.heroFloatingSubtext}
-          bookingCtaUrl={page.bookingCtaUrl}
-          breadcrumbHomeLabel={siteSettings?.breadcrumbHomeLabel}
-        />
-        <HotelFacilities
-          facilitiesHeading={page.facilitiesHeading}
-          facilitiesHeadingItalic={page.facilitiesHeadingItalic}
-          facilitiesDescription={page.facilitiesDescription}
-          facilities={page.facilities}
-        />
-        <HotelRoomShowcase
-          roomShowcaseHeading={page.roomShowcaseHeading}
-          rooms={rooms}
-          bookingCtaUrl={page.bookingCtaUrl}
-        />
-        <HotelPracticalInfo
-          practicalInfoHeading={page.practicalInfoHeading}
-          practicalInfoHeadingItalic={page.practicalInfoHeadingItalic}
-          faqItems={page.faqItems}
-        />
-        <HotelNeighborhood
-          neighborhoodHeading={page.neighborhoodHeading}
-          neighborhoodHeadingItalic={page.neighborhoodHeadingItalic}
-          neighborhoodAddress={page.neighborhoodAddress}
-          neighborhoodCity={page.neighborhoodCity}
-          neighborhoodMapUrl={page.neighborhoodMapUrl}
-          neighborhoodItems={page.neighborhoodItems}
-          mapEyebrow={page.mapEyebrow}
-          directionsLabel={page.directionsLabel}
-        />
-        <HotelRestaurantTeaser
-          restaurantEyebrow={page.restaurantEyebrow}
-          restaurantHeading={page.restaurantHeading}
-          restaurantHeadingItalic={page.restaurantHeadingItalic}
-          restaurantDescription={page.restaurantDescription}
-          restaurantCtaLabel={page.restaurantCtaLabel}
-          restaurantCtaUrl={page.restaurantCtaUrl}
-          restaurantImage={page.restaurantImage}
-        />
-      </main>
-    );
   }
 
   return (

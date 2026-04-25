@@ -1,12 +1,9 @@
-import { draftMode } from "next/headers";
 import type { Metadata } from "next";
 import { sanityFetch } from "@/sanity/lib/live";
 import { urlFor } from "@/sanity/lib/image";
-import MenuHero from "@/components/sections/MenuHero";
-import MenuTabsSection from "@/components/sections/MenuTabsSection";
 import { SectionRenderer } from "@/components/sections";
-import { type SiteSettings, type SanitySeo, type SanityImage, type SanitySection } from "@/types/sanity";
-import { type TabConfig, type MenuCard } from "@/components/MenuTabs";
+import { type SiteSettings, type SanitySeo, type SanitySection } from "@/types/sanity";
+import { type MenuCard } from "@/components/MenuTabs";
 import { SECTIONS_QUERY_FRAGMENT } from "@/sanity/lib/sections-query";
 import StructuredData from "@/components/StructuredData";
 
@@ -15,15 +12,7 @@ interface MenuPageData {
   _type: string;
   title?: string;
   seo?: SanitySeo;
-  breadcrumbLabel?: string;
   sections?: SanitySection[];
-  headerHeading?: string;
-  headerDescription?: string;
-  headerImage?: SanityImage;
-  headerServingTimes?: Array<{ _key?: string; label?: string; time?: string }>;
-  bookTableLabel?: string;
-  bookTableUrl?: string;
-  tabs?: TabConfig[];
 }
 
 // ─── Query ────────────────────────────────────────────────────────────────────
@@ -34,17 +23,11 @@ const QUERY = `{
     _type,
     title,
     seo,
-    breadcrumbLabel,
     sections[]{
       ...,
       _type == "menuHeroSection" => { ..., headerImage{ ..., asset-> } },
       ${SECTIONS_QUERY_FRAGMENT}
     },
-    // Fallbacks
-    headerHeading, headerDescription, headerImage{ ..., asset-> },
-    headerServingTimes[]{ _key, label, time },
-    bookTableLabel, bookTableUrl,
-    tabs[]{ _key, label, menuType, servingTime }
   },
   "menus": *[_type == "menuCard"] | order(order asc){
     _id, title, menuType, order, intro,
@@ -71,12 +54,13 @@ export async function generateMetadata(): Promise<Metadata> {
   const siteSettings = result?.siteSettings;
 
   const seo = page?.seo;
+  const heroSection = (page?.sections as any[])?.find((s) => s._type === "menuHeroSection");
   const title = seo?.metaTitle || page?.title || "Menukort";
-  const description = seo?.metaDescription || page?.headerDescription || siteSettings?.footerDescription;
-  const ogImage = seo?.shareImage 
+  const description = seo?.metaDescription || heroSection?.headerDescription || siteSettings?.footerDescription;
+  const ogImage = seo?.shareImage
     ? urlFor(seo.shareImage).width(1200).height(630).url()
-    : page?.headerImage 
-      ? urlFor(page.headerImage).width(1200).height(630).url()
+    : heroSection?.headerImage
+      ? urlFor(heroSection.headerImage).width(1200).height(630).url()
       : undefined;
 
   return {
@@ -96,12 +80,13 @@ export default async function MenukortPage() {
   const menus = result?.menus ?? [];
 
   const globalBookTableUrl = siteSettings?.ctaBookTableUrl || "https://dinnerbooking.com/dk/da-DK/eventbooking/event/4155/allegade-10";
+  const heroSection = (page?.sections as any[])?.find((s) => s._type === "menuHeroSection");
 
   const menuSchema = {
     "@context": "https://schema.org",
     "@type": "Menu",
-    name: page?.headerHeading || "Menukort",
-    description: page?.headerDescription,
+    name: heroSection?.headerHeading || "Menukort",
+    description: heroSection?.headerDescription,
     url: "https://allegade10.dk/menukort",
     ...(menus.length > 0 && {
       hasMenuSection: menus.map((menu: any) => ({
@@ -115,18 +100,10 @@ export default async function MenukortPage() {
               name: item.name,
               ...(item.description && { description: item.description }),
               ...(item.price != null && {
-                offers: {
-                  "@type": "Offer",
-                  price: item.price,
-                  priceCurrency: "DKK",
-                },
+                offers: { "@type": "Offer", price: item.price, priceCurrency: "DKK" },
               }),
               ...(item.priceString && !item.price && {
-                offers: {
-                  "@type": "Offer",
-                  price: item.priceString,
-                  priceCurrency: "DKK",
-                },
+                offers: { "@type": "Offer", price: item.priceString, priceCurrency: "DKK" },
               }),
             }))
           ),
@@ -134,32 +111,6 @@ export default async function MenukortPage() {
       })),
     }),
   };
-
-  const hasSections = page?.sections && page.sections.length > 0;
-
-  if (!hasSections && page) {
-    return (
-      <main className="bg-warm-white min-h-[calc(100vh-80px)]">
-        <StructuredData data={menuSchema} />
-        <MenuHero
-          breadcrumbLabel={page.breadcrumbLabel}
-          headerHeading={page.headerHeading}
-          headerDescription={page.headerDescription}
-          headerImage={page.headerImage}
-          headerServingTimes={page.headerServingTimes}
-          bookTableLabel={page.bookTableLabel}
-          bookTableUrl={page.bookTableUrl}
-          breadcrumbHomeLabel={siteSettings?.breadcrumbHomeLabel}
-          globalBookTableUrl={globalBookTableUrl}
-        />
-        <MenuTabsSection
-          tabs={page.tabs}
-          menus={menus}
-          globalBookTableUrl={globalBookTableUrl}
-        />
-      </main>
-    );
-  }
 
   return (
     <main className="bg-warm-white min-h-[calc(100vh-80px)]">
