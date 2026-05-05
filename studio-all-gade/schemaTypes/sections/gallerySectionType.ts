@@ -35,6 +35,7 @@ export const gallerySectionType = defineType({
       name: 'columns',
       title: 'Antal kolonner',
       type: 'string',
+      description: 'Gælder kun for "Gitter" layout.',
       options: {
         list: [
           {title: 'Automatisk', value: 'auto'},
@@ -47,9 +48,23 @@ export const gallerySectionType = defineType({
       initialValue: 'auto',
     }),
     defineField({
+      name: 'layout',
+      title: 'Layout type',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Gitter (Standard)', value: 'grid'},
+          {title: 'Magasin (Variation)', value: 'magazine'},
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'grid',
+    }),
+    defineField({
       name: 'aspectRatio',
       title: 'Billedformat',
       type: 'string',
+      description: 'Gælder kun for "Gitter" layout.',
       options: {
         list: [
           {title: 'Landskab (16:9)', value: 'landscape'},
@@ -59,6 +74,13 @@ export const gallerySectionType = defineType({
         layout: 'radio',
       },
       initialValue: 'landscape',
+    }),
+    defineField({
+      name: 'initialCount',
+      title: 'Antal billeder (start)',
+      type: 'number',
+      description: 'Hvor mange billeder skal vises før "Vis flere" knappen?',
+      initialValue: 9,
     }),
   ],
   preview: {

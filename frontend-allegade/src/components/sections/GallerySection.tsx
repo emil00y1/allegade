@@ -34,13 +34,13 @@ type GallerySectionProps = {
 
 const colsMap = {
   "1": "grid-cols-1",
-  "2": "grid-cols-1 sm:grid-cols-2",
+  "2": "grid-cols-2",
   "3": "grid-cols-2 md:grid-cols-3",
-  "4": "grid-cols-2 md:grid-cols-3 lg:grid-cols-4",
+  "4": "grid-cols-2 md:grid-cols-4",
 };
 
 const aspectMap = {
-  landscape: "aspect-[4/3]",
+  landscape: "aspect-video",
   square: "aspect-square",
   portrait: "aspect-[3/4]",
 };
