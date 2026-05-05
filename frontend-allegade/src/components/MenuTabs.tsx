@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { urlFor } from "@/sanity/lib/image";
 import { type SanityImage } from "@/types/sanity";
@@ -50,22 +51,38 @@ export interface TabConfig {
   servingTime?: string;
 }
 
+const DEFAULT_TABS: TabConfig[] = [
+  { label: "Brunch", menuType: "brunch", servingTime: "Lør–Søn 10–13" },
+  { label: "Frokost", menuType: "lunch", servingTime: "11:30–16:00" },
+  { label: "Aften", menuType: "dinner", servingTime: "Fra 17:00" },
+  { label: "Drikkevarer", menuType: "beverages" },
+];
+
 interface MenuTabsProps {
-  tabs: TabConfig[];
+  tabs?: TabConfig[];
   menus: MenuCard[];
   bookTableUrl?: string;
+  labels?: {
+    pricePerPerson?: string;
+    bookTable?: string;
+    viewDrinks?: string;
+    noContent?: string;
+  };
 }
 
+const DEFAULT_LABELS = {
+  pricePerPerson: "Pris per person",
+  bookTable: "Book bord",
+  viewDrinks: "Se drikkekort →",
+  noContent: "Indholdet er ikke klar endnu — tilføj et menukort i Sanity Studio.",
+};
+
 // ─── Time-based default tab ────────────────────────────────────────────────
-// Auto-selects the tab most relevant to the current time of day.
-// Brunch: Saturday & Sunday 10:00–13:00
-// Aften: Daily from 17:00
-// Frokost: 11:30–16:00 (or as fallback during the day)
 function getDefaultMenuType(tabs: TabConfig[]): string {
   const now = new Date();
   const hour = now.getHours();
   const minutes = now.getMinutes();
-  const day = now.getDay(); // 0=Sun, 6=Sat
+  const day = now.getDay(); 
   const timeAsNumber = hour + minutes / 60;
 
   const hasType = (t: string) => tabs.some((tab) => tab.menuType === t);
@@ -84,7 +101,6 @@ function getDefaultMenuType(tabs: TabConfig[]): string {
   if (timeAsNumber >= 11.5 && timeAsNumber < 17 && hasType("lunch")) {
     return "lunch";
   }
-  // Fallback: first tab
   return tabs[0]?.menuType ?? "lunch";
 }
 
@@ -101,15 +117,12 @@ function formatPrice(item: MenuItem): string | null {
 function SectionHeader({ title, note }: { title?: string; note?: string }) {
   if (!title) return null;
   return (
-    <div>
-      <div className="flex items-center gap-4 mb-1">
-        <h3 className="text-[11px] tracking-[2.5px] uppercase font-light text-dark-stone shrink-0">
-          {title}
-        </h3>
-        <div className="flex-1 h-px bg-brand/30" />
-      </div>
+    <div className="mb-6">
+      <h3 className="text-[13px] tracking-[3px] uppercase font-light text-dark-stone mb-2">
+        {title}
+      </h3>
       {note && (
-        <p className="text-[10px] tracking-[0.5px] uppercase text-warm-brown/60 font-light mt-1">
+        <p className="text-[11px] tracking-[0.5px] uppercase text-warm-brown/85 font-normal">
           {note}
         </p>
       )}
@@ -176,17 +189,16 @@ function WineItemRow({ item }: { item: MenuItem }) {
   );
 }
 
-// Featured cards for set menus (side-by-side)
 function FeaturedSection({
   section,
   bookTableUrl,
+  bookTableLabel,
 }: {
   section: MenuSection;
   bookTableUrl?: string;
+  bookTableLabel?: string;
 }) {
   if (!section.items?.length) return null;
-
-  // Pairs of items rendered as cards; odd leftovers get full width
   const pairs: MenuItem[][] = [];
   for (let i = 0; i < section.items.length; i += 2) {
     pairs.push(section.items.slice(i, i + 2));
@@ -237,7 +249,7 @@ function FeaturedSection({
                       href={bookTableUrl}
                       className="text-[10px] tracking-[1.5px] uppercase font-light text-brand border-b border-brand/40 pb-px self-start hover:opacity-70 transition-opacity"
                     >
-                      Book bord
+                      {bookTableLabel}
                     </Link>
                   )}
                 </div>
@@ -250,14 +262,14 @@ function FeaturedSection({
   );
 }
 
-function DrinksCrossLink({ onSwitch }: { onSwitch: () => void }) {
+function DrinksCrossLink({ label, onSwitch }: { label: string; onSwitch: () => void }) {
   return (
     <div className="mt-10 pt-6 border-t border-border-warm/30">
       <button
         onClick={onSwitch}
         className="text-[11px] tracking-[1px] uppercase font-light text-brand border-b border-brand/40 pb-px hover:opacity-70 transition-opacity"
       >
-        Se drikkekort →
+        {label}
       </button>
     </div>
   );
@@ -269,10 +281,12 @@ function BrunchTab({
   menu,
   bookTableUrl,
   onSwitchToDrinks,
+  labels,
 }: {
   menu: MenuCard;
   bookTableUrl?: string;
   onSwitchToDrinks: () => void;
+  labels: typeof DEFAULT_LABELS;
 }) {
   const items = menu.sections?.[0]?.items ?? [];
   const price =
@@ -292,7 +306,6 @@ function BrunchTab({
             </p>
           )}
 
-          {/* Items as a paragraph */}
           {items.length > 0 && (
             <div className="mb-8">
               <p className="text-sm text-warm-brown font-light leading-relaxed">
@@ -315,7 +328,7 @@ function BrunchTab({
           <div className="pt-10 flex flex-col items-center gap-8">
             <div className="flex flex-col items-center">
               <p className="text-[10px] tracking-[1px] uppercase text-dark-stone/50 mb-3">
-                Pris per person
+                {menu.priceLabel || labels.pricePerPerson}
               </p>
               {price && (
                 <p className="font-newsreader font-extralight text-4xl text-brand leading-none">
@@ -324,19 +337,14 @@ function BrunchTab({
               )}
             </div>
             <Link
-              href={
-                menu.ctaUrl ??
-                bookTableUrl ??
-                "https://dinnerbooking.com/dk/da-DK/eventbooking/event/4155/allegade-10"
-              }
+              href={menu.ctaUrl ?? bookTableUrl ?? "#"}
               className="px-10 py-4 text-[11px] tracking-[2px] uppercase font-light text-white bg-brand hover:opacity-90 transition-opacity w-fit"
             >
-              {menu.ctaLabel ?? "Book brunch buffet"}
+              {menu.ctaLabel || labels.bookTable}
             </Link>
           </div>
         </div>
-
-        <DrinksCrossLink onSwitch={onSwitchToDrinks} />
+        <DrinksCrossLink label={labels.viewDrinks} onSwitch={onSwitchToDrinks} />
       </div>
     </div>
   );
@@ -346,32 +354,27 @@ function StandardMenuTab({
   menu,
   bookTableUrl,
   onSwitchToDrinks,
+  labels,
 }: {
   menu: MenuCard;
   bookTableUrl?: string;
   onSwitchToDrinks: () => void;
+  labels: typeof DEFAULT_LABELS;
 }) {
   return (
     <div className="py-12 lg:py-16 max-w-2xl mx-auto">
-      {menu.intro && (
-        <p className="text-warm-brown font-light leading-7 mb-10 text-base max-w-xl">
-          {menu.intro}
-        </p>
-      )}
-
       {menu.sections?.map((section) => {
         const style = section.displayStyle ?? "list";
-
         if (style === "featured") {
           return (
             <FeaturedSection
               key={section._key}
               section={section}
               bookTableUrl={bookTableUrl}
+              bookTableLabel={labels.bookTable}
             />
           );
         }
-
         return (
           <div key={section._key} className="mt-12 mb-6 first:mt-0">
             <SectionHeader
@@ -388,8 +391,7 @@ function StandardMenuTab({
           </div>
         );
       })}
-
-      <DrinksCrossLink onSwitch={onSwitchToDrinks} />
+      <DrinksCrossLink label={labels.viewDrinks} onSwitch={onSwitchToDrinks} />
     </div>
   );
 }
@@ -419,10 +421,14 @@ function BeveragesTab({ menu }: { menu: MenuCard }) {
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function MenuTabs({
-  tabs,
+  tabs: providedTabs,
   menus,
   bookTableUrl = "https://dinnerbooking.com/dk/da-DK/eventbooking/event/4155/allegade-10",
+  labels: providedLabels,
 }: MenuTabsProps) {
+  const tabs = providedTabs && providedTabs.length > 0 ? providedTabs : DEFAULT_TABS;
+  const labels = { ...DEFAULT_LABELS, ...providedLabels };
+
   const [activeTab, setActiveTab] = useState<string>(() =>
     getDefaultMenuType(tabs),
   );
@@ -430,18 +436,15 @@ export default function MenuTabs({
   const menusByType = Object.fromEntries(menus.map((m) => [m.menuType, m]));
   const activeMenu = menusByType[activeTab];
   const beveragesMenu = menusByType["beverages"];
-
   const switchToDrinks = () => setActiveTab("beverages");
 
   return (
     <div>
       {/* ── Sticky tab bar ────────────────────────────────────────────── */}
-      <div className="sticky top-16 z-40 bg-warm-white border-b border-border-warm shadow-sm">
-        <div className="max-w-6xl mx-auto px-10 lg:px-16">
-          {/* Relative wrapper so the fade overlay is contained */}
+      <div className="sticky top-16 z-40 bg-warm-white">
+        <div className="max-w-6xl mx-auto px-6 lg:px-16">
           <div className="relative">
-            {/* overflow-x-auto for mobile horizontal scroll; hide scrollbar */}
-            <div className="flex overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex lg:justify-center overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {tabs.map((tab) => {
                 const isActive = activeTab === tab.menuType;
                 return (
@@ -449,25 +452,29 @@ export default function MenuTabs({
                     key={tab.menuType}
                     onClick={() => setActiveTab(tab.menuType)}
                     className={cn(
-                      "flex flex-col items-center px-6 py-4 shrink-0 border-b-2 transition-all duration-200 focus:outline-none",
-                      isActive
-                        ? "border-brand text-dark-stone"
-                        : "border-transparent text-warm-brown hover:text-dark-stone",
+                      "relative flex flex-col items-center px-6 lg:px-8 py-5 shrink-0 transition-all duration-300 focus:outline-none",
+                      isActive ? "text-dark-stone" : "text-warm-brown hover:text-dark-stone",
                     )}
                   >
-                    <span className="font-sans font-light text-sm leading-snug">
+                    <span className="font-sans font-light text-[13px] tracking-[1px] uppercase leading-snug">
                       {tab.label}
                     </span>
                     {tab.servingTime && (
-                      <span className="text-[10px] text-warm-brown/75 font-light mt-0.5 font-sans">
+                      <span className="text-[11px] text-warm-brown/85 font-normal mt-1 font-sans">
                         {tab.servingTime}
                       </span>
+                    )}
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeTabUnderline"
+                        className="absolute bottom-0 left-0 right-0 h-[2px] bg-brand"
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
                     )}
                   </button>
                 );
               })}
             </div>
-            {/* Fade gradient — hints at horizontal scroll on mobile, hidden on lg */}
             <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-warm-white to-transparent lg:hidden" />
           </div>
         </div>
@@ -477,13 +484,14 @@ export default function MenuTabs({
       <div className="bg-warm-white px-10 lg:px-16 min-h-[60vh]">
         {!activeMenu ? (
           <div className="py-24 text-center text-warm-brown/50 font-light text-sm">
-            Indholdet er ikke klar endnu — tilføj et menukort i Sanity Studio.
+            {labels.noContent}
           </div>
         ) : activeTab === "brunch" ? (
           <BrunchTab
             menu={activeMenu}
             bookTableUrl={bookTableUrl}
             onSwitchToDrinks={switchToDrinks}
+            labels={labels}
           />
         ) : activeTab === "beverages" ? (
           <BeveragesTab menu={activeMenu} />
@@ -492,6 +500,7 @@ export default function MenuTabs({
             menu={activeMenu}
             bookTableUrl={bookTableUrl}
             onSwitchToDrinks={beveragesMenu ? switchToDrinks : () => {}}
+            labels={labels}
           />
         )}
       </div>

@@ -68,6 +68,7 @@ export interface SiteSettings {
   newsletterLabel?: string;
   newsletterSubtext?: string;
   newsletterButtonLabel?: string;
+  ctaBookTableLabel?: string;
   ctaBookTableUrl?: string;
   breadcrumbHomeLabel?: string;
 }

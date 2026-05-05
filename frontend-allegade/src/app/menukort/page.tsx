@@ -3,7 +3,7 @@ import { sanityFetch } from "@/sanity/lib/live";
 import { urlFor } from "@/sanity/lib/image";
 import { SectionRenderer } from "@/components/sections";
 import { type SiteSettings, type SanitySeo, type SanitySection } from "@/types/sanity";
-import { type MenuCard } from "@/components/MenuTabs";
+import MenuTabs, { type MenuCard } from "@/components/MenuTabs";
 import { SECTIONS_QUERY_FRAGMENT } from "@/sanity/lib/sections-query";
 import StructuredData from "@/components/StructuredData";
 
@@ -11,6 +11,7 @@ interface MenuPageData {
   _id: string;
   _type: string;
   title?: string;
+  intro?: string;
   seo?: SanitySeo;
   sections?: SanitySection[];
 }
@@ -22,6 +23,7 @@ const QUERY = `{
     _id,
     _type,
     title,
+    intro,
     seo,
     sections[]{
       ...,
@@ -40,10 +42,11 @@ const QUERY = `{
   },
   "siteSettings": *[_type == "siteSettings"][0]{
     address, phone, email, footerDescription, socialLinks,
-    restaurantHours, kitchenClosingNote, ctaBookTableUrl,
+    restaurantHours, kitchenClosingNote, ctaBookTableUrl, ctaBookTableLabel,
     breadcrumbHomeLabel
   }
-}`;
+  }
+`;
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
@@ -74,19 +77,31 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function MenukortPage() {
   const { data } = await sanityFetch({ query: QUERY });
-  const result = data as { page: MenuPageData | null; siteSettings: SiteSettings | null; menus: MenuCard[] } | null;
+  const result = data as {
+    page: MenuPageData | null;
+    siteSettings: SiteSettings | null;
+    menus: MenuCard[];
+  } | null;
+
   const page = result?.page;
   const siteSettings = result?.siteSettings;
   const menus = result?.menus ?? [];
 
-  const globalBookTableUrl = siteSettings?.ctaBookTableUrl || "https://dinnerbooking.com/dk/da-DK/eventbooking/event/4155/allegade-10";
-  const heroSection = (page?.sections as any[])?.find((s) => s._type === "menuHeroSection");
+  const globalBookTableUrl =
+    siteSettings?.ctaBookTableUrl ||
+    "https://dinnerbooking.com/dk/da-DK/eventbooking/event/4155/allegade-10";
+
+  // Find the menuTabsSection to get any custom tab labels/serving times
+  const tabsSection = page?.sections?.find(
+    (s: any) => s._type === "menuTabsSection"
+  );
+  const customTabs = (tabsSection as any)?.tabs;
 
   const menuSchema = {
     "@context": "https://schema.org",
     "@type": "Menu",
-    name: heroSection?.headerHeading || "Menukort",
-    description: heroSection?.headerDescription,
+    name: "Menukort",
+    description: "Vores udvalg af mad og drikke",
     url: "https://allegade10.dk/menukort",
     ...(menus.length > 0 && {
       hasMenuSection: menus.map((menu: any) => ({
@@ -100,11 +115,20 @@ export default async function MenukortPage() {
               name: item.name,
               ...(item.description && { description: item.description }),
               ...(item.price != null && {
-                offers: { "@type": "Offer", price: item.price, priceCurrency: "DKK" },
+                offers: {
+                  "@type": "Offer",
+                  price: item.price,
+                  priceCurrency: "DKK",
+                },
               }),
-              ...(item.priceString && !item.price && {
-                offers: { "@type": "Offer", price: item.priceString, priceCurrency: "DKK" },
-              }),
+              ...(item.priceString &&
+                !item.price && {
+                  offers: {
+                    "@type": "Offer",
+                    price: item.priceString,
+                    priceCurrency: "DKK",
+                  },
+                }),
             }))
           ),
         }),
@@ -113,15 +137,26 @@ export default async function MenukortPage() {
   };
 
   return (
-    <main className="bg-warm-white min-h-[calc(100vh-80px)]">
+    <main className="bg-warm-white min-h-[calc(100vh-80px)] pt-12">
       <StructuredData data={menuSchema} />
-      <SectionRenderer
-        documentId={page?._id ?? "menuPage"}
-        documentType={page?._type ?? "menuPage"}
-        sections={page?.sections}
+      {/* 
+        Dedicated minimalistic menu page: 
+        Only show the tabs and the menu content.
+      */}
+      {page?.intro && (
+        <div className="max-w-2xl mx-auto px-6 pt-12 text-center">
+          <p className="text-warm-brown font-light leading-relaxed text-sm lg:text-base italic">
+            {page.intro}
+          </p>
+        </div>
+      )}
+      <MenuTabs
+        tabs={customTabs}
         menus={menus}
-        globalBookTableUrl={globalBookTableUrl}
-        breadcrumbHomeLabel={siteSettings?.breadcrumbHomeLabel}
+        bookTableUrl={globalBookTableUrl}
+        labels={{
+          bookTable: siteSettings?.ctaBookTableLabel,
+        }}
       />
     </main>
   );

@@ -25,6 +25,13 @@ export const menuPageType = defineType({
       initialValue: 'Menukort',
     }),
     defineField({
+      name: 'intro',
+      title: 'Intro tekst',
+      description: 'Valgfri tekst der vises øverst på menukort-siden for at byde gæster velkommen.',
+      type: 'text',
+      rows: 3,
+    }),
+    defineField({
       name: 'sections',
       title: 'Side-sektioner',
       description: 'Byg menukort-siden ved at tilføje og reorder sektioner nedenfor.',
