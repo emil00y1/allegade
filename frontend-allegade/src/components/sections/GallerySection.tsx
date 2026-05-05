@@ -121,11 +121,13 @@ export default function GallerySection({
   heading,
   subheading,
   images,
-  columns = "3",
+  columns: columnsProp,
   layout = "grid",
-  aspectRatio = "landscape",
+  aspectRatio: aspectRatioProp,
   initialCount = DEFAULT_INITIAL,
 }: GallerySectionProps) {
+  const columns = columnsProp || "3";
+  const aspectRatio = aspectRatioProp || "landscape";
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [visibleCount, setVisibleCount] = useState(initialCount);
 
@@ -144,6 +146,9 @@ export default function GallerySection({
     alt: img.alt,
     caption: img.caption,
   })), [validImages]);
+
+  const colsClass = colsMap[columns as keyof typeof colsMap] || colsMap["3"];
+  const aspectClass = aspectMap[aspectRatio as keyof typeof aspectMap] || aspectMap.landscape;
 
   return (
     <section className="bg-warm-white py-14 md:py-24 lg:py-32">
@@ -179,7 +184,7 @@ export default function GallerySection({
             onOpen={openLightbox}
           />
         ) : (
-          <div className={`grid ${colsMap[columns]} gap-2 md:gap-3`}>
+          <div className={`grid ${colsClass} gap-2 md:gap-3`}>
             {shownImages.map((img, idx) => (
               <figure
                 key={img._key}
@@ -191,7 +196,7 @@ export default function GallerySection({
                   `sections[_key=="${_key}"].images[_key=="${img._key}"]`,
                 )}
               >
-                <div className={`relative ${aspectMap[aspectRatio]}`}>
+                <div className={`relative ${aspectClass}`}>
                   <SanityImage
                     image={img}
                     alt={img.alt ?? ""}

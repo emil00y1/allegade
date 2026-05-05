@@ -43,9 +43,10 @@ export default function CtaBannerSection({
   description,
   cta,
   ctaSecondary,
-  style = "dark",
+  style: styleProp,
 }: CtaBannerSectionProps) {
-  const s = styleConfig[style];
+  const style = styleProp || "dark";
+  const s = styleConfig[style as keyof typeof styleConfig] || styleConfig.dark;
 
   return (
     <section className={`${s.bg} py-14 md:py-24 lg:py-32`}>

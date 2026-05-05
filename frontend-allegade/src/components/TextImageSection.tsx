@@ -63,15 +63,16 @@ export default function TextImageSection({
   body,
   cta,
   imagePosition = "right",
-  backgroundColor = "white",
+  backgroundColor: backgroundColorProp,
   image,
 }: TextImageSectionProps) {
-  const bg = bgMap[backgroundColor];
-  const textColor = textColorMap[backgroundColor];
-  const accentColor = accentColorMap[backgroundColor];
-  const dividerColor = dividerColorMap[backgroundColor];
-  const frameColor = frameColorMap[backgroundColor];
-  const ctaStyle = ctaStyleMap[backgroundColor];
+  const backgroundColor = backgroundColorProp || "white";
+  const bg = bgMap[backgroundColor as keyof typeof bgMap] || bgMap.white;
+  const textColor = textColorMap[backgroundColor as keyof typeof textColorMap] || textColorMap.white;
+  const accentColor = accentColorMap[backgroundColor as keyof typeof accentColorMap] || accentColorMap.white;
+  const dividerColor = dividerColorMap[backgroundColor as keyof typeof dividerColorMap] || dividerColorMap.white;
+  const frameColor = frameColorMap[backgroundColor as keyof typeof frameColorMap] || frameColorMap.white;
+  const ctaStyle = ctaStyleMap[backgroundColor as keyof typeof ctaStyleMap] || ctaStyleMap.white;
 
   const imageFirst = imagePosition === "left";
 

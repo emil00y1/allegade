@@ -37,14 +37,19 @@ export default function QuoteSection({
   quote,
   attribution,
   backgroundImage,
-  backgroundColor = "beige",
+  backgroundColor: backgroundColorProp,
 }: QuoteSectionProps) {
   if (!quote) return null;
 
+  const backgroundColor = backgroundColorProp || "beige";
   const hasImage = !!backgroundImage?.asset;
 
+  const bgClass = bgMap[backgroundColor as keyof typeof bgMap] || bgMap.beige;
+  const textColorClass = textColorMap[backgroundColor as keyof typeof textColorMap] || textColorMap.beige;
+  const attrColorClass = attrColorMap[backgroundColor as keyof typeof attrColorMap] || attrColorMap.beige;
+
   return (
-    <section className={`relative overflow-hidden py-14 md:py-24 lg:py-32 ${hasImage ? "" : bgMap[backgroundColor]}`}>
+    <section className={`relative overflow-hidden py-14 md:py-24 lg:py-32 ${hasImage ? "" : bgClass}`}>
       {hasImage && (
         <>
           <div
@@ -66,7 +71,7 @@ export default function QuoteSection({
       <div className="relative z-10 max-w-3xl mx-auto px-6 lg:px-16 text-center">
         <div className="mb-8 flex justify-center">
           <svg
-            className={`w-10 h-10 ${hasImage ? "text-white/40" : attrColorMap[backgroundColor]} opacity-50`}
+            className={`w-10 h-10 ${hasImage ? "text-white/40" : attrColorClass} opacity-50`}
             viewBox="0 0 24 24"
             fill="currentColor"
           >
@@ -76,7 +81,7 @@ export default function QuoteSection({
 
         <blockquote
           className={`font-serif text-2xl md:text-3xl lg:text-4xl font-light leading-snug italic ${
-            hasImage ? "text-white" : textColorMap[backgroundColor]
+            hasImage ? "text-white" : textColorClass
           }`}
         >
           {quote}
@@ -85,7 +90,7 @@ export default function QuoteSection({
         {attribution && (
           <p
             className={`mt-8 text-xs tracking-[0.25em] uppercase font-medium ${
-              hasImage ? "text-white/70" : attrColorMap[backgroundColor]
+              hasImage ? "text-white/70" : attrColorClass
             }`}
           >
             — {attribution}

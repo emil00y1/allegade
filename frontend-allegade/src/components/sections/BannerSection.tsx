@@ -35,11 +35,17 @@ export default function BannerSection({
   subheading,
   cta,
   backgroundImage,
-  overlay = "medium",
-  size = "medium",
+  overlay: overlayProp,
+  size: sizeProp,
 }: BannerSectionProps) {
+  const overlay = overlayProp || "medium";
+  const size = sizeProp || "medium";
+
+  const sizeClass = sizeMap[size as keyof typeof sizeMap] || sizeMap.medium;
+  const overlayClass = overlayMap[overlay as keyof typeof overlayMap] || overlayMap.medium;
+
   return (
-    <section className={`relative overflow-hidden ${sizeMap[size]}`}>
+    <section className={`relative overflow-hidden ${sizeClass}`}>
       {backgroundImage?.asset && (
         <div
           className="absolute inset-0"
@@ -55,7 +61,7 @@ export default function BannerSection({
         </div>
       )}
 
-      <div className={`absolute inset-0 ${overlayMap[overlay]}`} />
+      <div className={`absolute inset-0 ${overlayClass}`} />
 
       <div className="relative z-10 max-w-4xl mx-auto px-6 lg:px-16 text-center">
         {heading && (

@@ -33,15 +33,21 @@ export default function RichTextSection({
   heading,
   body,
   alignment = "left",
-  maxWidth = "medium",
-  backgroundColor = "white",
+  maxWidth: maxWidthProp,
+  backgroundColor: backgroundColorProp,
 }: RichTextSectionProps) {
+  const maxWidth = maxWidthProp || "medium";
+  const backgroundColor = backgroundColorProp || "white";
   const centered = alignment === "center";
   const isDark = backgroundColor === "dark";
 
+  const bgClass = bgMap[backgroundColor as keyof typeof bgMap] || bgMap.white;
+  const maxWidthClass = maxWidthMap[maxWidth as keyof typeof maxWidthMap] || maxWidthMap.medium;
+  const dividerClass = dividerColorMap[backgroundColor as keyof typeof dividerColorMap] || dividerColorMap.white;
+
   return (
-    <section className={`${bgMap[backgroundColor]} py-14 md:py-24 lg:py-32`}>
-      <div className={`${maxWidthMap[maxWidth]} mx-auto px-6 lg:px-16 ${centered ? "text-center" : ""}`}>
+    <section className={`${bgClass} py-14 md:py-24 lg:py-32`}>
+      <div className={`${maxWidthClass} mx-auto px-6 lg:px-16 ${centered ? "text-center" : ""}`}>
         {eyebrow && (
           <span className={`block text-[10px] tracking-[2px] uppercase mb-4 ${isDark ? "text-stone-400" : "text-brand"}`}>
             {eyebrow}
@@ -54,7 +60,7 @@ export default function RichTextSection({
           </h2>
         )}
 
-        <div className={`w-10 h-px mb-8 ${dividerColorMap[backgroundColor]} ${centered ? "mx-auto" : ""}`} />
+        <div className={`w-10 h-px mb-8 ${dividerClass} ${centered ? "mx-auto" : ""}`} />
 
         {body && body.length > 0 && (
           <div
