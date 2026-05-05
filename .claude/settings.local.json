@@ -65,7 +65,9 @@
       "mcp__Sanity__get_document",
       "mcp__Sanity__patch_document_from_json",
       "mcp__Sanity__publish_documents",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(npx tsx *)",
+      "Bash(SANITY_TOKEN=skwGsVmHb4PIRpvTyJFm0jW5TkYwsvBe1nX2bzLjNr6ygDKweiLAMkrHwGLpLsqPdlv0QmG6vA2k9xT47gI4hbYfw2RdIfAvvN7mEpLM192FxQaMkVVA0MD9zHBdo7FNh4KzM6Md2o1mYbfkmZ3wVrjNWwmX2cuIkTcS7A6KzGvRDCEMiWQI npx tsx migrations/remove-orphaned-hotel-inline-fields.ts)"
     ]
   }
 }
