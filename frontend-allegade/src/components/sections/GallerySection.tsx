@@ -26,7 +26,7 @@ type GallerySectionProps = {
   heading?: string;
   subheading?: string;
   images?: GalleryImage[];
-  columns?: "1" | "2" | "3" | "4" | "auto";
+  columns?: "1" | "2" | "3" | "4" | "5" | "6" | "auto";
   layout?: "grid" | "magazine";
   aspectRatio?: "landscape" | "square" | "portrait";
   initialCount?: number;
@@ -35,8 +35,10 @@ type GallerySectionProps = {
 const colsMap = {
   "1": "grid-cols-1",
   "2": "grid-cols-2",
-  "3": "grid-cols-2 md:grid-cols-3",
-  "4": "grid-cols-2 md:grid-cols-4",
+  "3": "grid-cols-3",
+  "4": "grid-cols-3 md:grid-cols-4",
+  "5": "grid-cols-3 sm:grid-cols-4 md:grid-cols-5",
+  "6": "grid-cols-3 sm:grid-cols-4 md:grid-cols-6",
 };
 
 const aspectMap = {
@@ -127,7 +129,7 @@ export default function GallerySection({
   aspectRatio: aspectRatioProp,
   initialCount = DEFAULT_INITIAL,
 }: GallerySectionProps) {
-  const aspectRatio = aspectRatioProp || "landscape";
+  const aspectRatio = aspectRatioProp || "square";
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [visibleCount, setVisibleCount] = useState(initialCount);
 
@@ -136,10 +138,11 @@ export default function GallerySection({
   const columns = useMemo(() => {
     if (columnsProp && columnsProp !== "auto") return columnsProp;
     const n = validImages.length;
-    if (n === 0) return "3";
-    const rows = Math.ceil(n / 4);
-    const cols = Math.ceil(n / rows);
-    return Math.min(cols, 4).toString() as "1" | "2" | "3" | "4";
+    if (n === 0) return "4";
+    if (n <= 3) return n.toString() as "1" | "2" | "3";
+    if (n <= 6) return "4";
+    if (n <= 10) return "5";
+    return "6";
   }, [columnsProp, validImages]);
 
   const openLightbox = useCallback((idx: number) => setLightboxIndex(idx), []);
@@ -211,7 +214,7 @@ export default function GallerySection({
                     alt={img.alt ?? ""}
                     fill
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                    sizes={`(max-width: 640px) 50vw, ${Math.round(100 / Number(columns))}vw`}
+                    sizes={`(max-width: 640px) 33vw, ${Math.round(100 / Number(columns))}vw`}
                   />
                   <GalleryOverlay caption={img.caption} />
                 </div>
