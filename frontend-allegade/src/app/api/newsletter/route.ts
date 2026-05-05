@@ -16,6 +16,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Newsletter ikke konfigureret." }, { status: 500 });
   }
 
+  const normalizedEmail = email.trim().toLowerCase();
+
   const res = await fetch("https://connect.mailerlite.com/api/subscribers", {
     method: "POST",
     headers: {
@@ -23,16 +25,25 @@ export async function POST(req: NextRequest) {
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      email,
+      email: normalizedEmail,
       fields: {
-        name: firstName,
-        last_name: lastName,
+        name: firstName.trim(),
+        last_name: lastName?.trim() || "",
       },
     }),
   });
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
+    
+    // If user is already in the system but in a state that can't be updated (e.g. unsubscribed/bounced)
+    // or if they are already active, MailerLite might return 422 or 400.
+    // To the user, we want to show "Success" so they don't think something broke.
+    if (res.status === 422 || res.status === 400) {
+      console.log(`Newsletter signup: Email ${normalizedEmail} returned status ${res.status}. Showing success to user.`);
+      return NextResponse.json({ success: true });
+    }
+
     return NextResponse.json(
       { error: body?.message || "Tilmelding mislykkedes." },
       { status: res.status }
