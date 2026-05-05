@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Input } from "@/components/ui/FormField";
+import { toast } from "sonner";
 
 interface NewsletterSectionProps {
   label?: string;
@@ -26,12 +27,10 @@ export default function NewsletterSection({
 }: NewsletterSectionProps) {
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "" });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [message, setMessage] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setStatus("loading");
-    setMessage("");
 
     const res = await fetch("/api/newsletter", {
       method: "POST",
@@ -43,11 +42,11 @@ export default function NewsletterSection({
 
     if (res.ok) {
       setStatus("success");
-      setMessage(successMessage);
+      toast.success(successMessage);
       setForm({ firstName: "", lastName: "", email: "" });
     } else {
       setStatus("error");
-      setMessage(data.error || errorMessage);
+      toast.error(data.error || errorMessage);
     }
   }
 
@@ -111,17 +110,6 @@ export default function NewsletterSection({
             </button>
           </form>
         </div>
-
-        {/* Status message — always below the form row */}
-        {message && (
-          <p
-            className={`mt-3 text-xs font-light ${
-              status === "success" ? "text-brand-light" : "text-red-400"
-            }`}
-          >
-            {message}
-          </p>
-        )}
       </div>
     </div>
   );

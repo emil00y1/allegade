@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils";
 import { sanityFetch } from "@/sanity/lib/live";
 import { getThemeVars } from "@/lib/themes";
 import { getFontVars, generateFontFaceCSS } from "@/lib/fonts";
+import { Toaster } from "sonner";
 import CookieConsent from "@/components/CookieConsent";
 import MobileBookingBar from "@/components/MobileBookingBar";
 import StructuredData from "@/components/StructuredData";
@@ -249,6 +250,7 @@ export default async function RootLayout({
           ctaBookStayUrl={navSettings?.ctaBookStayUrl}
         />
         <CookieConsent />
+        <Toaster position="bottom-right" richColors />
         <SanityLive />
         {(await draftMode()).isEnabled && (
           <>
