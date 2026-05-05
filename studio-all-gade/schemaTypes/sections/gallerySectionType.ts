@@ -37,13 +37,14 @@ export const gallerySectionType = defineType({
       type: 'string',
       options: {
         list: [
+          {title: 'Automatisk', value: 'auto'},
           {title: '2 kolonner', value: '2'},
           {title: '3 kolonner', value: '3'},
           {title: '4 kolonner', value: '4'},
         ],
         layout: 'radio',
       },
-      initialValue: '3',
+      initialValue: 'auto',
     }),
     defineField({
       name: 'aspectRatio',

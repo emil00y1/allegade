@@ -26,13 +26,14 @@ type GallerySectionProps = {
   heading?: string;
   subheading?: string;
   images?: GalleryImage[];
-  columns?: "2" | "3" | "4";
+  columns?: "1" | "2" | "3" | "4" | "auto";
   layout?: "grid" | "magazine";
   aspectRatio?: "landscape" | "square" | "portrait";
   initialCount?: number;
 };
 
 const colsMap = {
+  "1": "grid-cols-1",
   "2": "grid-cols-1 sm:grid-cols-2",
   "3": "grid-cols-2 md:grid-cols-3",
   "4": "grid-cols-2 md:grid-cols-3 lg:grid-cols-4",
@@ -126,12 +127,20 @@ export default function GallerySection({
   aspectRatio: aspectRatioProp,
   initialCount = DEFAULT_INITIAL,
 }: GallerySectionProps) {
-  const columns = columnsProp || "3";
   const aspectRatio = aspectRatioProp || "landscape";
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [visibleCount, setVisibleCount] = useState(initialCount);
 
   const validImages = useMemo(() => (images ?? []).filter((img) => img?.asset), [images]);
+
+  const columns = useMemo(() => {
+    if (columnsProp && columnsProp !== "auto") return columnsProp;
+    const n = validImages.length;
+    if (n === 0) return "3";
+    const rows = Math.ceil(n / 4);
+    const cols = Math.ceil(n / rows);
+    return Math.min(cols, 4).toString() as "1" | "2" | "3" | "4";
+  }, [columnsProp, validImages]);
 
   const openLightbox = useCallback((idx: number) => setLightboxIndex(idx), []);
   const closeLightbox = useCallback(() => setLightboxIndex(null), []);
