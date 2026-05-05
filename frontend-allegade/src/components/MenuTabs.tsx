@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { urlFor } from "@/sanity/lib/image";
 import { type SanityImage } from "@/types/sanity";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -117,12 +115,12 @@ function formatPrice(item: MenuItem): string | null {
 function SectionHeader({ title, note }: { title?: string; note?: string }) {
   if (!title) return null;
   return (
-    <div className="mb-6">
-      <h3 className="text-[13px] tracking-[3px] uppercase font-light text-dark-stone mb-2">
+    <div className="mb-3">
+      <h3 className="text-[13px] tracking-[3px] uppercase font-normal text-dark-stone mb-1">
         {title}
       </h3>
       {note && (
-        <p className="text-[11px] tracking-[0.5px] uppercase text-warm-brown/85 font-normal">
+        <p className="text-[11px] tracking-[0.5px] uppercase text-warm-brown/95 font-normal">
           {note}
         </p>
       )}
@@ -133,9 +131,9 @@ function SectionHeader({ title, note }: { title?: string; note?: string }) {
 function MenuItemRow({ item }: { item: MenuItem }) {
   const price = formatPrice(item);
   return (
-    <div className="py-3.5 border-b border-border-warm/30 last:border-0">
+    <div className="py-2 border-b border-border-warm/15 last:border-0">
       <div className="flex items-baseline gap-2">
-        <span className="font-newsreader font-light text-[1.05rem] text-dark-stone leading-snug">
+        <span className="font-newsreader font-medium text-[1.05rem] text-dark-stone leading-snug">
           {item.name}
         </span>
         {item.badge && (
@@ -145,18 +143,18 @@ function MenuItemRow({ item }: { item: MenuItem }) {
         )}
         <span className="flex-1" />
         {price && (
-          <span className="font-sans font-light text-sm text-dark-stone shrink-0 tabular-nums">
+          <span className="font-sans font-medium text-[15px] text-dark-stone shrink-0 tabular-nums">
             {price}
           </span>
         )}
       </div>
       {item.description && (
-        <p className="text-sm italic text-warm-brown/70 font-light mt-0.5 leading-snug">
+        <p className="text-sm italic text-warm-brown/95 font-light mt-0.5 leading-snug">
           {item.description}
         </p>
       )}
       {item.note && (
-        <p className="text-[11px] text-warm-brown/50 font-light mt-0.5">
+        <p className="text-[11px] text-warm-brown/60 font-light mt-0.5">
           {item.note}
         </p>
       )}
@@ -167,20 +165,20 @@ function MenuItemRow({ item }: { item: MenuItem }) {
 function WineItemRow({ item }: { item: MenuItem }) {
   const price = formatPrice(item);
   return (
-    <div className="py-4 border-b border-border-warm/30 last:border-0">
+    <div className="py-2.5 border-b border-border-warm/15 last:border-0">
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <p className="font-newsreader font-extralight text-lg text-dark-stone leading-snug">
+          <p className="font-newsreader font-medium text-[1.1rem] text-dark-stone leading-snug">
             {item.name}
           </p>
           {item.description && (
-            <p className="text-sm italic text-warm-brown/60 font-light mt-1 leading-snug">
+            <p className="text-sm italic text-warm-brown/95 font-light mt-1 leading-snug">
               {item.description}
             </p>
           )}
         </div>
         {price && (
-          <span className="font-sans font-light text-sm text-dark-stone shrink-0 tabular-nums text-right">
+          <span className="font-newsreader font-medium text-[1.1rem] text-dark-stone shrink-0 tabular-nums text-right">
             {price}
           </span>
         )}
@@ -205,7 +203,7 @@ function FeaturedSection({
   }
 
   return (
-    <div>
+    <div className="mb-6">
       <SectionHeader title={section.sectionTitle} note={section.sectionNote} />
       <div className="flex flex-col gap-4">
         {pairs.map((pair, pi) => (
@@ -226,7 +224,7 @@ function FeaturedSection({
                   <span className="text-[9px] tracking-[2px] uppercase font-light text-brand border border-brand/30 px-2 py-1 self-start">
                     Sæt-menu
                   </span>
-                  <h4 className="font-newsreader font-extralight text-xl text-dark-stone leading-snug">
+                  <h4 className="font-newsreader font-medium text-xl text-dark-stone leading-snug">
                     {item.name}
                   </h4>
                   {item.description && (
@@ -240,7 +238,7 @@ function FeaturedSection({
                     </p>
                   )}
                   {price && (
-                    <p className="font-newsreader font-extralight text-2xl text-brand mt-auto pt-2">
+                    <p className="font-newsreader font-medium text-2xl text-brand mt-auto pt-2">
                       {price}
                     </p>
                   )}
@@ -264,7 +262,7 @@ function FeaturedSection({
 
 function DrinksCrossLink({ label, onSwitch }: { label: string; onSwitch: () => void }) {
   return (
-    <div className="mt-10 pt-6 border-t border-border-warm/30">
+    <div className="mt-6 pt-4 border-t border-border-warm/20">
       <button
         onClick={onSwitch}
         className="text-[11px] tracking-[1px] uppercase font-light text-brand border-b border-brand/40 pb-px hover:opacity-70 transition-opacity"
@@ -293,21 +291,21 @@ function BrunchTab({
     menu.priceString ?? (menu.price != null ? `${menu.price},-` : null);
 
   return (
-    <div className="py-12 lg:py-20">
+    <div className="py-8 lg:py-10">
       <div className="max-w-2xl mx-auto">
-        <div className="bg-warm-white border border-border-warm/40 p-10 lg:p-14 shadow-sm text-center">
-          <h2 className="font-newsreader font-extralight text-4xl lg:text-5xl text-dark-stone mb-3 leading-none">
+        <div className="bg-warm-white border border-border-warm/40 p-8 lg:p-10 shadow-sm text-center">
+          <h2 className="font-newsreader font-medium text-4xl lg:text-5xl text-dark-stone mb-2 leading-none">
             {menu.title}
           </h2>
 
           {menu.sections?.[0]?.sectionNote && (
-            <p className="text-[10px] tracking-[1.5px] uppercase text-warm-brown/60 font-light mb-8">
+            <p className="text-[11px] tracking-[1.5px] uppercase text-warm-brown/95 font-normal mb-6">
               {menu.sections[0].sectionNote}
             </p>
           )}
 
           {items.length > 0 && (
-            <div className="mb-8">
+            <div className="mb-6">
               <p className="text-sm text-warm-brown font-light leading-relaxed">
                 {items.map((item, i) => (
                   <span key={item._key}>
@@ -320,18 +318,18 @@ function BrunchTab({
           )}
 
           {menu.menuNote && (
-            <p className="text-sm italic text-warm-brown font-light mb-6">
+            <p className="text-sm italic text-warm-brown font-light mb-4">
               {menu.menuNote}
             </p>
           )}
 
-          <div className="pt-10 flex flex-col items-center gap-8">
+          <div className="pt-8 flex flex-col items-center gap-6">
             <div className="flex flex-col items-center">
-              <p className="text-[10px] tracking-[1px] uppercase text-dark-stone/50 mb-3">
+              <p className="text-[10px] tracking-[1px] uppercase text-dark-stone/50 mb-2">
                 {menu.priceLabel || labels.pricePerPerson}
               </p>
               {price && (
-                <p className="font-newsreader font-extralight text-4xl text-brand leading-none">
+                <p className="font-newsreader font-medium text-4xl text-dark-stone leading-none">
                   {price}
                 </p>
               )}
@@ -362,7 +360,7 @@ function StandardMenuTab({
   labels: typeof DEFAULT_LABELS;
 }) {
   return (
-    <div className="py-12 lg:py-16 max-w-2xl mx-auto">
+    <div className="py-6 lg:py-8 max-w-2xl mx-auto">
       {menu.sections?.map((section) => {
         const style = section.displayStyle ?? "list";
         if (style === "featured") {
@@ -376,7 +374,7 @@ function StandardMenuTab({
           );
         }
         return (
-          <div key={section._key} className="mt-12 mb-6 first:mt-0">
+          <div key={section._key} className="mb-6 first:mt-0">
             <SectionHeader
               title={section.sectionTitle}
               note={section.sectionNote}
@@ -398,9 +396,9 @@ function StandardMenuTab({
 
 function BeveragesTab({ menu }: { menu: MenuCard }) {
   return (
-    <div className="py-12 lg:py-16 max-w-2xl mx-auto">
+    <div className="py-6 lg:py-8 max-w-2xl mx-auto">
       {menu.sections?.map((section) => (
-        <div key={section._key} className="mt-12 mb-6 first:mt-0">
+        <div key={section._key} className="mb-6 first:mt-0">
           <SectionHeader
             title={section.sectionTitle}
             note={section.sectionNote}
@@ -444,7 +442,7 @@ export default function MenuTabs({
       <div className="sticky top-16 z-40 bg-warm-white">
         <div className="max-w-6xl mx-auto px-6 lg:px-16">
           <div className="relative">
-            <div className="flex lg:justify-center overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex lg:justify-center overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden border-b border-border-warm/10">
               {tabs.map((tab) => {
                 const isActive = activeTab === tab.menuType;
                 return (
@@ -452,7 +450,7 @@ export default function MenuTabs({
                     key={tab.menuType}
                     onClick={() => setActiveTab(tab.menuType)}
                     className={cn(
-                      "relative flex flex-col items-center px-6 lg:px-8 py-5 shrink-0 transition-all duration-300 focus:outline-none",
+                      "relative flex flex-col items-center px-6 lg:px-8 py-4 shrink-0 transition-all duration-300 focus:outline-none",
                       isActive ? "text-dark-stone" : "text-warm-brown hover:text-dark-stone",
                     )}
                   >
@@ -460,7 +458,7 @@ export default function MenuTabs({
                       {tab.label}
                     </span>
                     {tab.servingTime && (
-                      <span className="text-[11px] text-warm-brown/85 font-normal mt-1 font-sans">
+                      <span className="text-[11px] text-warm-brown/95 font-normal mt-0.5 font-sans">
                         {tab.servingTime}
                       </span>
                     )}
@@ -481,7 +479,7 @@ export default function MenuTabs({
       </div>
 
       {/* ── Tab content ───────────────────────────────────────────────── */}
-      <div className="bg-warm-white px-10 lg:px-16 min-h-[60vh]">
+      <div className="bg-warm-white px-6 lg:px-16 min-h-[60vh]">
         {!activeMenu ? (
           <div className="py-24 text-center text-warm-brown/50 font-light text-sm">
             {labels.noContent}
@@ -507,3 +505,4 @@ export default function MenuTabs({
     </div>
   );
 }
+

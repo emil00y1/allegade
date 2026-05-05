@@ -1,11 +1,19 @@
 import type { Metadata } from "next";
 import { sanityFetch } from "@/sanity/lib/live";
 import { urlFor } from "@/sanity/lib/image";
-import { SectionRenderer } from "@/components/sections";
 import { type SiteSettings, type SanitySeo, type SanitySection } from "@/types/sanity";
-import MenuTabs, { type MenuCard } from "@/components/MenuTabs";
+import MenuTabs, { type MenuCard, type TabConfig } from "@/components/MenuTabs";
 import { SECTIONS_QUERY_FRAGMENT } from "@/sanity/lib/sections-query";
 import StructuredData from "@/components/StructuredData";
+
+interface MenuHeroSection extends SanitySection {
+  headerDescription?: string;
+  headerImage?: SanityImage;
+}
+
+interface MenuTabsSection extends SanitySection {
+  tabs?: TabConfig[];
+}
 
 interface MenuPageData {
   _id: string;
@@ -57,7 +65,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const siteSettings = result?.siteSettings;
 
   const seo = page?.seo;
-  const heroSection = (page?.sections as any[])?.find((s) => s._type === "menuHeroSection");
+  const heroSection = page?.sections?.find((s) => s._type === "menuHeroSection") as MenuHeroSection | undefined;
   const title = seo?.metaTitle || page?.title || "Menukort";
   const description = seo?.metaDescription || heroSection?.headerDescription || siteSettings?.footerDescription;
   const ogImage = seo?.shareImage
@@ -93,9 +101,9 @@ export default async function MenukortPage() {
 
   // Find the menuTabsSection to get any custom tab labels/serving times
   const tabsSection = page?.sections?.find(
-    (s: any) => s._type === "menuTabsSection"
-  );
-  const customTabs = (tabsSection as any)?.tabs;
+    (s) => s._type === "menuTabsSection"
+  ) as MenuTabsSection | undefined;
+  const customTabs = tabsSection?.tabs;
 
   const menuSchema = {
     "@context": "https://schema.org",
@@ -104,13 +112,13 @@ export default async function MenukortPage() {
     description: "Vores udvalg af mad og drikke",
     url: "https://allegade10.dk/menukort",
     ...(menus.length > 0 && {
-      hasMenuSection: menus.map((menu: any) => ({
+      hasMenuSection: menus.map((menu) => ({
         "@type": "MenuSection",
         name: menu.title,
         ...(menu.intro && { description: menu.intro }),
         ...(menu.sections && {
-          hasMenuItem: menu.sections.flatMap((section: any) =>
-            (section.items || []).map((item: any) => ({
+          hasMenuItem: menu.sections.flatMap((section) =>
+            (section.items || []).map((item) => ({
               "@type": "MenuItem",
               name: item.name,
               ...(item.description && { description: item.description }),

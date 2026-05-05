@@ -1,9 +1,10 @@
 import dynamic from "next/dynamic";
+import type { TabConfig, MenuCard } from "@/components/MenuTabs";
 const MenuTabs = dynamic(() => import("@/components/MenuTabs"));
 
 interface MenuTabsSectionProps {
-  tabs?: any[];
-  menus?: any[];
+  tabs?: TabConfig[];
+  menus?: MenuCard[];
   globalBookTableUrl?: string;
 }
 

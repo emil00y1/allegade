@@ -38,11 +38,11 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans", weight: ["300", "400", "500"] });
 const newsreader = Newsreader({
   variable: "--font-newsreader",
   subsets: ["latin"],
-  weight: ["200", "300"],
+  weight: ["200", "300", "400"],
   style: ["normal", "italic"],
 });
 const cormorantGaramond = Cormorant_Garamond({
