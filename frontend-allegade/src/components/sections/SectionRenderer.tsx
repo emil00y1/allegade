@@ -154,10 +154,13 @@ function buildExtraProps(
   ) {
     if (section._type === "homeHeroSection") {
       extraProps.cta = {
-        label: section.cta?.label,
-        url: section.cta?.url || globalBookTableUrl,
+        label: section.ctaPrimaryLabel,
+        url: (section.ctaPrimaryUrl as string) || globalBookTableUrl,
       };
-      extraProps.ctaSecondary = section.ctaSecondary;
+      extraProps.ctaSecondary = {
+        label: section.ctaSecondaryLabel,
+        url: section.ctaSecondaryUrl,
+      };
     }
     extraProps.backgroundVideoUrl = section.backgroundVideo?.asset?.url;
     extraProps.breadcrumbHomeLabel = breadcrumbHomeLabel;

@@ -42,6 +42,8 @@ export const gallerySectionType = defineType({
           {title: '2 kolonner', value: '2'},
           {title: '3 kolonner', value: '3'},
           {title: '4 kolonner', value: '4'},
+          {title: '5 kolonner (miniaturer)', value: '5'},
+          {title: '6 kolonner (miniaturer)', value: '6'},
         ],
         layout: 'radio',
       },

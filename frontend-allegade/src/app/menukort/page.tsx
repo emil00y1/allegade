@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { sanityFetch } from "@/sanity/lib/live";
 import { urlFor } from "@/sanity/lib/image";
-import { type SiteSettings, type SanitySeo, type SanitySection } from "@/types/sanity";
+import { type SiteSettings, type SanitySeo, type SanitySection, type SanityImage } from "@/types/sanity";
 import MenuTabs, { type MenuCard, type TabConfig } from "@/components/MenuTabs";
 import { SECTIONS_QUERY_FRAGMENT } from "@/sanity/lib/sections-query";
 import StructuredData from "@/components/StructuredData";
