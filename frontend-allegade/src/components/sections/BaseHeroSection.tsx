@@ -96,7 +96,7 @@ export default function BaseHeroSection({
   servingTimes,
   floatingBadge,
   gridClassName = "grid lg:grid-cols-2",
-  minHeightClassName = "min-h-[calc(100vh-80px)]",
+  minHeightClassName = "mobile-hero-h lg:min-h-[calc(100vh-80px)]",
   headingSize = "lg",
 }: BaseHeroSectionProps) {
   const headingClass =
@@ -111,7 +111,7 @@ export default function BaseHeroSection({
 
   return (
     <section className={cn(gridClassName, minHeightClassName, "bg-warm-white")}>
-      <div className="flex flex-col justify-center px-10 lg:px-16 py-20">
+      <div className="flex flex-col justify-start lg:justify-center px-10 lg:px-16 py-10 lg:py-20">
         <Breadcrumb current={breadcrumbLabel} homeLabel={breadcrumbHomeLabel} />
 
         <div className="mb-8">

@@ -166,4 +166,11 @@ html {
   .pb-mobile-bar {
     padding-bottom: calc(57px + env(safe-area-inset-bottom));
   }
+
+  /* Hero sections on mobile: fill exactly the visible area between the nav (80px)
+     and the fixed booking bar (57px + safe-area), so the next section is never
+     visible on first load and scrolling lands directly into it. */
+  .mobile-hero-h {
+    min-height: calc(100svh - 80px - 57px - env(safe-area-inset-bottom));
+  }
 }
