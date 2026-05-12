@@ -64,7 +64,7 @@ export default function HotelStory({
             <SectionHeading
               eyebrow={storyEyebrow ?? "Siden 1780"}
               heading={storyHeading ?? "En bygning med sjæl"}
-              headingItalic={storyHeadingItalic ?? "og historie"}
+              headingItalic={storyHeadingItalic}
             />
             <div className="flex flex-col gap-4">
               {paragraphs.map((para, i) => (

@@ -41,7 +41,7 @@ export default function HotelArrival({
           <SectionHeading
             eyebrow={eyebrow ?? "Praktisk info"}
             heading={heading ?? "Alt du skal vide om"}
-            headingItalic={headingItalic ?? "dit ophold"}
+            headingItalic={headingItalic}
           />
           {description && (
             <p className="mt-6 text-warm-brown font-light leading-7 text-base">

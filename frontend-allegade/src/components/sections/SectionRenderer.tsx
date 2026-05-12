@@ -21,7 +21,7 @@ import HotelPracticalInfo from "./HotelPracticalInfo";
 import HotelNeighborhood from "./HotelNeighborhood";
 import HotelRestaurantTeaser from "./HotelRestaurantTeaser";
 import HotelStory from "./HotelStory";
-import HotelArrival from "./HotelArrival";
+import HotelArrival from "./HotelArrivalV2";
 import SelskaberHero from "./SelskaberHero";
 import SelskaberOccasions from "./SelskaberOccasions";
 import SelskaberVenues from "./SelskaberVenues";

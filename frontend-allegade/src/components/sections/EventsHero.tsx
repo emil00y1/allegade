@@ -47,7 +47,7 @@ export default function EventsHero({
       breadcrumbLabel="Begivenheder"
       breadcrumbHomeLabel={breadcrumbHomeLabel}
       heading={heroHeading ?? "Begivenheder"}
-      headingItalic={heroHeadingItalic ?? "på Allégade 10"}
+      headingItalic={heroHeadingItalic}
       description={
         heroDescription ??
         "Oplev Allégade 10's unikke begivenheder i historiske omgivelser."

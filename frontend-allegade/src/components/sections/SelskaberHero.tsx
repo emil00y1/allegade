@@ -44,7 +44,7 @@ export default function SelskaberHero({
       breadcrumbLabel={breadcrumbLabel ?? "Selskaber"}
       breadcrumbHomeLabel={breadcrumbHomeLabel}
       heading={heroHeading ?? "Fejr jeres næste"}
-      headingItalic={heroHeadingItalic ?? "begivenhed hos os"}
+      headingItalic={heroHeadingItalic}
       description={
         heroDescription ??
         "Siden 1780 har Allégade 10 dannet rammen om livets store øjeblikke."

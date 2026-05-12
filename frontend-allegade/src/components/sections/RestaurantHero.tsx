@@ -46,7 +46,7 @@ export default function RestaurantHero({
       breadcrumbLabel="Restaurant"
       breadcrumbHomeLabel={breadcrumbHomeLabel}
       heading={heroHeading ?? "Mad, atmosfære og"}
-      headingItalic={heroHeadingItalic ?? "gode øjeblikke"}
+      headingItalic={heroHeadingItalic}
       description={
         heroDescription ??
         "I de historiske stuer på Allégade 10 serverer vi klassisk dansk køkken..."
