@@ -50,7 +50,9 @@ export default function HotelRestaurantTeaser({
 
               <h2 className="text-[clamp(1.5rem,2.5vw,1.875rem)] leading-tight">
                 <span className="font-newsreader font-extralight text-dark-stone">{restaurantHeading ?? "Din overnatning er tæt på Frederiksbergs "} </span>
-                <span className="font-cormorant font-light italic text-dark-stone">{restaurantHeadingItalic ?? "ældste restaurant"}</span>
+                {restaurantHeadingItalic && (
+                  <span className="font-cormorant font-light italic text-dark-stone">{restaurantHeadingItalic}</span>
+                )}
               </h2>
 
               {restaurantDescription && <p className="text-warm-brown text-base leading-6 font-light max-w-xl">{restaurantDescription}</p>}

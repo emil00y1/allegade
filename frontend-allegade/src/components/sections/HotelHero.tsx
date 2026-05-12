@@ -52,7 +52,7 @@ export default function HotelHero({
       breadcrumbLabel="Hotel"
       breadcrumbHomeLabel={breadcrumbHomeLabel}
       heading={heroHeading ?? "Overnat i hjertet af"}
-      headingItalic={heroHeadingItalic ?? "Frederiksberg"}
+      headingItalic={heroHeadingItalic}
       description={
         heroDescription ??
         "Oplev atmosfæren i en af Københavns ældste bygninger. Vores hotel kombinerer 1780'ernes historiske charme med moderne komfort."
