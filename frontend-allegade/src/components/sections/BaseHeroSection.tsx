@@ -96,7 +96,7 @@ export default function BaseHeroSection({
   servingTimes,
   floatingBadge,
   gridClassName = "grid lg:grid-cols-2",
-  minHeightClassName = "lg:min-h-[calc(100vh-80px)]",
+  minHeightClassName = "mobile-hero-h lg:min-h-[calc(100vh-80px)]",
   headingSize = "lg",
 }: BaseHeroSectionProps) {
   const headingClass =
