@@ -52,7 +52,7 @@ export default function MobileBookingBar({
       }`}
     >
       <div className="grid grid-cols-2">
-        {(["table", "stay"] as const)
+        {(["table", "stay"] as Array<"table" | "stay">)
           .sort((a, b) => (a === primaryCtaButton ? 1 : b === primaryCtaButton ? -1 : 0))
           .map((which) => {
             const isPrimary = which === primaryCtaButton;

@@ -259,7 +259,7 @@ export default function Header({
 
           {/* Right Actions */}
           <div className="flex items-center gap-6">
-            {(["table", "stay"] as const)
+            {(["table", "stay"] as Array<"table" | "stay">)
               .sort((a, b) =>
                 a === primaryCtaButton ? 1 : b === primaryCtaButton ? -1 : 0,
               )
