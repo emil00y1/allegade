@@ -104,6 +104,7 @@ const NAV_QUERY = `*[_type == "siteSettings" && _id == "siteSettings"][0]{
   ctaBookTableUrl,
   ctaBookStayLabel,
   ctaBookStayUrl,
+  primaryCtaButton,
   colorTheme,
   fontPairing,
   customFontPairings[]{ _key, label, headingFontUrl, headingFontFamily, bodyFontUrl, bodyFontFamily, accentFontUrl, accentFontFamily },
@@ -235,6 +236,7 @@ export default async function RootLayout({
           ctaBookTableUrl={navSettings?.ctaBookTableUrl}
           ctaBookStayLabel={navSettings?.ctaBookStayLabel}
           ctaBookStayUrl={navSettings?.ctaBookStayUrl}
+          primaryCtaButton={navSettings?.primaryCtaButton}
           menuOpenLabel={navSettings?.headerMenuOpenLabel}
           menuCloseLabel={navSettings?.headerMenuCloseLabel}
           logoText={navSettings?.logoText}

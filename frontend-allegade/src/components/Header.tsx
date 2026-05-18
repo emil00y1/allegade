@@ -25,6 +25,7 @@ interface HeaderProps {
   ctaBookTableUrl?: string;
   ctaBookStayLabel?: string;
   ctaBookStayUrl?: string;
+  primaryCtaButton?: "table" | "stay";
   menuOpenLabel?: string;
   menuCloseLabel?: string;
   logoText?: string;
@@ -69,6 +70,7 @@ export default function Header({
   ctaBookTableUrl = "https://dinnerbooking.com/dk/da-DK/eventbooking/event/4155/allegade-10",
   ctaBookStayLabel = "Book ophold",
   ctaBookStayUrl = "https://allegade10.suitcasebooking.com/da",
+  primaryCtaButton = "stay",
   menuOpenLabel = "Åbn menu",
   menuCloseLabel = "Luk menu",
   logoText,
@@ -132,7 +134,7 @@ export default function Header({
               : "bg-transparent border-transparent"),
         )}
       >
-        <div className="max-w-[1280px] mx-auto px-8 h-16 flex items-center justify-between">
+        <div className="max-w-[1280px] mx-auto px-8 h-20 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-4 shrink-0">
             {logoSvgContent ? (
@@ -257,29 +259,34 @@ export default function Header({
 
           {/* Right Actions */}
           <div className="flex items-center gap-6">
-            <Link
-              href={resolvedTableUrl}
-              target={isExternal(resolvedTableUrl) ? "_blank" : undefined}
-              rel={
-                isExternal(resolvedTableUrl) ? "noopener noreferrer" : undefined
-              }
-              className={cn(
-                "hidden lg:block text-[11px] tracking-[1.2px] uppercase font-light transition-colors duration-300 hover:opacity-60",
-                !isHome || scrolled ? "text-dark-stone" : "text-white/90",
-              )}
-            >
-              {ctaBookTableLabel}
-            </Link>
-            <Link
-              href={resolvedStayUrl}
-              target={isExternal(resolvedStayUrl) ? "_blank" : undefined}
-              rel={
-                isExternal(resolvedStayUrl) ? "noopener noreferrer" : undefined
-              }
-              className="hidden lg:flex items-center text-[11px] tracking-[1.2px] uppercase font-light text-white px-6 py-3 hover:opacity-90 transition-opacity bg-[linear-gradient(165deg,var(--brand)_0%,var(--brand-mid)_100%)]"
-            >
-              {ctaBookStayLabel}
-            </Link>
+            {(["table", "stay"] as const)
+              .sort((a, b) =>
+                a === primaryCtaButton ? 1 : b === primaryCtaButton ? -1 : 0,
+              )
+              .map((which) => {
+                const isPrimary = which === primaryCtaButton;
+                const href = which === "table" ? resolvedTableUrl : resolvedStayUrl;
+                const label = which === "table" ? ctaBookTableLabel : ctaBookStayLabel;
+                return (
+                  <Link
+                    key={which}
+                    href={href}
+                    target={isExternal(href) ? "_blank" : undefined}
+                    rel={isExternal(href) ? "noopener noreferrer" : undefined}
+                    className={
+                      isPrimary
+                        ? "hidden lg:flex items-center text-[11px] tracking-[1.2px] uppercase font-light text-white px-6 py-3 hover:opacity-90 transition-opacity bg-[linear-gradient(165deg,var(--brand)_0%,var(--brand-mid)_100%)]"
+                        : cn(
+                            "hidden lg:block text-[11px] tracking-[1.2px] uppercase font-light transition-colors duration-300 hover:opacity-60",
+                            !isHome || scrolled ? "text-dark-stone" : "text-white/90",
+                          )
+                    }
+                  >
+                    {label}
+                  </Link>
+                );
+              })}
+
 
             {/* Mobile hamburger */}
             <button

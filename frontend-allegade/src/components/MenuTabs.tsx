@@ -439,7 +439,7 @@ export default function MenuTabs({
   return (
     <div>
       {/* ── Sticky tab bar ────────────────────────────────────────────── */}
-      <div className="sticky top-16 z-40 bg-warm-white">
+      <div className="sticky top-20 z-40 bg-warm-white">
         <div className="max-w-6xl mx-auto px-6 lg:px-16">
           <div className="relative">
             <div className="flex lg:justify-center overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden border-b border-border-warm/10">

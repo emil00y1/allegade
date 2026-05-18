@@ -180,6 +180,21 @@ export const siteSettingsType = defineType({
       group: 'navigation',
     }),
     defineField({
+      name: 'primaryCtaButton',
+      title: 'Primær booking-knap',
+      description: 'Vælg hvilken booking-knap der vises som den primære knap (med baggrundsfarve) i navigationen.',
+      type: 'string',
+      initialValue: 'stay',
+      options: {
+        list: [
+          { title: 'Book ophold', value: 'stay' },
+          { title: 'Book bord', value: 'table' },
+        ],
+        layout: 'radio',
+      },
+      group: 'navigation',
+    }),
+    defineField({
       name: 'headerMenuOpenLabel',
       title: 'Menu-knap tekst (Åbn)',
       type: 'string',
