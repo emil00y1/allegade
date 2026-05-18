@@ -5,10 +5,10 @@ export async function POST(req: NextRequest) {
   const limited = rateLimit(req);
   if (limited) return limited;
 
-  const { firstName, lastName, email } = await req.json();
+  const { email } = await req.json();
 
-  if (!email || !firstName) {
-    return NextResponse.json({ error: "Navn og email er påkrævet." }, { status: 400 });
+  if (!email) {
+    return NextResponse.json({ error: "Email er påkrævet." }, { status: 400 });
   }
 
   const apiKey = process.env.MAILERLITE_API_KEY;
@@ -24,13 +24,7 @@ export async function POST(req: NextRequest) {
       "Content-Type": "application/json",
       Authorization: `Bearer ${apiKey}`,
     },
-    body: JSON.stringify({
-      email: normalizedEmail,
-      fields: {
-        name: firstName.trim(),
-        last_name: lastName?.trim() || "",
-      },
-    }),
+    body: JSON.stringify({ email: normalizedEmail }),
   });
 
   if (!res.ok) {

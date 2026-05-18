@@ -332,20 +332,6 @@ export const siteSettingsType = defineType({
       group: 'newsletter',
     }),
     defineField({
-      name: 'newsletterFirstNameLabel',
-      title: 'Fornavn felt tekst',
-      type: 'string',
-      initialValue: 'Fornavn',
-      group: 'newsletter',
-    }),
-    defineField({
-      name: 'newsletterLastNameLabel',
-      title: 'Efternavn felt tekst',
-      type: 'string',
-      initialValue: 'Efternavn',
-      group: 'newsletter',
-    }),
-    defineField({
       name: 'newsletterEmailLabel',
       title: 'Email felt tekst',
       type: 'string',

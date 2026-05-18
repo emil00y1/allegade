@@ -8,14 +8,14 @@ import {
   Mail,
   type LucideIcon,
 } from "lucide-react";
-import NewsletterSection from "@/components/NewsletterSection";
+import NewsletterInline from "@/components/NewsletterInline";
 import { sanityFetch } from "@/sanity/lib/live";
 
 const FOOTER_QUERY = `*[_type == "siteSettings"][0]{
   address, phone, email, cvr, footerDescription, socialLinks,
   restaurantHours, kitchenClosingNote,
   newsletterLabel, newsletterSubtext, newsletterButtonLabel,
-  newsletterFirstNameLabel, newsletterLastNameLabel, newsletterEmailLabel,
+  newsletterEmailLabel,
   newsletterSuccessMessage, newsletterErrorMessage,
   footerRestaurantHoursLabel, footerContactLabel,
   footerLinks[]{ label, url },
@@ -50,8 +50,6 @@ interface SiteSettings {
   newsletterLabel?: string;
   newsletterSubtext?: string;
   newsletterButtonLabel?: string;
-  newsletterFirstNameLabel?: string;
-  newsletterLastNameLabel?: string;
   newsletterEmailLabel?: string;
   newsletterSuccessMessage?: string;
   newsletterErrorMessage?: string;
@@ -91,18 +89,7 @@ export default async function Footer() {
   const socialLinks = siteSettings?.socialLinks || [];
 
   return (
-    <>
-      <NewsletterSection
-        label={siteSettings?.newsletterLabel ?? undefined}
-        subtext={siteSettings?.newsletterSubtext ?? undefined}
-        buttonLabel={siteSettings?.newsletterButtonLabel ?? undefined}
-        firstNameLabel={siteSettings?.newsletterFirstNameLabel ?? undefined}
-        lastNameLabel={siteSettings?.newsletterLastNameLabel ?? undefined}
-        emailLabel={siteSettings?.newsletterEmailLabel ?? undefined}
-        successMessage={siteSettings?.newsletterSuccessMessage ?? undefined}
-        errorMessage={siteSettings?.newsletterErrorMessage ?? undefined}
-      />
-      <footer className="bg-warm-gray border-t border-[rgba(231,229,228,0.1)]">
+    <footer className="bg-warm-gray border-t border-[rgba(231,229,228,0.1)]">
         <div className="max-w-7xl mx-auto px-12 pt-16 pb-6">
           {/* 4-col grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 pb-12">
@@ -234,8 +221,20 @@ export default async function Footer() {
             </div>
           </div>
 
+          {/* Newsletter */}
+          <div className="border-t border-[rgba(214,211,209,0.2)] py-8">
+            <NewsletterInline
+              label={siteSettings?.newsletterLabel ?? undefined}
+              subtext={siteSettings?.newsletterSubtext ?? undefined}
+              emailLabel={siteSettings?.newsletterEmailLabel ?? undefined}
+              buttonLabel={siteSettings?.newsletterButtonLabel ?? undefined}
+              successMessage={siteSettings?.newsletterSuccessMessage ?? undefined}
+              errorMessage={siteSettings?.newsletterErrorMessage ?? undefined}
+            />
+          </div>
+
           {/* Bottom bar */}
-          <div className="border-t border-[rgba(214,211,209,0.2)] pt-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="border-t border-[rgba(214,211,209,0.2)] pt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <p className="text-[#a8a29e] text-[10px] tracking-[1px] uppercase font-light">
               © Allégade 10{siteSettings?.cvr ? ` · CVR: ${siteSettings.cvr}` : ''}
             </p>
@@ -260,6 +259,5 @@ export default async function Footer() {
           </div>
         </div>
       </footer>
-    </>
   );
 }
