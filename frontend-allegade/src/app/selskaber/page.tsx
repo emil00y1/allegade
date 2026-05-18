@@ -18,7 +18,7 @@ const QUERY = `{
       _type == "selskaberHeroSection" => { ..., heroImage{ ..., asset-> } },
       _type == "selskaberOccasionsSection" => { ..., occasions[]{ ..., image{ ..., asset-> } } },
       _type == "selskaberVenuesSection" => { ..., venues[]{ ..., image{ ..., asset-> } } },
-      _type == "selskaberCtaBannerSection" => { ..., ctaBannerImage{ ..., asset-> } },
+      _type == "selskaberCtaBannerSection" => { ... },
       ${SECTIONS_QUERY_FRAGMENT}
     },
     "occasionLabels": sections[_type == "selskaberOccasionsSection"][0].occasions[].label,

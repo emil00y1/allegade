@@ -9,6 +9,7 @@ export const hotelNeighborhoodSectionType = defineType({
     defineField({name: 'neighborhoodHeadingItalic', title: 'Overskrift (kursiv)', type: 'string'}),
     defineField({name: 'neighborhoodAddress', title: 'Adresse', type: 'string'}),
     defineField({name: 'neighborhoodCity', title: 'By', type: 'string'}),
+    defineField({name: 'hotelPhone', title: 'Hoteltlf.', description: 'Telefonnummer specifikt for hotelafdelingen (vises kun i denne sektion).', type: 'string'}),
     defineField({name: 'neighborhoodMapUrl', title: 'Maps Embed URL', type: 'url'}),
     defineField({name: 'mapEyebrow', title: 'Kort Eyebrow', type: 'string'}),
     defineField({name: 'directionsLabel', title: 'Vejledning Label', type: 'string'}),

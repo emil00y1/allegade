@@ -6,6 +6,7 @@ interface HotelNeighborhoodProps {
   neighborhoodHeadingItalic?: string;
   neighborhoodAddress?: string;
   neighborhoodCity?: string;
+  hotelPhone?: string;
   neighborhoodMapUrl?: string;
   neighborhoodItems?: Array<{ _key: string; title?: string; walkTime?: string; description?: string }>;
   mapEyebrow?: string;
@@ -17,6 +18,7 @@ export default function HotelNeighborhood({
   neighborhoodHeadingItalic,
   neighborhoodAddress,
   neighborhoodCity,
+  hotelPhone,
   neighborhoodMapUrl,
   neighborhoodItems,
   mapEyebrow,
@@ -44,6 +46,14 @@ export default function HotelNeighborhood({
           <p className="font-cormorant font-light italic text-brand text-xl mt-2">
             {neighborhoodCity ?? "2000 Frederiksberg"}
           </p>
+          {hotelPhone && (
+            <a
+              href={`tel:${hotelPhone.replace(/\s/g, "")}`}
+              className="inline-block mt-2 text-[11px] tracking-[1px] text-warm-brown hover:text-dark-stone transition-colors"
+            >
+              {hotelPhone}
+            </a>
+          )}
         </div>
 
         <div className="w-10 h-px bg-border-warm/40 my-8" />

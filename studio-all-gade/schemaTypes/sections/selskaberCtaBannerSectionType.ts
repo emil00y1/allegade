@@ -6,25 +6,18 @@ export const selskaberCtaBannerSectionType = defineType({
   title: 'Selskaber CTA Banner',
   type: 'object',
   icon: LinkIcon,
-  description: 'Billedebanner med overskrift og knap til selskabssiden.',
+  description: 'Kompakt bannerstribe med tekst og CTA-knap.',
   fields: [
-    defineField({
-      name: 'ctaBannerImage',
-      title: 'Billede',
-      type: 'image',
-      options: {hotspot: true},
-      fields: [defineField({name: 'alt', title: 'Alt tekst', type: 'string'})],
-    }),
-    defineField({name: 'ctaBannerHeading', title: 'Overskrift', type: 'string'}),
-    defineField({name: 'ctaBannerButtonLabel', title: 'Knap tekst', type: 'string'}),
+    defineField({name: 'ctaBannerHeading', title: 'Tekst', type: 'string', initialValue: 'Hold dit selskab hos os'}),
+    defineField({name: 'ctaBannerButtonLabel', title: 'Knap tekst', type: 'string', initialValue: 'Læs mere'}),
+    defineField({name: 'ctaBannerButtonUrl', title: 'Knap link', type: 'string', initialValue: '/selskaber'}),
   ],
   preview: {
-    select: {title: 'ctaBannerHeading', media: 'ctaBannerImage'},
-    prepare({title, media}) {
+    select: {title: 'ctaBannerHeading'},
+    prepare({title}) {
       return {
         title: title || 'Selskaber CTA Banner',
         subtitle: 'CTA Banner',
-        media,
       }
     },
   },
