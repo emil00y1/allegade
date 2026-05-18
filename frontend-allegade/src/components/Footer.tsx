@@ -90,11 +90,11 @@ export default async function Footer() {
 
   return (
     <footer className="bg-warm-gray border-t border-[rgba(231,229,228,0.1)]">
-        <div className="max-w-7xl mx-auto px-12 pt-16 pb-6">
+        <div className="max-w-7xl mx-auto px-12 pt-16 pb-24 lg:pb-6">
           {/* 4-col grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 pb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 pb-12">
             {/* Col 1 – Brand */}
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-6 md:order-1">
               <Link href="/" className="flex items-center gap-3">
                 {siteSettings?.logoImageUrl && (
                   <img
@@ -150,7 +150,7 @@ export default async function Footer() {
             </div>
 
             {/* Col 2 – Restaurant hours */}
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-8 md:order-3">
               <h4 className="text-[#292524] text-[12px] tracking-[1.2px] uppercase font-light">
                 {siteSettings?.footerRestaurantHoursLabel ?? "Restaurant"}
               </h4>
@@ -181,7 +181,7 @@ export default async function Footer() {
             </div>
 
             {/* Col 3 – Contact */}
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-8 md:order-4">
               <h4 className="text-[#292524] text-[12px] tracking-[1.2px] uppercase font-light">
                 {siteSettings?.footerContactLabel ?? "Kontakt"}
               </h4>
@@ -219,18 +219,19 @@ export default async function Footer() {
                 )}
               </div>
             </div>
-          </div>
 
-          {/* Newsletter */}
-          <div className="border-t border-[rgba(214,211,209,0.2)] py-8">
-            <NewsletterInline
-              label={siteSettings?.newsletterLabel ?? undefined}
-              subtext={siteSettings?.newsletterSubtext ?? undefined}
-              emailLabel={siteSettings?.newsletterEmailLabel ?? undefined}
-              buttonLabel={siteSettings?.newsletterButtonLabel ?? undefined}
-              successMessage={siteSettings?.newsletterSuccessMessage ?? undefined}
-              errorMessage={siteSettings?.newsletterErrorMessage ?? undefined}
-            />
+            {/* Col 4 – Newsletter */}
+            <div className="flex flex-col gap-8 order-first md:order-2 lg:order-last">
+              <NewsletterInline
+                layout="column"
+                label={siteSettings?.newsletterLabel ?? undefined}
+                subtext={siteSettings?.newsletterSubtext ?? undefined}
+                emailLabel={siteSettings?.newsletterEmailLabel ?? undefined}
+                buttonLabel={siteSettings?.newsletterButtonLabel ?? undefined}
+                successMessage={siteSettings?.newsletterSuccessMessage ?? undefined}
+                errorMessage={siteSettings?.newsletterErrorMessage ?? undefined}
+              />
+            </div>
           </div>
 
           {/* Bottom bar */}

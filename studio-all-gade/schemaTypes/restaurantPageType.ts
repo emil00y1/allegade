@@ -36,6 +36,7 @@ export const restaurantPageType = defineType({
         defineArrayMember({type: 'gallerySection'}),
         defineArrayMember({type: 'quoteSection'}),
         defineArrayMember({type: 'ctaBannerSection'}),
+        defineArrayMember({type: 'selskaberCtaBannerSection'}),
       ],
       initialValue: [
         {_type: 'restaurantHeroSection'},

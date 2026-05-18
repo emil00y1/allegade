@@ -44,7 +44,6 @@ export const selskaberPageType = defineType({
         {_type: 'selskaberOccasionsSection'},
         {_type: 'selskaberVenuesSection'},
         {_type: 'selskaberMenuSection'},
-        {_type: 'selskaberCtaBannerSection'},
         {_type: 'selskaberFormSection'},
       ],
     }),

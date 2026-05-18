@@ -40,6 +40,7 @@ export const hotelPageType = defineType({
         defineArrayMember({type: 'gallerySection'}),
         defineArrayMember({type: 'quoteSection'}),
         defineArrayMember({type: 'ctaBannerSection'}),
+        defineArrayMember({type: 'selskaberCtaBannerSection'}),
       ],
       initialValue: [
         {_type: 'hotelHeroSection'},

@@ -10,6 +10,7 @@ interface MobileBookingBarProps {
   ctaBookTableUrl?: string;
   ctaBookStayLabel?: string;
   ctaBookStayUrl?: string;
+  primaryCtaButton?: "table" | "stay";
 }
 
 function isExternal(url?: string) {
@@ -26,6 +27,7 @@ export default function MobileBookingBar({
   ctaBookTableUrl = "https://dinnerbooking.com/dk/da-DK/eventbooking/event/4155/allegade-10",
   ctaBookStayLabel = "Book ophold",
   ctaBookStayUrl = "https://allegade10.suitcasebooking.com/da",
+  primaryCtaButton = "stay",
 }: MobileBookingBarProps) {
   const pathname = usePathname();
   const isHome = pathname === "/";
@@ -50,24 +52,29 @@ export default function MobileBookingBar({
       }`}
     >
       <div className="grid grid-cols-2">
-        <Link
-          href={ctaBookTableUrl}
-          target={isExternal(ctaBookTableUrl) ? "_blank" : undefined}
-          rel={isExternal(ctaBookTableUrl) ? "noopener noreferrer" : undefined}
-          className="flex items-center justify-center gap-2 py-5 text-[11px] tracking-[1.2px] uppercase font-light text-dark-stone border-r border-border-warm hover:bg-warm-gray/60 transition-colors"
-        >
-          <Calendar className="w-4 h-4 text-brand" strokeWidth={1.5} />
-          {ctaBookTableLabel}
-        </Link>
-        <Link
-          href={ctaBookStayUrl}
-          target={isExternal(ctaBookStayUrl) ? "_blank" : undefined}
-          rel={isExternal(ctaBookStayUrl) ? "noopener noreferrer" : undefined}
-          className="flex items-center justify-center gap-2 py-5 text-[11px] tracking-[1.2px] uppercase font-light text-white bg-[linear-gradient(165deg,var(--brand)_0%,var(--brand-mid)_100%)] hover:opacity-95 transition-opacity"
-        >
-          <BedDouble className="w-4 h-4" strokeWidth={1.5} />
-          {ctaBookStayLabel}
-        </Link>
+        {(["table", "stay"] as const)
+          .sort((a, b) => (a === primaryCtaButton ? 1 : b === primaryCtaButton ? -1 : 0))
+          .map((which) => {
+            const isPrimary = which === primaryCtaButton;
+            const href = which === "table" ? ctaBookTableUrl : ctaBookStayUrl;
+            const label = which === "table" ? ctaBookTableLabel : ctaBookStayLabel;
+            const Icon = which === "table" ? Calendar : BedDouble;
+            return (
+              <Link
+                key={which}
+                href={href}
+                target={isExternal(href) ? "_blank" : undefined}
+                rel={isExternal(href) ? "noopener noreferrer" : undefined}
+                className={isPrimary
+                  ? "flex items-center justify-center gap-2 py-5 text-[11px] tracking-[1.2px] uppercase font-light text-white bg-[linear-gradient(165deg,var(--brand)_0%,var(--brand-mid)_100%)] hover:opacity-95 transition-opacity"
+                  : "flex items-center justify-center gap-2 py-5 text-[11px] tracking-[1.2px] uppercase font-light text-dark-stone border-r border-border-warm hover:bg-warm-gray/60 transition-colors"
+                }
+              >
+                <Icon className={`w-4 h-4 ${isPrimary ? "text-white" : "text-brand"}`} strokeWidth={1.5} />
+                {label}
+              </Link>
+            );
+          })}
       </div>
     </div>
   );

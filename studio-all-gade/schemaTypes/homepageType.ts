@@ -30,6 +30,7 @@ export const homepageType = defineType({
         defineArrayMember({type: 'welcomeSection'}),
         defineArrayMember({type: 'eventsTeaserSection'}),
         defineArrayMember({type: 'selskaberTeaserSection'}),
+        defineArrayMember({type: 'selskaberCtaBannerSection'}),
         defineArrayMember({type: 'textImageSection'}),
         defineArrayMember({type: 'bannerSection'}),
         defineArrayMember({type: 'richTextSection'}),

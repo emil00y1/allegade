@@ -52,6 +52,7 @@ export const pageType = defineType({
         defineArrayMember({type: 'gallerySection'}),
         defineArrayMember({type: 'quoteSection'}),
         defineArrayMember({type: 'ctaBannerSection'}),
+        defineArrayMember({type: 'selskaberCtaBannerSection'}),
         defineArrayMember({type: 'faqSection'}),
         defineArrayMember({type: 'testimonialsSection'}),
         defineArrayMember({type: 'teamSection'}),

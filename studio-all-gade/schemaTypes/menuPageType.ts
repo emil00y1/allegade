@@ -45,6 +45,7 @@ export const menuPageType = defineType({
         defineArrayMember({type: 'gallerySection'}),
         defineArrayMember({type: 'quoteSection'}),
         defineArrayMember({type: 'ctaBannerSection'}),
+        defineArrayMember({type: 'selskaberCtaBannerSection'}),
       ],
       initialValue: [
         {_type: 'menuHeroSection'},

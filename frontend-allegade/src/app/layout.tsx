@@ -250,6 +250,7 @@ export default async function RootLayout({
           ctaBookTableUrl={navSettings?.ctaBookTableUrl}
           ctaBookStayLabel={navSettings?.ctaBookStayLabel}
           ctaBookStayUrl={navSettings?.ctaBookStayUrl}
+          primaryCtaButton={navSettings?.primaryCtaButton}
         />
         <CookieConsent />
         <Toaster position="bottom-right" richColors />

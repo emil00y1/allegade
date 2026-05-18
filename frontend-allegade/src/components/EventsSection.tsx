@@ -63,16 +63,39 @@ export default function EventsSection({
           </div>
           <Link
             href={allEventsUrl}
-            className="border-b border-[rgba(144,63,0,0.3)] pb-1 text-brand text-[12px] tracking-[1.2px] uppercase font-light hover:opacity-60 transition-opacity shrink-0 self-start sm:self-auto"
+            className="hidden sm:block border-b border-[rgba(144,63,0,0.3)] pb-1 text-brand text-[12px] tracking-[1.2px] uppercase font-light hover:opacity-60 transition-opacity shrink-0 self-start sm:self-auto"
           >
             {allEventsLabel}
           </Link>
         </div>
 
-        {/* Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {events.map((event) => (
-            <div key={event._id} className="bg-warm-white flex flex-col">
+        {/* Mobile CTA – replaces card grid on small screens */}
+        <div className="sm:hidden flex justify-center py-4">
+          <Link
+            href={allEventsUrl}
+            className="inline-flex items-center gap-2 text-[11px] tracking-[1.4px] uppercase font-light text-white px-8 py-3.5 bg-[linear-gradient(165deg,var(--brand)_0%,var(--brand-mid)_100%)] hover:opacity-90 transition-opacity"
+          >
+            {allEventsLabel}
+          </Link>
+        </div>
+
+        {/* Cards – hidden on mobile, capped to one row per breakpoint */}
+        <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          {events.map((event, i) => {
+            // i=0,1 → visible at sm+ (2-col row)
+            // i=2   → visible at lg+ only (3-col row)
+            // i=3   → visible at xl only (4-col row)
+            // i=4+  → never shown
+            const visibility =
+              i >= 4 ? "hidden" :
+              i === 3 ? "hidden xl:flex" :
+              i === 2 ? "hidden lg:flex" :
+              "";
+            return (
+            <div
+              key={event._id}
+              className={`bg-warm-white flex flex-col ${visibility}`.trim()}
+            >
               {/* Image */}
               <div className="relative h-[180px] overflow-hidden bg-warm-gray">
                 {event.image ? (
@@ -120,7 +143,8 @@ export default function EventsSection({
                 </Link>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
