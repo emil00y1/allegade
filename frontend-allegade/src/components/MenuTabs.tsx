@@ -219,7 +219,7 @@ function FeaturedSection({
               return (
                 <div
                   key={item._key}
-                  className="bg-brand-light/20 border border-brand/20 p-6 flex flex-col gap-3"
+                  className="bg-warm-white border border-brand/20 p-6 flex flex-col gap-3"
                 >
                   <span className="text-[9px] tracking-[2px] uppercase font-light text-brand border border-brand/30 px-2 py-1 self-start">
                     Sæt-menu
