@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import React from "react";
 import Script from "next/script";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import {
   Geist,
   Geist_Mono,
@@ -128,6 +128,15 @@ const FAVICON_QUERY = `*[_type == "siteSettings" && _id == "siteSettings"][0]{
   socialLinks,
   googleAnalyticsId
 }`;
+
+// Render edge-to-edge so env(safe-area-inset-bottom) resolves on iOS — this keeps
+// the fixed MobileBookingBar flush with the physical screen bottom whether or not
+// the browser's bottom toolbar is showing (otherwise it appears to "hover").
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 // ─── Dynamic metadata (favicon and title from Sanity) ─────────────────────────
 export async function generateMetadata(): Promise<Metadata> {
