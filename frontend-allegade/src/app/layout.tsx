@@ -32,6 +32,7 @@ import { Toaster } from "sonner";
 import CookieConsent from "@/components/CookieConsent";
 import MobileBookingBar from "@/components/MobileBookingBar";
 import StructuredData from "@/components/StructuredData";
+import { Analytics } from "@vercel/analytics/next";
 
 // ─── Fonts ────────────────────────────────────────────────────────────────────
 // Classic pairing (current defaults)
@@ -264,6 +265,7 @@ export default async function RootLayout({
           primaryCtaButton={navSettings?.primaryCtaButton}
         />
         <CookieConsent />
+        <Analytics />
         <Toaster position="bottom-right" richColors />
         <SanityLive />
         {(await draftMode()).isEnabled && (
