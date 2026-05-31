@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import React from "react";
 import Script from "next/script";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import {
   Geist,
   Geist_Mono,
@@ -32,6 +32,7 @@ import { Toaster } from "sonner";
 import CookieConsent from "@/components/CookieConsent";
 import MobileBookingBar from "@/components/MobileBookingBar";
 import StructuredData from "@/components/StructuredData";
+import { Analytics } from "@vercel/analytics/next";
 
 // ─── Fonts ────────────────────────────────────────────────────────────────────
 // Classic pairing (current defaults)
@@ -128,6 +129,15 @@ const FAVICON_QUERY = `*[_type == "siteSettings" && _id == "siteSettings"][0]{
   socialLinks,
   googleAnalyticsId
 }`;
+
+// Render edge-to-edge so env(safe-area-inset-bottom) resolves on iOS — this keeps
+// the fixed MobileBookingBar flush with the physical screen bottom whether or not
+// the browser's bottom toolbar is showing (otherwise it appears to "hover").
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 // ─── Dynamic metadata (favicon and title from Sanity) ─────────────────────────
 export async function generateMetadata(): Promise<Metadata> {
@@ -255,6 +265,7 @@ export default async function RootLayout({
           primaryCtaButton={navSettings?.primaryCtaButton}
         />
         <CookieConsent />
+        <Analytics />
         <Toaster position="bottom-right" richColors />
         <SanityLive />
         {(await draftMode()).isEnabled && (
