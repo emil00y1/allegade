@@ -46,6 +46,95 @@ export const menuCardType = defineType({
       type: 'text',
       rows: 3,
     }),
+    // ─── Fremhævet menu / accordion (f.eks. grillbuffet) ──────────────────────
+    defineField({
+      name: 'highlightMenu',
+      title: 'Fremhævet menu / accordion (vises øverst i fanen)',
+      type: 'object',
+      options: {collapsible: true, collapsed: true},
+      description:
+        'Valgfri udklappelig menu, f.eks. grillbuffet, der vises øverst i fanen som en notits man kan klikke for at åbne/lukke.',
+      fields: [
+        defineField({
+          name: 'enabled',
+          title: 'Vis fremhævet menu',
+          type: 'boolean',
+          initialValue: false,
+        }),
+        defineField({
+          name: 'openByDefault',
+          title: 'Åben som standard',
+          type: 'boolean',
+          initialValue: false,
+        }),
+        defineField({
+          name: 'noticeText',
+          title: 'Notits / overskrift (klikbar)',
+          type: 'string',
+          description: 'F.eks. "Fredag og lørdag serveres grillbuffet"',
+        }),
+        defineField({
+          name: 'badge',
+          title: 'Mærkat',
+          type: 'string',
+          initialValue: 'Sæt-menu',
+        }),
+        defineField({
+          name: 'title',
+          title: 'Titel',
+          type: 'string',
+          description: 'F.eks. "Grillbuffet"',
+        }),
+        defineField({
+          name: 'intro',
+          title: 'Intro tekst',
+          type: 'text',
+          rows: 2,
+        }),
+        defineField({
+          name: 'groups',
+          title: 'Grupper',
+          type: 'array',
+          of: [
+            defineArrayMember({
+              type: 'object',
+              name: 'menuGroup',
+              title: 'Gruppe',
+              fields: [
+                defineField({name: 'heading', title: 'Overskrift (valgfri)', type: 'string'}),
+                defineField({
+                  name: 'body',
+                  title: 'Tekst (én linje pr. linjeskift)',
+                  type: 'text',
+                  rows: 3,
+                }),
+              ],
+              preview: {
+                select: {title: 'heading', subtitle: 'body'},
+                prepare({title, subtitle}) {
+                  return {title: title || 'Gruppe', subtitle}
+                },
+              },
+            }),
+          ],
+        }),
+        defineField({
+          name: 'price',
+          title: 'Pris (tekst)',
+          type: 'string',
+          description: 'F.eks. "345,-"',
+        }),
+        defineField({
+          name: 'priceNote',
+          title: 'Pris-note / varianter',
+          type: 'string',
+          description:
+            'F.eks. "Med Shrimp Cocktail 395,- · Med Shrimp Cocktail & Rhubarb Trifli 445,-"',
+        }),
+        defineField({name: 'ctaLabel', title: 'Knap tekst', type: 'string'}),
+        defineField({name: 'ctaUrl', title: 'Knap link', type: 'string'}),
+      ],
+    }),
     // ─── Featured card fields (used for Brunch) ───────────────────────────────
     defineField({
       name: 'featuredImage',
