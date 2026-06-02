@@ -301,6 +301,8 @@ export const siteSettingsType = defineType({
       of: [
         defineArrayMember({
           type: 'object',
+          name: 'footerLink',
+          title: 'Footer link',
           fields: [
             defineField({name: 'label', title: 'Navn', type: 'string'}),
             defineField({name: 'url', title: 'URL', type: 'string'}),
@@ -362,6 +364,8 @@ export const siteSettingsType = defineType({
       of: [
         defineArrayMember({
           type: 'object',
+          name: 'socialLink',
+          title: 'Social medie',
           fields: [
             defineField({
               name: 'platform',

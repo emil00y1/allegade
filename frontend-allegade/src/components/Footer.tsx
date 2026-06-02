@@ -6,6 +6,8 @@ import {
   Youtube,
   Twitter,
   Mail,
+  Music2,
+  Pin,
   type LucideIcon,
 } from "lucide-react";
 import NewsletterInline from "@/components/NewsletterInline";
@@ -74,6 +76,8 @@ const platformIcons: Record<string, LucideIcon> = {
   youtube: Youtube,
   twitter: Twitter,
   x: Twitter,
+  tiktok: Music2,
+  pinterest: Pin,
   mail: Mail,
 };
 
