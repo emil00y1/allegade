@@ -26,6 +26,26 @@ export interface MenuSection {
   items?: MenuItem[];
 }
 
+export interface HighlightGroup {
+  _key?: string;
+  heading?: string;
+  body?: string;
+}
+
+export interface HighlightMenu {
+  enabled?: boolean;
+  openByDefault?: boolean;
+  noticeText?: string;
+  badge?: string;
+  title?: string;
+  intro?: string;
+  groups?: HighlightGroup[];
+  price?: string;
+  priceNote?: string;
+  ctaLabel?: string;
+  ctaUrl?: string;
+}
+
 export interface MenuCard {
   _id: string;
   title: string;
@@ -39,6 +59,7 @@ export interface MenuCard {
   menuNote?: string;
   ctaLabel?: string;
   ctaUrl?: string;
+  highlightMenu?: HighlightMenu;
   sections?: MenuSection[];
 }
 
@@ -273,6 +294,129 @@ function DrinksCrossLink({ label, onSwitch }: { label: string; onSwitch: () => v
   );
 }
 
+function HighlightAccordion({
+  highlight,
+  bookTableUrl,
+  bookTableLabel,
+}: {
+  highlight: HighlightMenu;
+  bookTableUrl?: string;
+  bookTableLabel: string;
+}) {
+  const [isOpen, setIsOpen] = useState<boolean>(
+    highlight.openByDefault ?? false,
+  );
+
+  const headerText = highlight.noticeText || highlight.title;
+  if (!headerText) return null;
+
+  const ctaHref = highlight.ctaUrl ?? bookTableUrl;
+  const ctaLabel = highlight.ctaLabel || bookTableLabel;
+
+  return (
+    <div className="mb-8 border border-brand/25 bg-warm-white">
+      <button
+        onClick={() => setIsOpen((v) => !v)}
+        className="w-full flex items-center justify-between gap-4 px-5 lg:px-6 py-4 text-left group"
+        aria-expanded={isOpen}
+      >
+        <span className="flex items-center gap-3 min-w-0">
+          {highlight.badge && (
+            <span className="text-[9px] tracking-[2px] uppercase font-light text-brand border border-brand/30 px-2 py-1 shrink-0">
+              {highlight.badge}
+            </span>
+          )}
+          <span className="font-sans font-light text-[13px] tracking-[1px] uppercase text-dark-stone leading-snug">
+            {headerText}
+          </span>
+        </span>
+        <span
+          className={cn(
+            "shrink-0 text-warm-brown transition-transform duration-300",
+            isOpen && "rotate-180",
+          )}
+        >
+          <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M1 1.5L6 6.5L11 1.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </span>
+      </button>
+
+      <div
+        className={cn(
+          "grid transition-all duration-300 ease-in-out",
+          isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
+        )}
+      >
+        <div className="overflow-hidden">
+          <div className="px-5 lg:px-6 pb-6 pt-1 border-t border-border-warm/20">
+            {highlight.title && (
+              <h3 className="font-newsreader font-medium text-2xl text-dark-stone leading-snug mt-4">
+                {highlight.title}
+              </h3>
+            )}
+            {highlight.intro && (
+              <p className="text-sm text-warm-brown font-light leading-relaxed mt-2">
+                {highlight.intro}
+              </p>
+            )}
+
+            {highlight.groups && highlight.groups.length > 0 && (
+              <div className="mt-5 flex flex-col gap-4">
+                {highlight.groups.map((group, gi) => (
+                  <div key={group._key ?? gi}>
+                    {group.heading && (
+                      <h4 className="text-[12px] tracking-[2px] uppercase font-normal text-dark-stone mb-1.5">
+                        {group.heading}
+                      </h4>
+                    )}
+                    {group.body && (
+                      <p className="text-sm text-warm-brown font-light leading-relaxed">
+                        {group.body.split("\n").map((line, li, arr) => (
+                          <span key={li}>
+                            {line}
+                            {li < arr.length - 1 && <br />}
+                          </span>
+                        ))}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {highlight.price && (
+              <p className="font-newsreader font-medium text-3xl text-brand mt-6">
+                {highlight.price}
+              </p>
+            )}
+            {highlight.priceNote && (
+              <p className="text-[13px] text-warm-brown/80 font-light italic mt-1">
+                {highlight.priceNote}
+              </p>
+            )}
+
+            {ctaHref && (
+              <Link
+                href={ctaHref}
+                className="inline-block mt-5 text-[10px] tracking-[1.5px] uppercase font-light text-brand border-b border-brand/40 pb-px hover:opacity-70 transition-opacity"
+              >
+                {ctaLabel}
+              </Link>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Tab content renderers ────────────────────────────────────────────────────
 
 function BrunchTab({
@@ -361,6 +505,13 @@ function StandardMenuTab({
 }) {
   return (
     <div className="py-6 lg:py-8 max-w-2xl mx-auto">
+      {menu.highlightMenu?.enabled && (
+        <HighlightAccordion
+          highlight={menu.highlightMenu}
+          bookTableUrl={bookTableUrl}
+          bookTableLabel={labels.bookTable}
+        />
+      )}
       {menu.sections?.map((section) => {
         const style = section.displayStyle ?? "list";
         if (style === "featured") {

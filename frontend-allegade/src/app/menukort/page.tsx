@@ -43,6 +43,10 @@ const QUERY = `{
     _id, title, menuType, order, intro,
     featuredImage{ ..., asset-> },
     price, priceString, priceLabel, menuNote, ctaLabel, ctaUrl,
+    highlightMenu{
+      enabled, openByDefault, noticeText, badge, title, intro,
+      groups[]{ heading, body }, price, priceNote, ctaLabel, ctaUrl
+    },
     sections[]{
       _key, sectionTitle, sectionNote, displayStyle,
       items[]{ _key, name, description, price, priceString, note, badge }
