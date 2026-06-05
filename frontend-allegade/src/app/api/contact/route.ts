@@ -1,18 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { rateLimit } from "@/lib/rate-limit";
 
-function createTransporter() {
-  return nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT ?? 587),
-    secure: process.env.SMTP_SECURE === "true",
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
-}
+const resend = process.env.RESEND_API_KEY
+  ? new Resend(process.env.RESEND_API_KEY)
+  : null;
+
+const FROM_EMAIL = process.env.RESEND_FROM || "onboarding@resend.dev";
 
 export async function POST(req: NextRequest) {
   const limited = rateLimit(req);
@@ -37,15 +31,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const recipient =
-      process.env.CONTACT_NOTIFICATION_EMAIL ||
-      process.env.SMTP_USER;
+    const recipient = process.env.CONTACT_NOTIFICATION_EMAIL;
 
-    if (recipient && process.env.SMTP_HOST && process.env.SMTP_USER) {
-      const transporter = createTransporter();
-
-      await transporter.sendMail({
-        from: process.env.SMTP_FROM,
+    if (recipient && resend) {
+      await resend.emails.send({
+        from: FROM_EMAIL,
         to: recipient,
         replyTo: `${name.trim()} <${email.trim()}>`,
         subject: `Ny besked fra ${name.trim()} – allegade10.dk`,
