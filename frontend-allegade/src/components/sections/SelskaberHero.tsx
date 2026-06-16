@@ -12,8 +12,6 @@ interface SelskaberHeroProps {
   heroHeadingItalic?: string;
   heroDescription?: string;
   heroCtaLabel?: string;
-  heroMenuCtaLabel?: string;
-  heroMenuCtaUrl?: string;
   breadcrumbHomeLabel?: string;
 }
 
@@ -27,8 +25,6 @@ export default function SelskaberHero({
   heroHeadingItalic,
   heroDescription,
   heroCtaLabel,
-  heroMenuCtaLabel,
-  heroMenuCtaUrl,
   breadcrumbHomeLabel,
 }: SelskaberHeroProps) {
   const heroImageUrl = heroImage?.asset
@@ -56,14 +52,6 @@ export default function SelskaberHero({
         label: heroCtaLabel ?? "Send en forespørgsel",
         href: "#foresporgsel",
       }}
-      secondaryCta={
-        heroMenuCtaUrl || heroMenuCtaLabel
-          ? {
-              label: heroMenuCtaLabel ?? "Se selskabsmenuer",
-              href: heroMenuCtaUrl ?? "/menukort",
-            }
-          : undefined
-      }
     />
   );
 }
