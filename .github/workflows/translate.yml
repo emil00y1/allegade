@@ -10,8 +10,10 @@ name: Translate content
 # Required repository secrets:
 #  - SANITY_PROJECT_ID
 #  - SANITY_DATASET            (e.g. "production")
-#  - DEEPL_API_KEY             (paid DeepL key)
+#  - GOOGLE_TRANSLATE_API_KEY  (Google Cloud Translation v2 API key)
 # Optional:
+#  - TRANSLATION_PROVIDER      ("google" default, or "deepl")
+#  - DEEPL_API_KEY             (only if TRANSLATION_PROVIDER=deepl)
 #  - SANITY_API_READ_TOKEN     (only if the dataset is private)
 #  - VERCEL_DEPLOY_HOOK_URL    (force a deploy even when nothing changed)
 
@@ -52,6 +54,8 @@ jobs:
           SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
           SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
           SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
+          TRANSLATION_PROVIDER: ${{ vars.TRANSLATION_PROVIDER || 'google' }}
+          GOOGLE_TRANSLATE_API_KEY: ${{ secrets.GOOGLE_TRANSLATE_API_KEY }}
           DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
         run: npm run translate
 

@@ -26,8 +26,10 @@ export interface TranslationFile {
   _type: string;
   /** Locale code, e.g. "en". */
   _locale: string;
-  /** DeepL target language used, e.g. "EN-GB". */
-  _deeplTarget: string;
+  /** Translation provider used, e.g. "google" or "deepl". */
+  _provider: string;
+  /** Provider target language code, e.g. "en" (Google) or "EN-GB" (DeepL). */
+  _target: string;
   /** Hash of the extracted source text + paths; used to skip unchanged docs. */
   _sourceHash: string;
   /**

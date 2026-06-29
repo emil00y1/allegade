@@ -12,8 +12,8 @@
  *  - Hashes the extracted source text (+ its paths) per document. If the hash
  *    matches the previous run, the document is skipped — only genuinely changed
  *    text is re-translated.
- *  - Batch-translates changed strings via the DeepL **paid** API
- *    (up to 50 `text` params per request).
+ *  - Batch-translates changed strings via the configured provider
+ *    (Google Cloud Translation by default; DeepL optional).
  *  - Writes one JSON file per document per locale to
  *    `content/translations/{locale}/{_id}.json` containing only the translated
  *    strings keyed by their path (not a full document copy).
@@ -21,9 +21,11 @@
  *    hand-polished translation survives future re-runs.
  *
  * Run:  npm run translate
- * Env:  SANITY_PROJECT_ID, SANITY_DATASET, DEEPL_API_KEY   (paid DeepL key)
+ * Env:  SANITY_PROJECT_ID, SANITY_DATASET
+ *       TRANSLATION_PROVIDER=google (default) | deepl
+ *       google → GOOGLE_TRANSLATE_API_KEY
+ *       deepl  → DEEPL_API_KEY (paid key) [+ optional DEEPL_API_URL]
  *       Optional: TRANSLATE_FORCE=1   re-translate even if unchanged
- *                 DEEPL_API_URL       override endpoint (defaults to paid)
  */
 
 import { createClient } from "@sanity/client";
@@ -34,8 +36,10 @@ import path from "node:path";
 
 import {
   SOURCE_DEEPL_LANG,
+  SOURCE_GOOGLE_LANG,
   TARGET_LOCALES,
   TRANSLATABLE_TYPES,
+  type LocaleDefinition,
 } from "../src/i18n/config";
 import type {
   TranslationFile,
@@ -46,11 +50,23 @@ import type {
 // CONFIG
 // ---------------------------------------------------------------------------
 
-// Paid endpoint — NOT api-free (the free tier retains text for training).
+const PROVIDER = (process.env.TRANSLATION_PROVIDER || "google").toLowerCase();
+const FORCE = process.env.TRANSLATE_FORCE === "1";
+
+// Google Cloud Translation v2 (Basic) — simple API-key auth.
+const GOOGLE_API_URL =
+  process.env.GOOGLE_TRANSLATE_API_URL ||
+  "https://translation.googleapis.com/language/translate/v2";
+// v2 allows up to 128 segments/request; we also cap total characters per
+// request to stay well within the payload limit.
+const GOOGLE_MAX_SEGMENTS = 100;
+const GOOGLE_MAX_CHARS = 28_000;
+
+// DeepL (optional alternative provider). Paid endpoint — NOT api-free, which
+// retains text for training.
 const DEEPL_API_URL =
   process.env.DEEPL_API_URL || "https://api.deepl.com/v2/translate";
 const DEEPL_BATCH_SIZE = 50;
-const FORCE = process.env.TRANSLATE_FORCE === "1";
 
 // Keys that must NEVER be translated, anywhere in a document. This includes
 // Sanity system keys, references/assets, identifiers, URLs/contacts, enum
@@ -163,23 +179,108 @@ function hashSlots(slots: TranslationSlot[]): string {
 }
 
 // ---------------------------------------------------------------------------
-// TRANSLATE — DeepL batch call (up to 50 text params per request)
+// TRANSLATE — provider dispatch (Google Cloud Translation by default)
 // ---------------------------------------------------------------------------
 
+/** Translate a list of strings into `locale`, preserving order. */
 async function translateBatch(
+  texts: string[],
+  locale: LocaleDefinition,
+): Promise<string[]> {
+  if (texts.length === 0) return [];
+  if (PROVIDER === "google") return googleTranslate(texts, locale.googleTarget!);
+  if (PROVIDER === "deepl") return deeplTranslate(texts, locale.deeplTarget!);
+  throw new Error(
+    `Unknown TRANSLATION_PROVIDER "${PROVIDER}" (expected "google" or "deepl")`,
+  );
+}
+
+/** True if the locale has the target code the active provider needs. */
+function localeSupported(locale: LocaleDefinition): boolean {
+  return PROVIDER === "google" ? !!locale.googleTarget : !!locale.deeplTarget;
+}
+
+// ── Google Cloud Translation v2 ──────────────────────────────────────────────
+
+interface GoogleResponse {
+  data: { translations: { translatedText: string }[] };
+}
+
+async function googleTranslate(
   texts: string[],
   target: string,
 ): Promise<string[]> {
-  if (texts.length === 0) return [];
   const results: string[] = [];
+  // Chunk by both segment count and total characters to respect v2 limits.
+  let chunk: string[] = [];
+  let chars = 0;
+  const flush = async () => {
+    if (chunk.length === 0) return;
+    results.push(...(await googleRequest(chunk, target)));
+    chunk = [];
+    chars = 0;
+  };
+  for (const t of texts) {
+    if (
+      chunk.length >= GOOGLE_MAX_SEGMENTS ||
+      (chunk.length > 0 && chars + t.length > GOOGLE_MAX_CHARS)
+    ) {
+      await flush();
+    }
+    chunk.push(t);
+    chars += t.length;
+  }
+  await flush();
+  return results;
+}
 
+async function googleRequest(
+  chunk: string[],
+  target: string,
+  attempt = 0,
+): Promise<string[]> {
+  const key = requireEnv("GOOGLE_TRANSLATE_API_KEY");
+  const res = await fetch(`${GOOGLE_API_URL}?key=${encodeURIComponent(key)}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      q: chunk,
+      source: SOURCE_GOOGLE_LANG,
+      target,
+      format: "text", // plain text — do not HTML-escape entities
+    }),
+  });
+
+  // 429 = rate limit, 5xx = transient. Back off and retry.
+  if ((res.status === 429 || res.status >= 500) && attempt < 5) {
+    const wait = 2 ** attempt * 1000;
+    console.warn(`  Google Translate ${res.status}; retrying in ${wait}ms…`);
+    await sleep(wait);
+    return googleRequest(chunk, target, attempt + 1);
+  }
+  if (!res.ok) {
+    throw new Error(`Google Translate ${res.status}: ${await res.text()}`);
+  }
+  const data = (await res.json()) as GoogleResponse;
+  return data.data.translations.map((t) => t.translatedText);
+}
+
+// ── DeepL (optional) ─────────────────────────────────────────────────────────
+
+interface DeepLResponse {
+  translations: { text: string; detected_source_language?: string }[];
+}
+
+async function deeplTranslate(
+  texts: string[],
+  target: string,
+): Promise<string[]> {
+  const results: string[] = [];
   for (let i = 0; i < texts.length; i += DEEPL_BATCH_SIZE) {
     const chunk = texts.slice(i, i + DEEPL_BATCH_SIZE);
     const body = new URLSearchParams();
     body.append("source_lang", SOURCE_DEEPL_LANG);
     body.append("target_lang", target);
-    // Keep DeepL from breaking on stray markup; our spans are plain text but
-    // occasional entities (&, <) are handled safely either way.
     body.append("preserve_formatting", "1");
     chunk.forEach((t) => body.append("text", t));
 
@@ -187,10 +288,6 @@ async function translateBatch(
     results.push(...data.translations.map((t) => t.text));
   }
   return results;
-}
-
-interface DeepLResponse {
-  translations: { text: string; detected_source_language?: string }[];
 }
 
 async function deeplRequest(
@@ -206,7 +303,7 @@ async function deeplRequest(
     body,
   });
 
-  // 429 = too many requests, 456 = quota, 529 = temporary. Back off and retry.
+  // 429 = too many requests, 529 = temporary. Back off and retry.
   if ((res.status === 429 || res.status === 529) && attempt < 5) {
     const wait = 2 ** attempt * 1000;
     console.warn(`  DeepL ${res.status}; retrying in ${wait}ms…`);
@@ -233,7 +330,13 @@ async function run(): Promise<void> {
   );
 
   for (const locale of TARGET_LOCALES) {
-    const target = locale.deeplTarget!;
+    if (!localeSupported(locale)) {
+      console.warn(
+        `[${locale.code}] no ${PROVIDER} target configured — skipping.`,
+      );
+      continue;
+    }
+    const target = PROVIDER === "google" ? locale.googleTarget! : locale.deeplTarget!;
     const dir = path.join(process.cwd(), "content", "translations", locale.code);
     await mkdir(dir, { recursive: true });
 
@@ -272,7 +375,7 @@ async function run(): Promise<void> {
 
       const translatedTexts = await translateBatch(
         slots.map((s) => s.source),
-        target,
+        locale,
       );
       const filledSlots: TranslationSlot[] = slots.map((s, i) => ({
         path: s.path,
@@ -284,7 +387,8 @@ async function run(): Promise<void> {
         _id: id,
         _type: doc._type as string,
         _locale: locale.code,
-        _deeplTarget: target,
+        _provider: PROVIDER,
+        _target: target,
         _sourceHash: sourceHash,
         _locked: false,
         _generatedAt: new Date().toISOString(),

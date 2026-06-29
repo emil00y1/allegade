@@ -34,17 +34,32 @@ is rendered server-side (the whole app is `force-dynamic`), so every language is
 fully indexable, and `generateMetadata` emits per-language `<title>`, meta
 description, canonical URL and `hreflang` alternates.
 
+### Translation provider
+
+The translator is pluggable via `TRANSLATION_PROVIDER`:
+
+- `google` (default) — Google Cloud Translation v2 (Basic), API-key auth. Has a
+  recurring 500k-characters/month free tier; because we only re-translate what
+  changed, this is effectively free in steady state.
+- `deepl` — DeepL paid endpoint (`api.deepl.com`), best quality for
+  Danish→European languages.
+
 ### Environment variables
 
 ```
 SANITY_PROJECT_ID=b0bkhf04
 SANITY_DATASET=production
-DEEPL_API_KEY=<your paid DeepL key>   # NOT a free (api-free) key
+
+# Provider (default: google)
+TRANSLATION_PROVIDER=google
+GOOGLE_TRANSLATE_API_KEY=<your Google Cloud Translation API key>
+
+# …or DeepL instead:
+# TRANSLATION_PROVIDER=deepl
+# DEEPL_API_KEY=<paid DeepL key>      # NOT a free (api-free) key — it retains text
+
 # SANITY_API_READ_TOKEN=...           # only if the dataset is private
 ```
-
-The script uses the **paid** DeepL endpoint (`api.deepl.com`) on purpose — the
-free tier retains submitted text for training.
 
 ### Running a translation
 
@@ -85,8 +100,9 @@ fires on `repository_dispatch` (event type `sanity-publish`) and can also be run
 manually from the Actions tab.
 
 Add these repository secrets: `SANITY_PROJECT_ID`, `SANITY_DATASET`,
-`DEEPL_API_KEY` (and optionally `SANITY_API_READ_TOKEN`,
-`VERCEL_DEPLOY_HOOK_URL`).
+`GOOGLE_TRANSLATE_API_KEY` (and optionally `SANITY_API_READ_TOKEN`,
+`VERCEL_DEPLOY_HOOK_URL`, plus `DEEPL_API_KEY` and a `TRANSLATION_PROVIDER`
+repository variable if you switch providers).
 
 Wire up the Sanity webhook (Manage → API → Webhooks) so publishing fires the
 workflow:

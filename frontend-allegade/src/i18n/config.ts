@@ -21,6 +21,8 @@ export interface LocaleDefinition {
   label: string;
   /** Value for the HTML `lang` attribute and `hreflang`. */
   htmlLang: string;
+  /** Google Cloud Translation target language code (omit for the source). */
+  googleTarget?: string;
   /** DeepL target language (omit for the source language). */
   deeplTarget?: string;
   /** True for the single source language (Danish). */
@@ -29,23 +31,24 @@ export interface LocaleDefinition {
 
 export const LOCALES: LocaleDefinition[] = [
   { code: "da", label: "Dansk", htmlLang: "da", isSource: true },
-  { code: "en", label: "English", htmlLang: "en", deeplTarget: "EN-GB" },
+  { code: "en", label: "English", htmlLang: "en", googleTarget: "en", deeplTarget: "EN-GB" },
   // Add more languages here, e.g.:
-  // { code: "de", label: "Deutsch", htmlLang: "de", deeplTarget: "DE" },
-  // { code: "es", label: "Español", htmlLang: "es", deeplTarget: "ES" },
-  // { code: "fr", label: "Français", htmlLang: "fr", deeplTarget: "FR" },
+  // { code: "de", label: "Deutsch", htmlLang: "de", googleTarget: "de", deeplTarget: "DE" },
+  // { code: "es", label: "Español", htmlLang: "es", googleTarget: "es", deeplTarget: "ES" },
+  // { code: "fr", label: "Français", htmlLang: "fr", googleTarget: "fr", deeplTarget: "FR" },
 ];
 
-/** DeepL source language code for our content. */
+/** Source language codes for our content, per provider. */
+export const SOURCE_GOOGLE_LANG = "da";
 export const SOURCE_DEEPL_LANG = "DA";
 
 export const DEFAULT_LOCALE = LOCALES.find((l) => l.isSource)?.code ?? "da";
 export const LOCALE_CODES = LOCALES.map((l) => l.code);
 /** Non-default locales — the ones that get a URL prefix. */
 export const PREFIXED_LOCALES = LOCALE_CODES.filter((c) => c !== DEFAULT_LOCALE);
-/** Locales the translation script should generate files for. */
+/** Locales the translation script should generate files for (every non-source). */
 export const TARGET_LOCALES = LOCALES.filter(
-  (l) => l.deeplTarget && l.code !== DEFAULT_LOCALE,
+  (l) => !l.isSource && l.code !== DEFAULT_LOCALE,
 );
 
 /**
