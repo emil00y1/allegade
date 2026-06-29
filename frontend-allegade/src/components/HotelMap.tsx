@@ -2,12 +2,14 @@
 
 import { useRef, useCallback } from "react";
 import { LocateFixed } from "lucide-react";
+import { useLabels } from "@/components/LabelsProvider";
 
 interface HotelMapProps {
   src: string;
 }
 
 export default function HotelMap({ src }: HotelMapProps) {
+  const labels = useLabels();
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const recenter = useCallback(() => {
@@ -29,15 +31,15 @@ export default function HotelMap({ src }: HotelMapProps) {
         allowFullScreen
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
-        title="Kort over Allégade 10"
+        title={labels.mapTitle}
       />
       <button
         onClick={recenter}
         className="absolute top-4 right-4 z-10 flex items-center gap-2 bg-white/90 hover:bg-white text-dark-stone px-3 py-2 rounded shadow-sm text-[10px] tracking-[1px] uppercase font-medium transition-colors duration-200"
-        aria-label="Centrér kort"
+        aria-label={labels.mapRecenter}
       >
         <LocateFixed className="w-3.5 h-3.5" strokeWidth={1.5} />
-        Centrér
+        {labels.mapRecenter}
       </button>
     </div>
   );

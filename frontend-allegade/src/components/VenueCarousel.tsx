@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect, useCallback } from "react";
 import Image from "next/image";
+import { useLabels } from "@/components/LabelsProvider";
 
 interface VenueItem {
   _key: string;
@@ -19,10 +20,12 @@ interface VenueCarouselProps {
 
 export default function VenueCarousel({
   venues,
-  ctaLabel = "Forespørg om lokalet",
+  ctaLabel,
   eyebrow,
   heading = "Vores Selskabslokaler",
 }: VenueCarouselProps) {
+  const labels = useLabels();
+  const resolvedCtaLabel = ctaLabel ?? labels.venueInquire;
   const trackRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
   const [canPrev, setCanPrev] = useState(false);
@@ -94,7 +97,7 @@ export default function VenueCarousel({
             <button
               onClick={() => navigate("next")}
               disabled={!canNext}
-              aria-label="Næste lokale"
+              aria-label={labels.venueNext}
               className={`w-9 h-9 flex items-center justify-center border transition-colors duration-200 ${
                 canNext
                   ? "border-dark-stone/30 text-dark-stone hover:border-dark-stone"
@@ -157,7 +160,7 @@ export default function VenueCarousel({
                   href="#foresporgsel"
                   className="mt-3 inline-flex items-center gap-2 text-[10px] tracking-[1.5px] uppercase text-dark-stone/50 border-b border-dark-stone/15 pb-0.5 w-fit hover:text-dark-stone hover:border-dark-stone/40 transition-colors duration-200"
                 >
-                  {ctaLabel}
+                  {resolvedCtaLabel}
                   <svg width="7" height="7" viewBox="0 0 10 10" fill="none">
                     <path
                       d="M1 9L9 1M9 1H3M9 1V7"

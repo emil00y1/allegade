@@ -11,6 +11,8 @@ import { buttonVariants } from "@/lib/button-variants";
 import StructuredData from "@/components/StructuredData";
 import { getLocale, getCanonicalPath } from "@/i18n/server";
 import { getTranslated } from "@/i18n/getTranslated";
+import { getUiLabels } from "@/i18n/getUiLabels";
+import { localizePath } from "@/i18n/config";
 import { languageAlternates } from "@/i18n/metadata";
 
 const EVENT_QUERY = `*[_type == "event" && slug.current == $slug && (!defined(publishAt) || publishAt <= now()) && (!defined(unpublishAt) || unpublishAt > now())][0]{
@@ -105,6 +107,7 @@ export default async function EventDetailPage({
 }) {
   const { slug } = await params;
   const locale = await getLocale();
+  const labels = await getUiLabels(locale);
   const { data: rawEvent } = await sanityFetch<any>({
     query: EVENT_QUERY,
     params: { slug },
@@ -184,10 +187,10 @@ export default async function EventDetailPage({
         <div className="absolute bottom-0 left-0 right-0 z-10 max-w-6xl mx-auto px-10 lg:px-16 pb-12">
           <nav className="flex items-center gap-2 text-[10px] tracking-[1px] uppercase text-white/60 mb-4">
             <Link
-              href="/begivenheder"
+              href={localizePath("/begivenheder", locale)}
               className="hover:text-white transition-colors"
             >
-              Begivenheder
+              {labels.eventsBreadcrumb}
             </Link>
             <span className="text-white/40">&rsaquo;</span>
             <span className="text-white/90">{event.title}</span>
@@ -250,7 +253,7 @@ export default async function EventDetailPage({
               {Array.isArray(event.menu) && event.menu.length > 0 && (
                 <div className="border-t border-border-warm pt-10">
                   <h2 className="text-[11px] tracking-[1.4px] uppercase font-light text-dark-stone mb-8">
-                    Menu
+                    {labels.eventMenuHeading}
                   </h2>
                   <div className="flex flex-col gap-6">
                     {event.menu.map(
@@ -279,7 +282,7 @@ export default async function EventDetailPage({
             <div className="flex flex-col gap-8">
               <div className="border border-border-warm p-6 bg-warm-gray flex flex-col gap-5">
                 <p className="text-[10px] tracking-[1.2px] uppercase text-warm-brown font-light">
-                  Praktisk info
+                  {labels.eventPracticalInfo}
                 </p>
 
                 {/* Date */}
@@ -336,7 +339,8 @@ export default async function EventDetailPage({
                     />
                     <div>
                       <p className="text-dark-stone text-sm font-light">
-                        Op til {event.venue.capacity} gæster
+                        {labels.eventCapacityPrefix} {event.venue.capacity}{" "}
+                        {labels.eventCapacitySuffix}
                       </p>
                     </div>
                   </div>
@@ -345,22 +349,22 @@ export default async function EventDetailPage({
                 {/* Price */}
                 <div className="border-t border-border-warm/30 pt-4">
                   <p className="text-[10px] tracking-[1.2px] uppercase text-warm-brown font-light mb-1">
-                    Pris
+                    {labels.eventPriceHeading}
                   </p>
                   {event.price != null ? (
                     <p className="font-newsreader font-extralight text-3xl text-dark-stone">
                       {event.price === 0
-                        ? "Gratis"
+                        ? labels.free
                         : `${event.price.toLocaleString("da-DK")} `}
                       {event.price > 0 && (
                         <span className="text-base ml-1 text-warm-brown">
-                          kr.
+                          {labels.currencySuffix}
                         </span>
                       )}
                     </p>
                   ) : (
                     <p className="text-warm-brown font-light text-sm">
-                      Kontakt os for pris
+                      {labels.priceOnRequest}
                     </p>
                   )}
                   {event.priceDescription && (
@@ -379,14 +383,14 @@ export default async function EventDetailPage({
                     buttonVariants({ variant: "primary" }) + " text-center"
                   }
                 >
-                  Book plads
+                  {labels.eventBookSpot}
                 </Link>
 
                 <Link
-                  href="/begivenheder"
+                  href={localizePath("/begivenheder", locale)}
                   className="text-center text-[11px] tracking-[1px] uppercase font-light text-warm-brown hover:text-brand transition-colors"
                 >
-                  &larr; Alle begivenheder
+                  &larr; {labels.eventAllEvents}
                 </Link>
               </div>
             </div>

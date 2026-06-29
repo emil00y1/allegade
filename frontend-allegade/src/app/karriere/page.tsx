@@ -3,6 +3,7 @@ import Link from "next/link";
 import { sanityFetch } from "@/sanity/lib/live";
 import { getLocale, getCanonicalPath } from "@/i18n/server";
 import { getManyTranslated } from "@/i18n/getTranslated";
+import { getUiLabels } from "@/i18n/getUiLabels";
 import { languageAlternates } from "@/i18n/metadata";
 import { localizePath } from "@/i18n/config";
 
@@ -28,6 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function KarrierePage() {
   const locale = await getLocale();
+  const labels = await getUiLabels(locale);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: rawJobs } = await sanityFetch<any>({ query: JOBS_QUERY });
   const jobs = getManyTranslated(rawJobs, locale);
@@ -37,13 +39,13 @@ export default async function KarrierePage() {
       <section className="py-14 md:py-24 lg:py-32">
         <div className="max-w-4xl mx-auto px-6 lg:px-16">
           <h1 className="font-serif text-4xl md:text-5xl xl:text-6xl font-light leading-[1.1] text-stone-900 mb-5 text-center">
-            Karriere
+            {labels.careersTitle}
           </h1>
           <div className="w-10 h-px bg-stone-300 mx-auto mb-12" />
 
           {!jobs?.length ? (
             <p className="text-stone-500 text-center text-lg font-light">
-              Vi har ingen ledige stillinger lige nu. Kig forbi igen snart.
+              {labels.careersEmpty}
             </p>
           ) : (
             <div className="space-y-0 border-t border-[rgba(221,193,179,0.3)]">
@@ -71,8 +73,8 @@ export default async function KarrierePage() {
                           {job.employmentType && (
                             <span className="text-xs tracking-[0.15em] uppercase font-medium text-stone-500">
                               {job.employmentType === "fuldtid"
-                                ? "Fuldtid"
-                                : "Deltid"}
+                                ? labels.careersFullTime
+                                : labels.careersPartTime}
                             </span>
                           )}
                           {job.location && (
@@ -84,7 +86,7 @@ export default async function KarrierePage() {
                       </div>
                       {deadlineStr && (
                         <span className="text-xs text-stone-400 shrink-0">
-                          Frist: {deadlineStr}
+                          {labels.careersDeadlinePrefix} {deadlineStr}
                         </span>
                       )}
                     </div>

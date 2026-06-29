@@ -28,7 +28,9 @@ import { cn } from "@/lib/utils";
 import { sanityFetch } from "@/sanity/lib/live";
 import { getLocale } from "@/i18n/server";
 import { getTranslated } from "@/i18n/getTranslated";
+import { getUiLabels } from "@/i18n/getUiLabels";
 import { getLocaleDefinition } from "@/i18n/config";
+import { LabelsProvider } from "@/components/LabelsProvider";
 import { getThemeVars } from "@/lib/themes";
 import { getFontVars, generateFontFaceCSS } from "@/lib/fonts";
 import { Toaster } from "sonner";
@@ -171,6 +173,7 @@ export default async function RootLayout({
   // Localize the chrome (navigation labels, CTA labels, footer text…).
   const navSettings = getTranslated(rawNavSettings, locale);
   const siteInfo = getTranslated(rawSiteInfo, locale);
+  const uiLabels = await getUiLabels(locale);
   const htmlLang = getLocaleDefinition(locale)?.htmlLang ?? "da";
 
   let logoSvgContent: string | null = null;
@@ -266,7 +269,7 @@ export default async function RootLayout({
           logoImageUrl={navSettings?.logoImageUrl}
           logoSvgContent={logoSvgContent}
         />
-        {children}
+        <LabelsProvider value={uiLabels}>{children}</LabelsProvider>
         <Footer />
         <MobileBookingBar
           ctaBookTableLabel={navSettings?.ctaBookTableLabel}

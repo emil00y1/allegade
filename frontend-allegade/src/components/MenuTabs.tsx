@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useLabels } from "@/components/LabelsProvider";
 import { type SanityImage } from "@/types/sanity";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -576,7 +577,13 @@ export default function MenuTabs({
   labels: providedLabels,
 }: MenuTabsProps) {
   const tabs = providedTabs && providedTabs.length > 0 ? providedTabs : DEFAULT_TABS;
-  const labels = { ...DEFAULT_LABELS, ...providedLabels };
+  const ui = useLabels();
+  const labels = {
+    ...DEFAULT_LABELS,
+    viewDrinks: `${ui.menuSeeDrinks} →`,
+    noContent: ui.menuEmpty,
+    ...providedLabels,
+  };
 
   const [activeTab, setActiveTab] = useState<string>(() =>
     getDefaultMenuType(tabs),

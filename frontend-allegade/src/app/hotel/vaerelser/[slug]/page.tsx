@@ -12,6 +12,8 @@ import StructuredData from "@/components/StructuredData";
 import RoomGallery from "@/components/RoomGallery";
 import { getLocale, getCanonicalPath } from "@/i18n/server";
 import { getTranslated } from "@/i18n/getTranslated";
+import { getUiLabels } from "@/i18n/getUiLabels";
+import { localizePath } from "@/i18n/config";
 import { languageAlternates } from "@/i18n/metadata";
 
 interface RoomImage {
@@ -92,6 +94,7 @@ export default async function RoomPage({
 }) {
   const { slug } = await params;
   const locale = await getLocale();
+  const labels = await getUiLabels(locale);
   const { data } = await sanityFetch({ query: ROOM_QUERY, params: { slug } });
   const room = getTranslated(data as RoomPageData | null, locale);
 
@@ -174,9 +177,9 @@ export default async function RoomPage({
 
         <div className="absolute bottom-0 left-0 right-0 z-10 max-w-6xl mx-auto px-10 lg:px-16 pb-12">
           <nav className="flex items-center gap-2 text-[10px] tracking-[1px] uppercase text-white/60 mb-4">
-            <Link href="/hotel" className="hover:text-white transition-colors">Hotel</Link>
+            <Link href={localizePath("/hotel", locale)} className="hover:text-white transition-colors">{labels.roomsBreadcrumbHotel}</Link>
             <span className="text-white/40">›</span>
-            <Link href="/hotel#vaerelser" className="hover:text-white transition-colors">Alle værelser</Link>
+            <Link href={localizePath("/hotel", locale) + "#vaerelser"} className="hover:text-white transition-colors">{labels.roomsBreadcrumbAll}</Link>
             <span className="text-white/40">›</span>
             <span className="text-white/90">{room.title}</span>
           </nav>
@@ -222,7 +225,7 @@ export default async function RoomPage({
               <div className="border border-border-warm p-6 bg-warm-gray flex flex-col gap-4">
                 <div>
                   <p className="text-[10px] tracking-[1.2px] uppercase text-warm-brown font-light mb-1">
-                    {room.priceLabel ?? "Pris pr. nat"}
+                    {room.priceLabel ?? labels.roomPricePerNight}
                   </p>
                   {room.pricePerNight ? (
                     <p className="font-newsreader font-extralight text-3xl text-dark-stone">
@@ -230,7 +233,7 @@ export default async function RoomPage({
                       <span className="text-base ml-1 text-warm-brown"> DKK</span>
                     </p>
                   ) : (
-                    <p className="text-warm-brown font-light text-sm">Kontakt os for pris</p>
+                    <p className="text-warm-brown font-light text-sm">{labels.priceOnRequest}</p>
                   )}
                 </div>
 
@@ -240,14 +243,14 @@ export default async function RoomPage({
                   rel={isExternal ? "noopener noreferrer" : undefined}
                   className={buttonVariants({ variant: "primary" }) + " text-center"}
                 >
-                  {room.ctaLabel ?? "Book ophold"}
+                  {room.ctaLabel ?? labels.roomBookStay}
                 </Link>
 
                 <Link
-                  href="/hotel#vaerelser"
+                  href={localizePath("/hotel", locale) + "#vaerelser"}
                   className="text-center text-[11px] tracking-[1px] uppercase font-light text-warm-brown hover:text-brand transition-colors"
                 >
-                  ← Se alle værelser
+                  ← {labels.roomSeeAll}
                 </Link>
               </div>
 
@@ -255,7 +258,7 @@ export default async function RoomPage({
               {room.features && room.features.length > 0 && (
                 <div>
                   <h2 className="text-[11px] tracking-[1.4px] uppercase font-light text-dark-stone mb-4">
-                    Faciliteter
+                    {labels.roomFacilities}
                   </h2>
                   <ul className="flex flex-col gap-2.5">
                     {room.features.map((feat, i) => (
@@ -301,10 +304,10 @@ export default async function RoomPage({
       <section className="bg-dark-stone py-16 lg:py-20 text-center">
         <div className="max-w-xl mx-auto px-8">
           <p className="text-[10px] tracking-[1.4px] uppercase font-light text-brand-light mb-4">
-            Book dit ophold
+            {labels.roomBookYourStay}
           </p>
           <h2 className="font-newsreader font-extralight text-[clamp(1.5rem,3vw,2.25rem)] text-white mb-8 leading-snug">
-            Klar til at booke{" "}
+            {labels.roomReadyToBook}{" "}
             <span className="font-cormorant font-light italic">{room.title}?</span>
           </h2>
           <Link

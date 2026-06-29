@@ -13,6 +13,7 @@ import {menuCardType} from './menuCardType'
 import {selskaberPageType} from './selskaberPageType'
 import {selskaberInquiryType} from './selskaberInquiryType'
 import {siteSettingsType} from './siteSettingsType'
+import {uiLabelsType} from './uiLabelsType'
 import {venueType} from './venueType'
 import {redirectType} from './redirectType'
 import {seoType} from './sections/seoType'
@@ -68,6 +69,7 @@ export const schemaTypes = [
   hotelPageType,
   selskaberPageType,
   siteSettingsType,
+  uiLabelsType,
 
   // ── Content documents ─────────────────────────────────────────────────────
   pageType,

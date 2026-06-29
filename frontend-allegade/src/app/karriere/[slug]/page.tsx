@@ -8,6 +8,7 @@ import { urlFor } from "@/sanity/lib/image";
 import StructuredData from "@/components/StructuredData";
 import { getLocale, getCanonicalPath } from "@/i18n/server";
 import { getTranslated } from "@/i18n/getTranslated";
+import { getUiLabels } from "@/i18n/getUiLabels";
 import { languageAlternates } from "@/i18n/metadata";
 import { localizePath } from "@/i18n/config";
 
@@ -73,6 +74,7 @@ export default async function JobPostingPage({
 }) {
   const { slug } = await params;
   const locale = await getLocale();
+  const labels = await getUiLabels(locale);
   const { data: rawJob } = await sanityFetch<any>({ query: JOB_QUERY, params: { slug } });
   const job = getTranslated(rawJob, locale);
 
@@ -124,7 +126,7 @@ export default async function JobPostingPage({
             href={localizePath("/karriere", locale)}
             className="text-xs tracking-[0.2em] uppercase font-medium text-stone-500 hover:text-stone-900 transition-colors mb-10 inline-block"
           >
-            &larr; Alle stillinger
+            &larr; {labels.careersAllPositions}
           </Link>
 
           <h1 className="font-serif text-3xl md:text-4xl xl:text-5xl font-light leading-[1.1] text-stone-900 mb-6">
@@ -134,7 +136,9 @@ export default async function JobPostingPage({
           <div className="flex flex-wrap gap-4 mb-8">
             {job.employmentType && (
               <span className="bg-[#f5f0e8] text-stone-700 text-xs tracking-[0.15em] uppercase font-medium px-4 py-2">
-                {job.employmentType === "fuldtid" ? "Fuldtid" : "Deltid"}
+                {job.employmentType === "fuldtid"
+                  ? labels.careersFullTime
+                  : labels.careersPartTime}
               </span>
             )}
             {job.location && (
@@ -144,7 +148,7 @@ export default async function JobPostingPage({
             )}
             {deadlineStr && (
               <span className="bg-[#f5f0e8] text-stone-700 text-xs tracking-[0.15em] uppercase font-medium px-4 py-2">
-                Frist: {deadlineStr}
+                {labels.careersDeadlinePrefix} {deadlineStr}
               </span>
             )}
           </div>
@@ -162,7 +166,7 @@ export default async function JobPostingPage({
               href={applyUrl}
               className="inline-flex items-center gap-3 border border-stone-900 text-stone-900 px-8 py-3.5 text-xs tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:bg-stone-900 hover:text-white group"
             >
-              Ansøg nu
+              {labels.careersApplyNow}
               <span className="transition-transform duration-300 group-hover:translate-x-1.5">
                 &rarr;
               </span>

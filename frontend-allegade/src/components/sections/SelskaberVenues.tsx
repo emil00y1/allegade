@@ -30,7 +30,7 @@ export default function SelskaberVenues({
       }))}
       eyebrow={venueEyebrow}
       heading={venueHeading ?? "Vores Selskabslokaler"}
-      ctaLabel={venueCtaLabel ?? "Forespørg om lokalet"}
+      ctaLabel={venueCtaLabel || undefined}
     />
   );
 }

@@ -8,7 +8,7 @@ import {media} from 'sanity-plugin-media'
 import {lucideIconPicker} from 'sanity-plugin-lucide-icon-picker'
 
 // Document types that should only ever have one instance
-const SINGLETONS = ['homepage', 'siteSettings', 'menuPage', 'hotelPage', 'selskaberPage', 'eventsPage', 'restaurantPage']
+const SINGLETONS = ['homepage', 'siteSettings', 'uiLabels', 'menuPage', 'hotelPage', 'selskaberPage', 'eventsPage', 'restaurantPage']
 const HIDDEN_FROM_AUTO_LIST = [...SINGLETONS, 'page', 'selskaberInquiry', 'jobPosting', 'reusableBlock', 'redirect']
 
 export default defineConfig({
@@ -35,6 +35,10 @@ export default defineConfig({
               .title('Site indstillinger')
               .id('siteSettings')
               .child(S.document().schemaType('siteSettings').documentId('siteSettings')),
+            S.listItem()
+              .title('UI tekster')
+              .id('uiLabels')
+              .child(S.document().schemaType('uiLabels').documentId('uiLabels')),
 
             S.divider(),
 

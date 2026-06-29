@@ -71,6 +71,7 @@ export const TRANSLATABLE_TYPES = [
   "post",
   "reusableBlock",
   "siteSettings",
+  "uiLabels",
 ] as const;
 
 export function getLocaleDefinition(code: string): LocaleDefinition | undefined {
