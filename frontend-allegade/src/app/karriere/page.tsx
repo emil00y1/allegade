@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { sanityFetch } from "@/sanity/lib/live";
+import { getLocale, getCanonicalPath } from "@/i18n/server";
+import { getManyTranslated } from "@/i18n/getTranslated";
+import { languageAlternates } from "@/i18n/metadata";
+import { localizePath } from "@/i18n/config";
 
 const JOBS_QUERY = `*[_type == "jobPosting" && isActive == true && (!defined(publishAt) || publishAt <= now()) && (!defined(unpublishAt) || unpublishAt > now())] | order(publishedAt desc){
   _id,
@@ -12,14 +16,21 @@ const JOBS_QUERY = `*[_type == "jobPosting" && isActive == true && (!defined(pub
   deadline
 }`;
 
-export const metadata: Metadata = {
-  title: "Karriere | Allégade 10",
-  description: "Se ledige stillinger hos Allégade 10.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const canonicalPath = await getCanonicalPath();
+  return {
+    title: "Karriere | Allégade 10",
+    description: "Se ledige stillinger hos Allégade 10.",
+    alternates: languageAlternates(canonicalPath, locale),
+  };
+}
 
 export default async function KarrierePage() {
+  const locale = await getLocale();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: jobs } = await sanityFetch<any>({ query: JOBS_QUERY });
+  const { data: rawJobs } = await sanityFetch<any>({ query: JOBS_QUERY });
+  const jobs = getManyTranslated(rawJobs, locale);
 
   return (
     <main className="min-h-screen bg-white">
@@ -48,7 +59,7 @@ export default async function KarrierePage() {
                 return (
                   <Link
                     key={job._id}
-                    href={`/karriere/${job.slug?.current}`}
+                    href={localizePath(`/karriere/${job.slug?.current}`, locale)}
                     className="block border-b border-[rgba(221,193,179,0.3)] py-8 group"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">

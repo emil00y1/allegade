@@ -5,6 +5,9 @@ import { type SiteSettings, type SanitySeo, type SanitySection, type SanityImage
 import MenuTabs, { type MenuCard, type TabConfig } from "@/components/MenuTabs";
 import { SECTIONS_QUERY_FRAGMENT } from "@/sanity/lib/sections-query";
 import StructuredData from "@/components/StructuredData";
+import { getLocale, getCanonicalPath } from "@/i18n/server";
+import { getTranslated, getManyTranslated } from "@/i18n/getTranslated";
+import { languageAlternates } from "@/i18n/metadata";
 
 interface MenuHeroSection extends SanitySection {
   headerDescription?: string;
@@ -63,9 +66,11 @@ const QUERY = `{
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const canonicalPath = await getCanonicalPath();
   const { data } = await sanityFetch({ query: QUERY });
   const result = data as { page: MenuPageData | null; siteSettings: SiteSettings | null };
-  const page = result?.page;
+  const page = getTranslated(result?.page, locale);
   const siteSettings = result?.siteSettings;
 
   const seo = page?.seo;
@@ -81,6 +86,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `${title} | Allégade 10`,
     description,
+    alternates: languageAlternates(canonicalPath, locale),
     openGraph: { title, description, images: ogImage ? [{ url: ogImage }] : [] },
   };
 }
@@ -88,6 +94,7 @@ export async function generateMetadata(): Promise<Metadata> {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function MenukortPage() {
+  const locale = await getLocale();
   const { data } = await sanityFetch({ query: QUERY });
   const result = data as {
     page: MenuPageData | null;
@@ -95,9 +102,9 @@ export default async function MenukortPage() {
     menus: MenuCard[];
   } | null;
 
-  const page = result?.page;
+  const page = getTranslated(result?.page, locale);
   const siteSettings = result?.siteSettings;
-  const menus = result?.menus ?? [];
+  const menus = getManyTranslated(result?.menus ?? [], locale);
 
   const globalBookTableUrl =
     siteSettings?.ctaBookTableUrl ||

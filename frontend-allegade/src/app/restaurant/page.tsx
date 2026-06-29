@@ -5,6 +5,9 @@ import { SectionRenderer } from "@/components/sections";
 import { type SiteSettings, type SanitySeo, type SanitySection } from "@/types/sanity";
 import { SECTIONS_QUERY_FRAGMENT } from "@/sanity/lib/sections-query";
 import StructuredData from "@/components/StructuredData";
+import { getLocale, getCanonicalPath } from "@/i18n/server";
+import { getTranslated } from "@/i18n/getTranslated";
+import { languageAlternates } from "@/i18n/metadata";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -44,9 +47,11 @@ const QUERY = `{
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const canonicalPath = await getCanonicalPath();
   const { data } = await sanityFetch({ query: QUERY });
   const result = data as { restaurantPage: RestaurantPageData | null; siteSettings: SiteSettings | null };
-  const page = result?.restaurantPage;
+  const page = getTranslated(result?.restaurantPage, locale);
   const siteSettings = result?.siteSettings;
 
   const seo = page?.seo;
@@ -62,6 +67,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `${title} | Allégade 10`,
     description,
+    alternates: languageAlternates(canonicalPath, locale),
     openGraph: { title, description, images: ogImage ? [{ url: ogImage }] : [] },
   };
 }
@@ -69,10 +75,11 @@ export async function generateMetadata(): Promise<Metadata> {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function RestaurantPage() {
+  const locale = await getLocale();
   const { data } = await sanityFetch({ query: QUERY });
   const result = data as { restaurantPage: RestaurantPageData | null; siteSettings: SiteSettings | null } | null;
 
-  const page = result?.restaurantPage;
+  const page = getTranslated(result?.restaurantPage, locale);
   const siteSettings = result?.siteSettings;
 
   const globalBookTableUrl =

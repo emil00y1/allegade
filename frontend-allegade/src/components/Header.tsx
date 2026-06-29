@@ -5,6 +5,13 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import {
+  DEFAULT_LOCALE,
+  localeFromPathname,
+  localizePath,
+  stripLocale,
+} from "@/i18n/config";
 
 interface NavChildLink {
   name: string;
@@ -78,7 +85,12 @@ export default function Header({
   logoSvgContent,
 }: HeaderProps) {
   const pathname = usePathname();
-  const isHome = pathname === "/";
+  const currentLocale = localeFromPathname(pathname) ?? DEFAULT_LOCALE;
+  // Keep internal links inside the active language; leave external links alone.
+  const withLocale = (href: string) =>
+    !href || isExternal(href) ? href : localizePath(href, currentLocale);
+  const homeHref = withLocale("/");
+  const isHome = stripLocale(pathname) === "/";
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -86,26 +98,28 @@ export default function Header({
     navLinks && navLinks.length > 0
       ? navLinks.map((l) => ({
           ...l,
-          href: resolvePageReferenceHref(l.pageReference, l.href),
+          href: withLocale(resolvePageReferenceHref(l.pageReference, l.href)),
           children: l.children?.map((c) => ({
             ...c,
-            href: resolvePageReferenceHref(c.pageReference, c.href),
+            href: withLocale(resolvePageReferenceHref(c.pageReference, c.href)),
           })),
         }))
-      : DEFAULT_NAV_LINKS;
+      : DEFAULT_NAV_LINKS.map((l) => ({ ...l, href: withLocale(l.href) }));
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   // Desktop: filter out empty/home links
-  const desktopNavLinks = rawLinks.filter((l) => l.name && l.href !== "/");
+  const desktopNavLinks = rawLinks.filter(
+    (l) => l.name && l.href !== homeHref,
+  );
   // Mobile: ensure Forside is first, filter out empty-name or duplicate home links
   const mobileNavLinks: NavLink[] = [
-    { name: "Forside", href: "/" },
-    ...rawLinks.filter((l) => l.name && l.href !== "/"),
+    { name: "Forside", href: homeHref },
+    ...rawLinks.filter((l) => l.name && l.href !== homeHref),
   ];
 
   const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
+    href === homeHref ? pathname === homeHref : pathname.startsWith(href);
   const resolvedTableUrl =
     ctaBookTableUrl ??
     "https://dinnerbooking.com/dk/da-DK/eventbooking/event/4155/allegade-10";
@@ -136,7 +150,7 @@ export default function Header({
       >
         <div className="max-w-[1280px] mx-auto px-8 h-20 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-4 shrink-0">
+          <Link href={homeHref} className="flex items-center gap-4 shrink-0">
             {logoSvgContent ? (
               <span
                 dangerouslySetInnerHTML={{ __html: logoSvgContent }}
@@ -287,6 +301,12 @@ export default function Header({
                 );
               })}
 
+            <LanguageSwitcher
+              className={cn(
+                "hidden lg:flex transition-colors duration-300",
+                !isHome || scrolled ? "text-dark-stone" : "text-white/90",
+              )}
+            />
 
             {/* Mobile hamburger */}
             <button
@@ -321,7 +341,7 @@ export default function Header({
         )}
       >
         <div className="flex items-center justify-between px-8 h-16">
-          <Link href="/" className="flex items-center gap-3">
+          <Link href={homeHref} className="flex items-center gap-3">
             {logoSvgContent ? (
               <span
                 dangerouslySetInnerHTML={{ __html: logoSvgContent }}
@@ -423,6 +443,7 @@ export default function Header({
           >
             {ctaBookStayLabel}
           </Link>
+          <LanguageSwitcher className="justify-center pt-2 text-dark-stone" />
         </div>
       </div>
     </>

@@ -7,6 +7,9 @@ import { type SiteSettings, type SanitySeo, type SanitySection } from "@/types/s
 import { type HotelRoom } from "@/components/RoomCarousel";
 import { SECTIONS_QUERY_FRAGMENT } from "@/sanity/lib/sections-query";
 import StructuredData from "@/components/StructuredData";
+import { getLocale, getCanonicalPath } from "@/i18n/server";
+import { getTranslated, getManyTranslated } from "@/i18n/getTranslated";
+import { languageAlternates } from "@/i18n/metadata";
 
 interface HotelPageData {
   _id: string;
@@ -47,9 +50,11 @@ const HOTEL_PAGE_QUERY = `{
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const canonicalPath = await getCanonicalPath();
   const { data } = await sanityFetch({ query: HOTEL_PAGE_QUERY });
   const result = data as { page: HotelPageData | null; siteSettings: SiteSettings | null };
-  const page = result?.page;
+  const page = getTranslated(result?.page, locale);
   const siteSettings = result?.siteSettings;
 
   const seo = page?.seo;
@@ -65,6 +70,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `${title} | Allégade 10`,
     description,
+    alternates: languageAlternates(canonicalPath, locale),
     openGraph: { title, description, images: ogImage ? [{ url: ogImage }] : [] },
   };
 }
@@ -72,11 +78,12 @@ export async function generateMetadata(): Promise<Metadata> {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function HotelPage() {
+  const locale = await getLocale();
   const { data } = await sanityFetch({ query: HOTEL_PAGE_QUERY });
   const result = data as { page: HotelPageData | null; siteSettings: SiteSettings | null; rooms: HotelRoom[] } | null;
-  const page = result?.page;
+  const page = getTranslated(result?.page, locale);
   const siteSettings = result?.siteSettings;
-  const rooms = result?.rooms ?? [];
+  const rooms = getManyTranslated(result?.rooms ?? [], locale);
 
   const globalBookTableUrl = siteSettings?.ctaBookTableUrl || "https://allegade10.suitcasebooking.com/da";
 

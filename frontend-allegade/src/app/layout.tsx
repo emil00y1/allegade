@@ -26,6 +26,9 @@ import { SanityLive } from "@/sanity/lib/live";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { cn } from "@/lib/utils";
 import { sanityFetch } from "@/sanity/lib/live";
+import { getLocale } from "@/i18n/server";
+import { getTranslated } from "@/i18n/getTranslated";
+import { getLocaleDefinition } from "@/i18n/config";
 import { getThemeVars } from "@/lib/themes";
 import { getFontVars, generateFontFaceCSS } from "@/lib/fonts";
 import { Toaster } from "sonner";
@@ -102,6 +105,7 @@ const fraunces = Fraunces({
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 const NAV_QUERY = `*[_type == "siteSettings" && _id == "siteSettings"][0]{
+  _id,
   navigation[]{ name, href, pageReference->{ _type, "slug": slug.current }, children[]{ name, href, pageReference->{ _type, "slug": slug.current } } },
   ctaBookTableLabel,
   ctaBookTableUrl,
@@ -118,6 +122,7 @@ const NAV_QUERY = `*[_type == "siteSettings" && _id == "siteSettings"][0]{
 }`;
 
 const FAVICON_QUERY = `*[_type == "siteSettings" && _id == "siteSettings"][0]{
+  _id,
   title,
   logoText,
   "faviconUrl": favicon.asset->url,
@@ -157,10 +162,16 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const [{ data: navSettings }, { data: siteInfo }] = await Promise.all([
+  const locale = await getLocale();
+  const [{ data: rawNavSettings }, { data: rawSiteInfo }] = await Promise.all([
     sanityFetch({ query: NAV_QUERY }),
     sanityFetch({ query: FAVICON_QUERY }),
   ]);
+
+  // Localize the chrome (navigation labels, CTA labels, footer text…).
+  const navSettings = getTranslated(rawNavSettings, locale);
+  const siteInfo = getTranslated(rawSiteInfo, locale);
+  const htmlLang = getLocaleDefinition(locale)?.htmlLang ?? "da";
 
   let logoSvgContent: string | null = null;
   if (navSettings?.logoImageUrl) {
@@ -195,7 +206,7 @@ export default async function RootLayout({
 
   return (
     <html
-      lang="da"
+      lang={htmlLang}
       className={cn("font-sans", allFontVariables)}
       style={{ ...themeVars, ...fontVars } as React.CSSProperties}
     >

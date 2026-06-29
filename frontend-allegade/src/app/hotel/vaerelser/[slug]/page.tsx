@@ -10,6 +10,9 @@ import { urlFor } from "@/sanity/lib/image";
 import { buttonVariants } from "@/lib/button-variants";
 import StructuredData from "@/components/StructuredData";
 import RoomGallery from "@/components/RoomGallery";
+import { getLocale, getCanonicalPath } from "@/i18n/server";
+import { getTranslated } from "@/i18n/getTranslated";
+import { languageAlternates } from "@/i18n/metadata";
 
 interface RoomImage {
   asset?: { _ref?: string; url?: string };
@@ -55,8 +58,10 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  const locale = await getLocale();
+  const canonicalPath = await getCanonicalPath();
   const { data } = await sanityFetch({ query: ROOM_QUERY, params: { slug } });
-  const room = data as RoomPageData | null;
+  const room = getTranslated(data as RoomPageData | null, locale);
   if (!room) return {};
 
   const seo = (room as any).seo;
@@ -71,6 +76,7 @@ export async function generateMetadata({
   return {
     title: `${title} | Hotel Allégade 10`,
     description,
+    alternates: languageAlternates(canonicalPath, locale),
     openGraph: {
       title,
       description,
@@ -85,8 +91,9 @@ export default async function RoomPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const locale = await getLocale();
   const { data } = await sanityFetch({ query: ROOM_QUERY, params: { slug } });
-  const room = data as RoomPageData | null;
+  const room = getTranslated(data as RoomPageData | null, locale);
 
   if (!room) notFound();
 

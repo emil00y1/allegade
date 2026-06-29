@@ -1,0 +1,77 @@
+name: Translate content
+
+# Regenerates the committed translation JSON whenever content is published in
+# Sanity, then commits any changes and triggers a redeploy.
+#
+# Triggers:
+#  - repository_dispatch (event_type: sanity-publish) fired by a Sanity webhook
+#  - workflow_dispatch for manual runs from the Actions tab
+#
+# Required repository secrets:
+#  - SANITY_PROJECT_ID
+#  - SANITY_DATASET            (e.g. "production")
+#  - DEEPL_API_KEY             (paid DeepL key)
+# Optional:
+#  - SANITY_API_READ_TOKEN     (only if the dataset is private)
+#  - VERCEL_DEPLOY_HOOK_URL    (force a deploy even when nothing changed)
+
+on:
+  repository_dispatch:
+    types: [sanity-publish]
+  workflow_dispatch:
+
+concurrency:
+  group: translate-content
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend-allegade
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend-allegade/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate translations
+        env:
+          SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+          SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
+          SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
+          DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
+        run: npm run translate
+
+      - name: Commit & push changed translations
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain content/translations)" ]; then
+            git add content/translations
+            git commit -m "chore(i18n): regenerate translations"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No translation changes."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Trigger Vercel deploy
+        if: ${{ steps.commit.outputs.changed == 'false' && env.HOOK != '' }}
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: curl -fsSL -X POST "$HOOK"

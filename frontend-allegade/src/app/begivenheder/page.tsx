@@ -4,6 +4,9 @@ import { urlFor } from "@/sanity/lib/image";
 import { SectionRenderer } from "@/components/sections";
 import { SECTIONS_QUERY_FRAGMENT } from "@/sanity/lib/sections-query";
 import StructuredData from "@/components/StructuredData";
+import { getLocale, getCanonicalPath } from "@/i18n/server";
+import { getTranslated, getManyTranslated } from "@/i18n/getTranslated";
+import { languageAlternates } from "@/i18n/metadata";
 
 // ─── Query ────────────────────────────────────────────────────────────────────
 
@@ -31,9 +34,11 @@ const QUERY = `{
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const canonicalPath = await getCanonicalPath();
   const { data } = await sanityFetch({ query: QUERY });
   const result = data as { page: any; siteSettings: any };
-  const page = result?.page;
+  const page = getTranslated(result?.page, locale);
   const siteSettings = result?.siteSettings;
 
   const seo = page?.seo;
@@ -45,6 +50,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `${title} | Allégade 10`,
     description,
+    alternates: languageAlternates(canonicalPath, locale),
     openGraph: { title, description, images: ogImage ? [{ url: ogImage }] : [] },
   };
 }
@@ -52,10 +58,11 @@ export async function generateMetadata(): Promise<Metadata> {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function BegivenhedPage() {
+  const locale = await getLocale();
   const { data } = await sanityFetch({ query: QUERY });
   const result = data as { page: any; events: any[]; siteSettings: any } | null;
-  const page = result?.page;
-  const events = result?.events ?? [];
+  const page = getTranslated(result?.page, locale);
+  const events = getManyTranslated(result?.events ?? [], locale);
   const breadcrumbHomeLabel = result?.siteSettings?.breadcrumbHomeLabel;
 
   const now = new Date();

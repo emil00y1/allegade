@@ -3,6 +3,9 @@ import { SectionRenderer } from "@/components/sections";
 import { sanityFetch } from "@/sanity/lib/live";
 import { urlFor } from "@/sanity/lib/image";
 import StructuredData from "@/components/StructuredData";
+import { getLocale, getCanonicalPath } from "@/i18n/server";
+import { getTranslated, getManyTranslated } from "@/i18n/getTranslated";
+import { languageAlternates } from "@/i18n/metadata";
 
 const HOMEPAGE_QUERY = `*[_type == "homepage" && _id == "homepage"][0]{
   _id,
@@ -50,8 +53,11 @@ const SITE_SETTINGS_QUERY = `*[_type == "siteSettings" && _id == "siteSettings"]
 }`;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { data: homepage } = await sanityFetch<any>({ query: HOMEPAGE_QUERY });
+  const locale = await getLocale();
+  const canonicalPath = await getCanonicalPath();
+  const { data: rawHomepage } = await sanityFetch<any>({ query: HOMEPAGE_QUERY });
   const { data: siteSettings } = await sanityFetch<any>({ query: SITE_SETTINGS_QUERY });
+  const homepage = getTranslated(rawHomepage, locale);
 
   const seo = homepage?.seo;
   const hero = homepage?.sections?.find((s: any) => s._type === "homeHeroSection");
@@ -68,6 +74,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `${title} | Allégade 10`,
     description,
+    alternates: languageAlternates(canonicalPath, locale),
     openGraph: {
       title,
       description,
@@ -77,7 +84,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function IndexPage() {
-  const [{ data: homepage }, { data: events }, { data: siteSettings }] =
+  const locale = await getLocale();
+  const [{ data: rawHomepage }, { data: rawEvents }, { data: siteSettings }] =
     await Promise.all([
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       sanityFetch<any>({ query: HOMEPAGE_QUERY }),
@@ -86,6 +94,9 @@ export default async function IndexPage() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       sanityFetch<any>({ query: SITE_SETTINGS_QUERY }),
     ]);
+
+  const homepage = getTranslated(rawHomepage, locale);
+  const events = getManyTranslated(rawEvents, locale);
 
   const globalBookTableUrl =
     siteSettings?.ctaBookTableUrl ||

@@ -1,5 +1,107 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Localization (multi-language)
+
+Danish is the single source of truth in Sanity. Other languages are **not**
+edited in Sanity — they are produced at publish time by translating the Danish
+content with the DeepL API and committing the result to the repo as JSON. The
+site then serves each language under its own URL.
+
+- Danish (source): served unprefixed, e.g. `/hotel`
+- English: served under `/en`, e.g. `/en/hotel`
+- Add German/Spanish/French later by adding a locale to `src/i18n/config.ts`
+  and re-running `npm run translate` — no routing changes needed.
+
+### How it fits together
+
+| Piece | File |
+| --- | --- |
+| Locales + helpers (single source of truth) | `src/i18n/config.ts` |
+| Build-time translation script | `scripts/translate-content.ts` |
+| Generated translations (committed) | `content/translations/{locale}/{_id}.json` |
+| Runtime merge helper | `src/i18n/getTranslated.ts` |
+| Locale routing (URL prefix → header) | `src/middleware.ts` |
+| `hreflang` + canonical metadata | `src/i18n/metadata.ts` |
+| Language switcher | `src/components/LanguageSwitcher.tsx` |
+| Publish → translate → deploy automation | `../.github/workflows/translate.yml` |
+
+The middleware resolves the locale from the URL prefix and forwards it (plus the
+canonical, locale-less path) as request headers. Pages read it with
+`getLocale()` / `getCanonicalPath()` and call `getTranslated(doc, locale)` on
+the documents they fetch. For Danish, `getTranslated` returns the document
+untouched; for other locales it overlays the translated strings. Translated HTML
+is rendered server-side (the whole app is `force-dynamic`), so every language is
+fully indexable, and `generateMetadata` emits per-language `<title>`, meta
+description, canonical URL and `hreflang` alternates.
+
+### Environment variables
+
+```
+SANITY_PROJECT_ID=b0bkhf04
+SANITY_DATASET=production
+DEEPL_API_KEY=<your paid DeepL key>   # NOT a free (api-free) key
+# SANITY_API_READ_TOKEN=...           # only if the dataset is private
+```
+
+The script uses the **paid** DeepL endpoint (`api.deepl.com`) on purpose — the
+free tier retains submitted text for training.
+
+### Running a translation
+
+```bash
+# from frontend-allegade/, with the env vars above exported
+npm run translate
+```
+
+What it does:
+
+- Reads **published** Sanity content only (drafts are ignored, so editor
+  keystrokes never trigger translation).
+- Extracts every translatable string, including the text spans inside Portable
+  Text, preserving structure, marks and links.
+- Hashes each document's source text and **re-translates only what changed**.
+- Batches up to 50 strings per DeepL request.
+- Writes `content/translations/{locale}/{_id}.json`.
+
+Force a full re-translation with `TRANSLATE_FORCE=1 npm run translate`.
+
+### Polishing a translation (and keeping it)
+
+`npm run translate` ships raw DeepL output. To hand-polish a page and stop the
+script from ever overwriting it:
+
+1. Open the file under `content/translations/{locale}/{_id}.json`.
+2. Edit the `value` of the slots you want to improve.
+3. Set `"_locked": true` at the top of the file.
+
+Locked files are skipped on every future run, so curated translations survive
+even when the Danish source changes later.
+
+### Automation (publish in Sanity → site updates)
+
+`.github/workflows/translate.yml` runs `npm run translate`, commits any changed
+translation files and lets the resulting commit trigger a Vercel deploy. It
+fires on `repository_dispatch` (event type `sanity-publish`) and can also be run
+manually from the Actions tab.
+
+Add these repository secrets: `SANITY_PROJECT_ID`, `SANITY_DATASET`,
+`DEEPL_API_KEY` (and optionally `SANITY_API_READ_TOKEN`,
+`VERCEL_DEPLOY_HOOK_URL`).
+
+Wire up the Sanity webhook (Manage → API → Webhooks) so publishing fires the
+workflow:
+
+- **URL:** `https://api.github.com/repos/emil00y1/allegade/dispatches`
+- **Trigger on:** Create / Update / Delete · **Filter:** `_type in [...]`
+  (the same types as `TRANSLATABLE_TYPES`)
+- **HTTP method:** `POST`
+- **HTTP headers:**
+  - `Authorization: Bearer <GitHub PAT with repo scope>`
+  - `Accept: application/vnd.github+json`
+- **Projection / body:** `{ "event_type": "sanity-publish" }`
+
+Manual `npm run translate` keeps working for local runs.
+
 ## Getting Started
 
 First, run the development server:

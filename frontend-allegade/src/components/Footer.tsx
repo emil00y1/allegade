@@ -12,8 +12,11 @@ import {
 } from "lucide-react";
 import NewsletterInline from "@/components/NewsletterInline";
 import { sanityFetch } from "@/sanity/lib/live";
+import { getLocale } from "@/i18n/server";
+import { getTranslated } from "@/i18n/getTranslated";
 
 const FOOTER_QUERY = `*[_type == "siteSettings"][0]{
+  _id,
   address, phone, email, cvr, footerDescription, socialLinks,
   restaurantHours, kitchenClosingNote,
   newsletterLabel, newsletterSubtext, newsletterButtonLabel,
@@ -82,9 +85,11 @@ const platformIcons: Record<string, LucideIcon> = {
 };
 
 export default async function Footer() {
-  const { data: siteSettings } = (await sanityFetch({
+  const locale = await getLocale();
+  const { data: rawSiteSettings } = (await sanityFetch({
     query: FOOTER_QUERY,
   })) as { data: SiteSettings | null };
+  const siteSettings = getTranslated(rawSiteSettings, locale);
 
   const restaurantHours = siteSettings?.restaurantHours?.length
     ? siteSettings.restaurantHours

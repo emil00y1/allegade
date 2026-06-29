@@ -3,6 +3,9 @@ import type { Metadata } from "next";
 import { SectionRenderer } from "@/components/sections";
 import { sanityFetch } from "@/sanity/lib/live";
 import { urlFor } from "@/sanity/lib/image";
+import { getLocale, getCanonicalPath } from "@/i18n/server";
+import { getTranslated } from "@/i18n/getTranslated";
+import { languageAlternates } from "@/i18n/metadata";
 
 const PAGE_QUERY = `*[_type == "page" && slug.current == $slug && isPublished == true && (!defined(publishAt) || publishAt <= now())][0]{
   _id,
@@ -52,7 +55,10 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const { data: page } = await sanityFetch<any>({ query: PAGE_QUERY, params: { slug } });
+  const locale = await getLocale();
+  const canonicalPath = await getCanonicalPath();
+  const { data: rawPage } = await sanityFetch<any>({ query: PAGE_QUERY, params: { slug } });
+  const page = getTranslated(rawPage, locale);
 
   if (!page) return { title: "Allégade 10" };
 
@@ -66,6 +72,7 @@ export async function generateMetadata({
   return {
     title: `${title} | Allégade 10`,
     description,
+    alternates: languageAlternates(canonicalPath, locale),
     openGraph: {
       title,
       description,
@@ -80,7 +87,9 @@ export default async function SlugPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const { data: page } = await sanityFetch<any>({ query: PAGE_QUERY, params: { slug } });
+  const locale = await getLocale();
+  const { data: rawPage } = await sanityFetch<any>({ query: PAGE_QUERY, params: { slug } });
+  const page = getTranslated(rawPage, locale);
 
   if (!page) notFound();
 

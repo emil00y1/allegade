@@ -9,6 +9,9 @@ import { client } from "@/sanity/client";
 import { urlFor } from "@/sanity/lib/image";
 import { buttonVariants } from "@/lib/button-variants";
 import StructuredData from "@/components/StructuredData";
+import { getLocale, getCanonicalPath } from "@/i18n/server";
+import { getTranslated } from "@/i18n/getTranslated";
+import { languageAlternates } from "@/i18n/metadata";
 
 const EVENT_QUERY = `*[_type == "event" && slug.current == $slug && (!defined(publishAt) || publishAt <= now()) && (!defined(unpublishAt) || unpublishAt > now())][0]{
   _id, title, slug, seo,
@@ -35,10 +38,13 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const { data: event } = await sanityFetch<any>({
+  const locale = await getLocale();
+  const canonicalPath = await getCanonicalPath();
+  const { data: rawEvent } = await sanityFetch<any>({
     query: EVENT_QUERY,
     params: { slug },
   });
+  const event = getTranslated(rawEvent, locale);
 
   if (!event) return { title: "Begivenheder | Allégade 10" };
 
@@ -54,6 +60,7 @@ export async function generateMetadata({
   return {
     title: `${title} | Allégade 10`,
     description,
+    alternates: languageAlternates(canonicalPath, locale),
     openGraph: {
       title,
       description,
@@ -97,10 +104,12 @@ export default async function EventDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const { data: event } = await sanityFetch<any>({
+  const locale = await getLocale();
+  const { data: rawEvent } = await sanityFetch<any>({
     query: EVENT_QUERY,
     params: { slug },
   });
+  const event = getTranslated(rawEvent, locale);
 
   if (!event) {
     notFound();

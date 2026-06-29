@@ -4,6 +4,9 @@ import { urlFor } from "@/sanity/lib/image";
 import { SectionRenderer } from "@/components/sections";
 import { type SiteSettings } from "@/types/sanity";
 import { SECTIONS_QUERY_FRAGMENT } from "@/sanity/lib/sections-query";
+import { getLocale, getCanonicalPath } from "@/i18n/server";
+import { getTranslated } from "@/i18n/getTranslated";
+import { languageAlternates } from "@/i18n/metadata";
 
 // ─── Query ────────────────────────────────────────────────────────────────────
 
@@ -34,9 +37,11 @@ const QUERY = `{
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const canonicalPath = await getCanonicalPath();
   const { data } = await sanityFetch({ query: QUERY });
   const result = data as { page: any; siteSettings: SiteSettings };
-  const page = result?.page;
+  const page = getTranslated(result?.page, locale);
   const siteSettings = result?.siteSettings;
 
   const seo = page?.seo;
@@ -52,6 +57,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `${title} | Allégade 10`,
     description,
+    alternates: languageAlternates(canonicalPath, locale),
     openGraph: { title, description, images: ogImage ? [{ url: ogImage }] : [] },
   };
 }
@@ -59,13 +65,21 @@ export async function generateMetadata(): Promise<Metadata> {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function SelskaberPage() {
+  const locale = await getLocale();
   const { data } = await sanityFetch({ query: QUERY });
   const result = data as { page: any; siteSettings: SiteSettings } | null;
-  const page = result?.page;
+  const page = getTranslated(result?.page, locale);
   const siteSettings = result?.siteSettings;
 
   const globalBookTableUrl = siteSettings?.ctaBookTableUrl || "https://dinnerbooking.com/dk/da-DK/eventbooking/event/4155/allegade-10";
-  const occasionLabels: string[] = page?.occasionLabels?.filter(Boolean) ?? [];
+  // Derive occasion labels from the (already translated) section rather than the
+  // denormalized GROQ projection, so they localize with everything else.
+  const occasionsSection = page?.sections?.find(
+    (s: any) => s._type === "selskaberOccasionsSection",
+  );
+  const occasionLabels: string[] = (occasionsSection?.occasions ?? [])
+    .map((o: any) => o?.label)
+    .filter(Boolean);
 
   return (
     <main className="bg-warm-white min-h-[calc(100vh-80px)]">

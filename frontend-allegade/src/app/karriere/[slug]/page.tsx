@@ -6,6 +6,10 @@ import { sanityFetch } from "@/sanity/lib/live";
 import { client } from "@/sanity/client";
 import { urlFor } from "@/sanity/lib/image";
 import StructuredData from "@/components/StructuredData";
+import { getLocale, getCanonicalPath } from "@/i18n/server";
+import { getTranslated } from "@/i18n/getTranslated";
+import { languageAlternates } from "@/i18n/metadata";
+import { localizePath } from "@/i18n/config";
 
 const JOB_QUERY = `*[_type == "jobPosting" && slug.current == $slug && isActive == true && (!defined(publishAt) || publishAt <= now()) && (!defined(unpublishAt) || unpublishAt > now())][0]{
   _id,
@@ -36,7 +40,10 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const { data: job } = await sanityFetch<any>({ query: JOB_QUERY, params: { slug } });
+  const locale = await getLocale();
+  const canonicalPath = await getCanonicalPath();
+  const { data: rawJob } = await sanityFetch<any>({ query: JOB_QUERY, params: { slug } });
+  const job = getTranslated(rawJob, locale);
 
   if (!job) return { title: "Karriere | Allégade 10" };
 
@@ -50,6 +57,7 @@ export async function generateMetadata({
   return {
     title: `${title} | Allégade 10`,
     description,
+    alternates: languageAlternates(canonicalPath, locale),
     openGraph: {
       title,
       description,
@@ -64,7 +72,9 @@ export default async function JobPostingPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const { data: job } = await sanityFetch<any>({ query: JOB_QUERY, params: { slug } });
+  const locale = await getLocale();
+  const { data: rawJob } = await sanityFetch<any>({ query: JOB_QUERY, params: { slug } });
+  const job = getTranslated(rawJob, locale);
 
   if (!job) {
     notFound();
@@ -111,7 +121,7 @@ export default async function JobPostingPage({
       <section className="py-14 md:py-24 lg:py-32">
         <div className="max-w-3xl mx-auto px-6 lg:px-16">
           <Link
-            href="/karriere"
+            href={localizePath("/karriere", locale)}
             className="text-xs tracking-[0.2em] uppercase font-medium text-stone-500 hover:text-stone-900 transition-colors mb-10 inline-block"
           >
             &larr; Alle stillinger
