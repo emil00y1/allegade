@@ -12,7 +12,7 @@ import StructuredData from "@/components/StructuredData";
 
 const EVENT_QUERY = `*[_type == "event" && slug.current == $slug && (!defined(publishAt) || publishAt <= now()) && (!defined(unpublishAt) || unpublishAt > now())][0]{
   _id, title, slug, seo,
-  startDate, endDate, price, priceDescription, category, excerpt,
+  startDate, endDate, price, priceDescription, ctaUrl, ctaLabel, category, excerpt,
   image{ ..., asset-> },
   venue->{ title, slug, capacity, description },
   menu[]{ course, description },
@@ -106,6 +106,9 @@ export default async function EventDetailPage({
     notFound();
   }
 
+  const ctaUrl = event.ctaUrl || BOOKING_URL;
+  const ctaLabel = event.ctaLabel || "Book plads";
+
   const heroImageUrl = event.image?.asset
     ? urlFor(event.image).width(1600).height(1000).auto("format").url()
     : null;
@@ -125,7 +128,7 @@ export default async function EventDetailPage({
         "@type": "Offer",
         price: event.price,
         priceCurrency: "DKK",
-        url: BOOKING_URL,
+        url: ctaUrl,
         availability: "https://schema.org/InStock",
         ...(event.startDate && { validFrom: event.startDate }),
       },
@@ -363,14 +366,14 @@ export default async function EventDetailPage({
 
                 {/* CTA */}
                 <Link
-                  href={BOOKING_URL}
+                  href={ctaUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={
                     buttonVariants({ variant: "primary" }) + " text-center"
                   }
                 >
-                  Book plads
+                  {ctaLabel}
                 </Link>
 
                 <Link
@@ -398,12 +401,12 @@ export default async function EventDetailPage({
             </span>
           </h2>
           <Link
-            href={BOOKING_URL}
+            href={ctaUrl}
             target="_blank"
             rel="noopener noreferrer"
             className={buttonVariants({ variant: "primary" })}
           >
-            Book plads
+            {ctaLabel}
           </Link>
         </div>
       </section>

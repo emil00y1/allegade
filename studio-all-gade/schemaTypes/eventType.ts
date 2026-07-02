@@ -76,6 +76,20 @@ export const eventType = defineType({
       type: 'string',
     }),
     defineField({
+      name: 'ctaUrl',
+      title: 'CTA / booking-link',
+      description:
+        'Valgfrit. Link til booking eller billetter. Hvis tomt, bruges standard bookinglinket.',
+      type: 'url',
+      validation: (rule) => rule.uri({scheme: ['http', 'https']}),
+    }),
+    defineField({
+      name: 'ctaLabel',
+      title: 'CTA-tekst',
+      description: 'Valgfrit. Tekst på knappen. Standard er "Book plads".',
+      type: 'string',
+    }),
+    defineField({
       name: 'category',
       type: 'string',
     }),
