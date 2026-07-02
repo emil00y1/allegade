@@ -12,7 +12,7 @@ import StructuredData from "@/components/StructuredData";
 
 const EVENT_QUERY = `*[_type == "event" && slug.current == $slug && (!defined(publishAt) || publishAt <= now()) && (!defined(unpublishAt) || unpublishAt > now())][0]{
   _id, title, slug, seo,
-  startDate, endDate, price, priceDescription, category, excerpt,
+  startDate, endDate, price, priceDescription, ctaUrl, ctaLabel, category, excerpt,
   image{ ..., asset-> },
   venue->{ title, slug, capacity, description },
   menu[]{ course, description },
@@ -20,9 +20,6 @@ const EVENT_QUERY = `*[_type == "event" && slug.current == $slug && (!defined(pu
 }`;
 
 const SLUGS_QUERY = `*[_type == "event" && defined(slug.current)]{ "slug": slug.current }`;
-
-const BOOKING_URL =
-  "https://dinnerbooking.com/dk/da-DK/eventbooking/event/4155/allegade-10";
 
 export async function generateStaticParams() {
   const events = await client.fetch(SLUGS_QUERY);
@@ -106,6 +103,9 @@ export default async function EventDetailPage({
     notFound();
   }
 
+  const ctaUrl: string | undefined = event.ctaUrl || undefined;
+  const ctaLabel = event.ctaLabel || "Book plads";
+
   const heroImageUrl = event.image?.asset
     ? urlFor(event.image).width(1600).height(1000).auto("format").url()
     : null;
@@ -125,7 +125,7 @@ export default async function EventDetailPage({
         "@type": "Offer",
         price: event.price,
         priceCurrency: "DKK",
-        url: BOOKING_URL,
+        ...(ctaUrl && { url: ctaUrl }),
         availability: "https://schema.org/InStock",
         ...(event.startDate && { validFrom: event.startDate }),
       },
@@ -362,16 +362,18 @@ export default async function EventDetailPage({
                 </div>
 
                 {/* CTA */}
-                <Link
-                  href={BOOKING_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={
-                    buttonVariants({ variant: "primary" }) + " text-center"
-                  }
-                >
-                  Book plads
-                </Link>
+                {ctaUrl && (
+                  <Link
+                    href={ctaUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={
+                      buttonVariants({ variant: "primary" }) + " text-center"
+                    }
+                  >
+                    {ctaLabel}
+                  </Link>
+                )}
 
                 <Link
                   href="/begivenheder"
@@ -386,27 +388,29 @@ export default async function EventDetailPage({
       </section>
 
       {/* Bottom CTA */}
-      <section className="bg-dark-stone py-16 lg:py-20 text-center">
-        <div className="max-w-xl mx-auto px-8">
-          <p className="text-[10px] tracking-[1.4px] uppercase font-light text-brand-light mb-4">
-            Sikr din plads
-          </p>
-          <h2 className="font-newsreader font-extralight text-[clamp(1.5rem,3vw,2.25rem)] text-white mb-8 leading-snug">
-            Vil du deltage i{" "}
-            <span className="font-cormorant font-light italic">
-              {event.title}?
-            </span>
-          </h2>
-          <Link
-            href={BOOKING_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={buttonVariants({ variant: "primary" })}
-          >
-            Book plads
-          </Link>
-        </div>
-      </section>
+      {ctaUrl && (
+        <section className="bg-dark-stone py-16 lg:py-20 text-center">
+          <div className="max-w-xl mx-auto px-8">
+            <p className="text-[10px] tracking-[1.4px] uppercase font-light text-brand-light mb-4">
+              Sikr din plads
+            </p>
+            <h2 className="font-newsreader font-extralight text-[clamp(1.5rem,3vw,2.25rem)] text-white mb-8 leading-snug">
+              Vil du deltage i{" "}
+              <span className="font-cormorant font-light italic">
+                {event.title}?
+              </span>
+            </h2>
+            <Link
+              href={ctaUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={buttonVariants({ variant: "primary" })}
+            >
+              {ctaLabel}
+            </Link>
+          </div>
+        </section>
+      )}
     </main>
   );
 }
