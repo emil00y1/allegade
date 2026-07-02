@@ -34,7 +34,10 @@ jobs:
           cache-dependency-path: studio-all-gade/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        # --legacy-peer-deps matches how the lockfile was generated:
+        # sanity-plugin-lucide-icon-picker peers on @sanity/ui v2 while the
+        # studio uses v3, which strict npm ci would otherwise reject.
+        run: npm ci --legacy-peer-deps
 
       - name: Deploy Studio
         env:
