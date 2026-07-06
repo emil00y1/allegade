@@ -69,6 +69,7 @@ function formatDate(dateString: string) {
 
 function formatTime(dateString: string) {
   return new Date(dateString).toLocaleTimeString("da-DK", {
+    timeZone: "Europe/Copenhagen",
     hour: "2-digit",
     minute: "2-digit",
   });
