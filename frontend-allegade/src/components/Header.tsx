@@ -81,6 +81,7 @@ export default function Header({
   const isHome = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [openMobileSubmenu, setOpenMobileSubmenu] = useState<string | null>(null);
 
   const rawLinks =
     navLinks && navLinks.length > 0
@@ -118,6 +119,11 @@ export default function Header({
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const closeDrawer = () => {
+    setDrawerOpen(false);
+    setOpenMobileSubmenu(null);
+  };
 
 
   return (
@@ -309,7 +315,7 @@ export default function Header({
           "fixed inset-0 z-50 bg-black/40 backdrop-blur-sm transition-opacity duration-300 lg:hidden",
           drawerOpen ? "opacity-100" : "opacity-0 pointer-events-none",
         )}
-        onClick={() => setDrawerOpen(false)}
+        onClick={closeDrawer}
       />
 
       {/* Mobile Drawer */}
@@ -354,7 +360,7 @@ export default function Header({
             )}
           </Link>
           <button
-            onClick={() => setDrawerOpen(false)}
+            onClick={closeDrawer}
             className="text-warm-brown hover:text-dark-stone transition-colors p-1"
             aria-label={menuCloseLabel}
           >
@@ -366,35 +372,77 @@ export default function Header({
           {mobileNavLinks.map((link) => {
             const active = isActive(link.href);
             const hasChildren = link.children && link.children.length > 0;
+            const submenuOpen = openMobileSubmenu === link.name;
             return (
               <div key={link.name}>
-                <Link
-                  href={link.href ?? "/"}
-                  onClick={() => setDrawerOpen(false)}
-                  className={cn(
-                    "flex items-center px-4 py-3.5 text-[11px] font-light tracking-[1.2px] uppercase hover:text-dark-stone hover:bg-warm-gray rounded-lg transition-all duration-200",
-                    active
-                      ? "text-dark-stone underline underline-offset-4 decoration-brand/40"
-                      : "text-warm-brown",
-                  )}
-                >
-                  {link.name}
-                </Link>
-                {hasChildren && link.children!.map((child) => (
+                <div className="flex items-center">
                   <Link
-                    key={child.name}
-                    href={child.href ?? "/"}
-                    onClick={() => setDrawerOpen(false)}
+                    href={link.href ?? "/"}
+                    onClick={closeDrawer}
                     className={cn(
-                      "flex items-center pl-8 pr-4 py-2.5 text-[10px] font-light tracking-[1px] uppercase hover:text-dark-stone hover:bg-warm-gray rounded-lg transition-all duration-200",
-                      isActive(child.href)
-                        ? "text-dark-stone"
-                        : "text-warm-brown/70",
+                      "flex-1 flex items-center px-4 py-3.5 text-[11px] font-light tracking-[1.2px] uppercase hover:text-dark-stone hover:bg-warm-gray rounded-lg transition-all duration-200",
+                      active
+                        ? "text-dark-stone underline underline-offset-4 decoration-brand/40"
+                        : "text-warm-brown",
                     )}
                   >
-                    {child.name}
+                    {link.name}
                   </Link>
-                ))}
+                  {hasChildren && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setOpenMobileSubmenu(submenuOpen ? null : link.name)
+                      }
+                      aria-expanded={submenuOpen}
+                      aria-label={`${link.name} undermenu`}
+                      className="p-3.5 text-warm-brown hover:text-dark-stone transition-colors"
+                    >
+                      <svg
+                        width="10"
+                        height="6"
+                        viewBox="0 0 8 5"
+                        fill="none"
+                        className={cn(
+                          "transition-transform duration-200",
+                          submenuOpen && "rotate-180",
+                        )}
+                      >
+                        <path
+                          d="M1 1L4 4L7 1"
+                          stroke="currentColor"
+                          strokeWidth="1"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+                {hasChildren && (
+                  <div
+                    className="grid overflow-hidden transition-[grid-template-rows] duration-200 ease-in-out"
+                    style={{ gridTemplateRows: submenuOpen ? "1fr" : "0fr" }}
+                  >
+                    <div className="overflow-hidden">
+                      {link.children!.map((child) => (
+                        <Link
+                          key={child.name}
+                          href={child.href ?? "/"}
+                          onClick={closeDrawer}
+                          className={cn(
+                            "flex items-center pl-8 pr-4 py-2.5 text-[10px] font-light tracking-[1px] uppercase hover:text-dark-stone hover:bg-warm-gray rounded-lg transition-all duration-200",
+                            isActive(child.href)
+                              ? "text-dark-stone"
+                              : "text-warm-brown/70",
+                          )}
+                        >
+                          {child.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}
@@ -407,7 +455,7 @@ export default function Header({
             rel={
               isExternal(resolvedTableUrl) ? "noopener noreferrer" : undefined
             }
-            onClick={() => setDrawerOpen(false)}
+            onClick={closeDrawer}
             className="px-5 py-3 text-center text-[11px] font-light tracking-[1.2px] uppercase text-dark-stone border border-border-warm rounded-full hover:border-brand transition-all duration-300"
           >
             {ctaBookTableLabel}
@@ -418,7 +466,7 @@ export default function Header({
             rel={
               isExternal(resolvedStayUrl) ? "noopener noreferrer" : undefined
             }
-            onClick={() => setDrawerOpen(false)}
+            onClick={closeDrawer}
             className="px-5 py-3 text-center text-[11px] font-light tracking-[1.2px] uppercase text-white rounded-full hover:opacity-90 transition-all duration-300 bg-[linear-gradient(165deg,var(--brand)_0%,var(--brand-mid)_100%)]"
           >
             {ctaBookStayLabel}
