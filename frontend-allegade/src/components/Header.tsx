@@ -369,10 +369,11 @@ export default function Header({
         </div>
 
         <nav className="flex flex-col px-4 py-2 gap-1 overflow-y-auto">
-          {mobileNavLinks.map((link) => {
+          {mobileNavLinks.map((link, index) => {
             const active = isActive(link.href);
             const hasChildren = link.children && link.children.length > 0;
             const submenuOpen = openMobileSubmenu === link.name;
+            const submenuId = `mobile-submenu-${index}`;
             return (
               <div key={link.name}>
                 <div className="flex items-center">
@@ -395,6 +396,7 @@ export default function Header({
                         setOpenMobileSubmenu(submenuOpen ? null : link.name)
                       }
                       aria-expanded={submenuOpen}
+                      aria-controls={submenuId}
                       aria-label={`${link.name} undermenu`}
                       className="p-3.5 text-warm-brown hover:text-dark-stone transition-colors"
                     >
@@ -421,11 +423,15 @@ export default function Header({
                 </div>
                 {hasChildren && (
                   <div
-                    className="grid overflow-hidden transition-[grid-template-rows] duration-200 ease-in-out"
+                    id={submenuId}
+                    className={cn(
+                      "grid overflow-hidden transition-[grid-template-rows,visibility] duration-200 ease-in-out",
+                      submenuOpen ? "visible" : "invisible",
+                    )}
                     style={{ gridTemplateRows: submenuOpen ? "1fr" : "0fr" }}
                   >
                     <div className="overflow-hidden">
-                      {link.children!.map((child) => (
+                      {link.children?.map((child) => (
                         <Link
                           key={child.name}
                           href={child.href ?? "/"}
