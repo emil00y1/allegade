@@ -4,11 +4,8 @@ import { sanityFetch } from "@/sanity/lib/live";
 import { type SiteSettings } from "@/types/sanity";
 import Breadcrumb from "@/components/Breadcrumb";
 import StructuredData from "@/components/StructuredData";
-import {
-  StandardMenuTab,
-  DEFAULT_LABELS,
-  type MenuCard,
-} from "@/components/MenuTabs";
+import { DEFAULT_LABELS, type MenuCard } from "@/components/MenuTabs";
+import SelskabsmenuerTabs from "@/components/SelskabsmenuerTabs";
 
 // ─── Query ────────────────────────────────────────────────────────────────────
 
@@ -92,26 +89,13 @@ export default async function SelskabsmenuerPage() {
           Indholdet er ikke klar endnu — tilføj et selskabsmenukort i Sanity Studio.
         </div>
       ) : (
-        menus.map((menu) => (
-          <section key={menu._id} className="px-6 lg:px-16 mt-6">
-            <div className="max-w-2xl mx-auto border-t border-border-warm/20 pt-8">
-              <h2 className="font-newsreader font-medium text-2xl lg:text-3xl text-dark-stone leading-snug mb-1 text-center">
-                {menu.title}
-              </h2>
-              {menu.intro && (
-                <p className="text-sm italic text-warm-brown/95 font-light mb-4 text-center">
-                  {menu.intro}
-                </p>
-              )}
-              <StandardMenuTab
-                menu={menu}
-                bookTableUrl={globalBookTableUrl}
-                labels={labels}
-                showHighlightMenu={false}
-              />
-            </div>
-          </section>
-        ))
+        <div className="mt-6">
+          <SelskabsmenuerTabs
+            menus={menus}
+            bookTableUrl={globalBookTableUrl}
+            labels={labels}
+          />
+        </div>
       )}
     </main>
   );
