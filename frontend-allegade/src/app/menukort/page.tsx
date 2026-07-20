@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { sanityFetch } from "@/sanity/lib/live";
 import { urlFor } from "@/sanity/lib/image";
+import Link from "next/link";
 import { type SiteSettings, type SanitySeo, type SanitySection, type SanityImage } from "@/types/sanity";
 import MenuTabs, { type MenuCard, type TabConfig } from "@/components/MenuTabs";
 import { SECTIONS_QUERY_FRAGMENT } from "@/sanity/lib/sections-query";
@@ -162,6 +163,14 @@ export default async function MenukortPage() {
           </p>
         </div>
       )}
+      <div className={`max-w-2xl mx-auto px-6 text-center ${page?.intro ? "mt-3" : "pt-12"}`}>
+        <Link
+          href="/selskaber/menuer"
+          className="text-[11px] tracking-[1px] uppercase font-light text-warm-brown/70 border-b border-warm-brown/30 pb-px hover:text-brand hover:border-brand/40 transition-colors"
+        >
+          Se vores selskabsmenuer →
+        </Link>
+      </div>
       <MenuTabs
         tabs={customTabs}
         menus={menus}

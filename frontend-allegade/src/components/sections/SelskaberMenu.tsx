@@ -29,8 +29,8 @@ export default function SelskaberMenu({
             {menuPdfFallbackLabel ?? "Se selskabsmenuer (PDF)"}
           </a>
         ) : (
-          <Link href="/menukort" className={buttonVariants({ variant: "dark", size: "lg" })}>
-            {menuCardFallbackLabel ?? "Se vores menukort"}
+          <Link href="/selskaber/menuer" className={buttonVariants({ variant: "dark", size: "lg" })}>
+            {menuCardFallbackLabel ?? "Se vores selskabsmenuer"}
           </Link>
         )}
       </div>

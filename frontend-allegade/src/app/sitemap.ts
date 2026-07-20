@@ -11,6 +11,7 @@ const STATIC_ROUTES: MetadataRoute.Sitemap = [
   { url: `${BASE_URL}/hotel`, priority: 0.9, changeFrequency: 'monthly' },
   { url: `${BASE_URL}/menukort`, priority: 0.8, changeFrequency: 'weekly' },
   { url: `${BASE_URL}/selskaber`, priority: 0.8, changeFrequency: 'monthly' },
+  { url: `${BASE_URL}/selskaber/menuer`, priority: 0.7, changeFrequency: 'monthly' },
   { url: `${BASE_URL}/begivenheder`, priority: 0.8, changeFrequency: 'daily' },
   { url: `${BASE_URL}/karriere`, priority: 0.6, changeFrequency: 'weekly' },
   { url: `${BASE_URL}/om-os`, priority: 0.6, changeFrequency: 'monthly' },

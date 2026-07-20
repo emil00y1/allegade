@@ -89,7 +89,7 @@ interface MenuTabsProps {
   };
 }
 
-const DEFAULT_LABELS = {
+export const DEFAULT_LABELS = {
   pricePerPerson: "Pris per person",
   bookTable: "Book bord",
   viewDrinks: "Se drikkekort →",
@@ -492,7 +492,7 @@ function BrunchTab({
   );
 }
 
-function StandardMenuTab({
+export function StandardMenuTab({
   menu,
   bookTableUrl,
   onSwitchToDrinks,
@@ -500,7 +500,7 @@ function StandardMenuTab({
 }: {
   menu: MenuCard;
   bookTableUrl?: string;
-  onSwitchToDrinks: () => void;
+  onSwitchToDrinks?: () => void;
   labels: typeof DEFAULT_LABELS;
 }) {
   return (
@@ -540,7 +540,9 @@ function StandardMenuTab({
           </div>
         );
       })}
-      <DrinksCrossLink label={labels.viewDrinks} onSwitch={onSwitchToDrinks} />
+      {onSwitchToDrinks && (
+        <DrinksCrossLink label={labels.viewDrinks} onSwitch={onSwitchToDrinks} />
+      )}
     </div>
   );
 }
@@ -648,7 +650,7 @@ export default function MenuTabs({
           <StandardMenuTab
             menu={activeMenu}
             bookTableUrl={bookTableUrl}
-            onSwitchToDrinks={beveragesMenu ? switchToDrinks : () => {}}
+            onSwitchToDrinks={beveragesMenu ? switchToDrinks : undefined}
             labels={labels}
           />
         )}
