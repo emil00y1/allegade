@@ -56,7 +56,7 @@ export default async function SelskabsmenuerPage() {
     "@type": "Menu",
     name: "Selskabsmenuer",
     description: "Menuer til selskaber, julefrokost og juleaften",
-    url: "https://allegade10.dk/selskaber/menuer",
+    url: "https://www.allegade10.dk/selskaber/menuer",
     ...(menus.length > 0 && {
       hasMenuSection: menus.map((menu) => ({
         "@type": "MenuSection",
