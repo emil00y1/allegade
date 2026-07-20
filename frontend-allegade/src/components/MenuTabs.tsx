@@ -650,7 +650,7 @@ export default function MenuTabs({
           <StandardMenuTab
             menu={activeMenu}
             bookTableUrl={bookTableUrl}
-            onSwitchToDrinks={beveragesMenu ? switchToDrinks : () => {}}
+            onSwitchToDrinks={beveragesMenu ? switchToDrinks : undefined}
             labels={labels}
           />
         )}
