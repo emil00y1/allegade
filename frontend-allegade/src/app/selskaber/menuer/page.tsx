@@ -69,22 +69,16 @@ export default async function SelskabsmenuerPage() {
   return (
     <main className="bg-warm-white min-h-[calc(100vh-80px)] pt-12">
       <StructuredData data={menuSchema} />
-      <div className="max-w-2xl mx-auto px-6 pt-12 text-center">
+      <div className="max-w-2xl mx-auto px-6 pt-10 text-center">
         <Breadcrumb
           current="Selskabsmenuer"
           currentUrl="/selskaber/menuer"
           homeLabel={siteSettings?.breadcrumbHomeLabel}
-          className="justify-center mb-8"
+          className="justify-center mb-6"
         />
-        <p className="font-cormorant font-light italic text-brand text-2xl mb-4">
-          Til jeres begivenhed
-        </p>
-        <h1 className="font-newsreader font-extralight text-[clamp(1.75rem,3vw,2.5rem)] text-dark-stone leading-tight mb-6">
-          Se vores selskabsmenuer
+        <h1 className="font-newsreader font-extralight text-[clamp(1.75rem,3vw,2.5rem)] text-dark-stone leading-tight mb-3">
+          Selskabsmenuer
         </h1>
-        <p className="text-warm-brown font-light leading-7 text-base mb-4 max-w-xl mx-auto">
-          Fra Mortensaften til julefrokost og juleaften — her finder du menuer og priser til jeres selskab.
-        </p>
         <Link
           href="/selskaber#foresporgsel"
           className="text-[11px] tracking-[1px] uppercase font-light text-brand border-b border-brand/40 pb-px hover:opacity-70 transition-opacity"
@@ -99,7 +93,7 @@ export default async function SelskabsmenuerPage() {
         </div>
       ) : (
         menus.map((menu) => (
-          <section key={menu._id} className="px-6 lg:px-16 mt-8">
+          <section key={menu._id} className="px-6 lg:px-16 mt-6">
             <div className="max-w-2xl mx-auto border-t border-border-warm/20 pt-8">
               <h2 className="font-newsreader font-medium text-2xl lg:text-3xl text-dark-stone leading-snug mb-1 text-center">
                 {menu.title}
@@ -109,7 +103,12 @@ export default async function SelskabsmenuerPage() {
                   {menu.intro}
                 </p>
               )}
-              <StandardMenuTab menu={menu} bookTableUrl={globalBookTableUrl} labels={labels} />
+              <StandardMenuTab
+                menu={menu}
+                bookTableUrl={globalBookTableUrl}
+                labels={labels}
+                showHighlightMenu={false}
+              />
             </div>
           </section>
         ))
