@@ -230,7 +230,7 @@ export default function Header({
                       openDropdown === link.name ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-1",
                     )}
                   >
-                    <div className="bg-warm-white border border-border-warm shadow-lg min-w-[180px] py-2">
+                    <div className="bg-warm-white shadow-lg min-w-[180px]">
                       {link.href && (
                         <Link
                           href={link.href}
