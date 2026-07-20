@@ -497,15 +497,17 @@ export function StandardMenuTab({
   bookTableUrl,
   onSwitchToDrinks,
   labels,
+  showHighlightMenu = true,
 }: {
   menu: MenuCard;
   bookTableUrl?: string;
   onSwitchToDrinks?: () => void;
   labels: typeof DEFAULT_LABELS;
+  showHighlightMenu?: boolean;
 }) {
   return (
     <div className="py-6 lg:py-8 max-w-2xl mx-auto">
-      {menu.highlightMenu?.enabled && (
+      {showHighlightMenu && menu.highlightMenu?.enabled && (
         <HighlightAccordion
           highlight={menu.highlightMenu}
           bookTableUrl={bookTableUrl}
