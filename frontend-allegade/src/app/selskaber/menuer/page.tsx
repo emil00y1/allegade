@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { sanityFetch } from "@/sanity/lib/live";
+import { client } from "@/sanity/client";
 import { type SiteSettings } from "@/types/sanity";
 import Breadcrumb from "@/components/Breadcrumb";
 import StructuredData from "@/components/StructuredData";
@@ -38,8 +38,15 @@ export const metadata: Metadata = {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function SelskabsmenuerPage() {
-  const { data } = await sanityFetch({ query: QUERY });
-  const result = data as { menus: MenuCard[]; siteSettings: SiteSettings } | null;
+  // Bypassed the shared Sanity Data Cache (sanityFetch) for this page: menu
+  // content changes need to show up immediately, and the cache here would
+  // otherwise only get invalidated once a browser tab's live listener notices
+  // the drift and refreshes — a multi-second stale flash for every visitor.
+  const result = await client.fetch<{ menus: MenuCard[]; siteSettings: SiteSettings } | null>(
+    QUERY,
+    {},
+    { cache: "no-store" },
+  );
   const menus = result?.menus ?? [];
   const siteSettings = result?.siteSettings;
 
