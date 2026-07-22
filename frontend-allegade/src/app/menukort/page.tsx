@@ -166,6 +166,7 @@ export default async function MenukortPage() {
       <div className={`max-w-2xl mx-auto px-6 text-center ${page?.intro ? "mt-3" : "pt-12"}`}>
         <Link
           href="/selskaber/menuer"
+          prefetch={false}
           className="text-[11px] tracking-[1px] uppercase font-light text-warm-brown/70 border-b border-warm-brown/30 pb-px hover:text-brand hover:border-brand/40 transition-colors"
         >
           Se vores selskabsmenuer →
