@@ -33,7 +33,7 @@ export default function EventsArchive({
           {list.map((event) => {
             const imageUrl = event.image?.asset ? urlFor(event.image).width(600).height(400).auto("format").url() : null;
             return (
-              <Link key={event._id} href={`/events/${event.slug.current}`} className="group flex flex-col opacity-60 hover:opacity-100 transition-opacity duration-300">
+              <Link key={event._id} href={`/begivenheder/${event.slug.current}`} className="group flex flex-col opacity-60 hover:opacity-100 transition-opacity duration-300">
                 <div className="relative aspect-[3/2] overflow-hidden bg-warm-gray grayscale group-hover:grayscale-0 transition-all duration-500">
                   {imageUrl ? <Image src={imageUrl} alt={event.title} fill className="object-cover" /> : <div className="absolute inset-0 bg-warm-gray" />}
                 </div>

@@ -10,6 +10,18 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      // Event cards used to link to /events/:slug, which was never a route.
+      // Keep those links (and anything already shared) working.
+      { source: "/events", destination: "/begivenheder", permanent: true },
+      {
+        source: "/events/:slug",
+        destination: "/begivenheder/:slug",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

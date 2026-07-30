@@ -61,7 +61,7 @@ const DEFAULT_NAV_LINKS: NavLink[] = [
   { name: "Hotel", href: "/hotel" },
   { name: "Menukort", href: "/menukort" },
   { name: "Selskaber", href: "/selskaber" },
-  { name: "Events", href: "/events" },
+  { name: "Events", href: "/begivenheder" },
 ];
 
 export default function Header({

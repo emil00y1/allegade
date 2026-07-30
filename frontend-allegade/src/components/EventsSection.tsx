@@ -124,7 +124,7 @@ export default function EventsSection({
                       {event.title}
                     </h3>
                   </div>
-                  <ShareButton url={`/events/${event.slug.current}`} title={event.title} />
+                  <ShareButton url={`/begivenheder/${event.slug.current}`} title={event.title} />
                 </div>
                 <div className="flex items-center gap-2 py-2 border-b border-border-warm">
                   <CalendarDays
@@ -136,7 +136,7 @@ export default function EventsSection({
                   </span>
                 </div>
                 <Link
-                  href={`/events/${event.slug.current}`}
+                  href={`/begivenheder/${event.slug.current}`}
                   className="mt-auto border border-border-warm text-dark-stone text-[10px] tracking-[1px] uppercase font-light text-center py-3 hover:border-brand hover:text-brand transition-colors duration-300"
                 >
                   {eventCtaLabel}

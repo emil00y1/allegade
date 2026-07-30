@@ -33,7 +33,7 @@ export const eventsTeaserSectionType = defineType({
       name: 'allEventsUrl',
       title: 'Se alle events URL',
       type: 'string',
-      initialValue: '/events',
+      initialValue: '/begivenheder',
     }),
     defineField({
       name: 'eventCtaLabel',
