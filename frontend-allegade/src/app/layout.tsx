@@ -107,6 +107,8 @@ const NAV_QUERY = `*[_type == "siteSettings" && _id == "siteSettings"][0]{
   ctaBookTableUrl,
   ctaBookStayLabel,
   ctaBookStayUrl,
+  ctaGiftCardLabel,
+  ctaGiftCardUrl,
   primaryCtaButton,
   colorTheme,
   fontPairing,
@@ -214,7 +216,7 @@ export default async function RootLayout({
         </>
       )}
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden max-lg:pb-mobile-bar`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden max-xl:pb-mobile-bar`}
       >
         <StructuredData
           data={{
@@ -248,6 +250,8 @@ export default async function RootLayout({
           ctaBookTableUrl={navSettings?.ctaBookTableUrl}
           ctaBookStayLabel={navSettings?.ctaBookStayLabel}
           ctaBookStayUrl={navSettings?.ctaBookStayUrl}
+          ctaGiftCardLabel={navSettings?.ctaGiftCardLabel}
+          ctaGiftCardUrl={navSettings?.ctaGiftCardUrl}
           primaryCtaButton={navSettings?.primaryCtaButton}
           menuOpenLabel={navSettings?.headerMenuOpenLabel}
           menuCloseLabel={navSettings?.headerMenuCloseLabel}

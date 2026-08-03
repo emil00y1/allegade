@@ -47,7 +47,7 @@ export default function MobileBookingBar({
   return (
     <div
       aria-hidden={!visible}
-      className={`lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-border-warm bg-warm-white/95 backdrop-blur-sm shadow-[0_-4px_16px_rgba(0,0,0,0.06)] transition-transform duration-300 pb-[env(safe-area-inset-bottom)] ${
+      className={`xl:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-border-warm bg-warm-white/95 backdrop-blur-sm shadow-[0_-4px_16px_rgba(0,0,0,0.06)] transition-transform duration-300 pb-[env(safe-area-inset-bottom)] ${
         visible ? "translate-y-0" : "translate-y-full"
       }`}
     >

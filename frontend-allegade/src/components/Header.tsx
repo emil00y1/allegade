@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Gift } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NavChildLink {
@@ -25,6 +25,8 @@ interface HeaderProps {
   ctaBookTableUrl?: string;
   ctaBookStayLabel?: string;
   ctaBookStayUrl?: string;
+  ctaGiftCardLabel?: string;
+  ctaGiftCardUrl?: string;
   primaryCtaButton?: "table" | "stay";
   menuOpenLabel?: string;
   menuCloseLabel?: string;
@@ -70,6 +72,8 @@ export default function Header({
   ctaBookTableUrl = "https://dinnerbooking.com/dk/da-DK/eventbooking/event/4155/allegade-10",
   ctaBookStayLabel = "Book ophold",
   ctaBookStayUrl = "https://allegade10.suitcasebooking.com/da",
+  ctaGiftCardLabel = "Gavekort",
+  ctaGiftCardUrl,
   primaryCtaButton = "stay",
   menuOpenLabel = "Åbn menu",
   menuCloseLabel = "Luk menu",
@@ -95,6 +99,7 @@ export default function Header({
       : DEFAULT_NAV_LINKS;
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [openMobileSubmenu, setOpenMobileSubmenu] = useState<string | null>(null);
 
   // Desktop: filter out empty/home links
   const desktopNavLinks = rawLinks.filter((l) => l.name && l.href !== "/");
@@ -111,6 +116,8 @@ export default function Header({
     "https://dinnerbooking.com/dk/da-DK/eventbooking/event/4155/allegade-10";
   const resolvedStayUrl =
     ctaBookStayUrl ?? "https://allegade10.suitcasebooking.com/da";
+  const resolvedGiftCardUrl = ctaGiftCardUrl?.trim() || undefined;
+  const resolvedGiftCardLabel = ctaGiftCardLabel || "Gavekort";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -134,7 +141,7 @@ export default function Header({
               : "bg-transparent border-transparent"),
         )}
       >
-        <div className="max-w-[1280px] mx-auto px-8 h-20 flex items-center justify-between">
+        <div className="max-w-[1440px] mx-auto px-8 h-20 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-4 shrink-0">
             {logoSvgContent ? (
@@ -188,7 +195,7 @@ export default function Header({
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden xl:flex items-center gap-8">
             {desktopNavLinks.map((link) => {
               const hasChildren = link.children && link.children.length > 0;
               if (!hasChildren) {
@@ -212,18 +219,18 @@ export default function Header({
                   onMouseEnter={() => setOpenDropdown(link.name)}
                   onMouseLeave={() => setOpenDropdown(null)}
                 >
-                  <button
+                  <Link
+                    href={link.href ?? "/"}
                     className={cn(
                       "text-[11px] tracking-[1.2px] uppercase font-light transition-colors duration-300 hover:opacity-60 flex items-center gap-1",
                       !isHome || scrolled ? "text-dark-stone" : "text-white/90",
                     )}
-                    onClick={() => setOpenDropdown(openDropdown === link.name ? null : link.name)}
                   >
                     {link.name}
                     <svg width="8" height="5" viewBox="0 0 8 5" fill="none" className="mt-px">
                       <path d="M1 1L4 4L7 1" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
-                  </button>
+                  </Link>
                   <div
                     className={cn(
                       "absolute top-full left-1/2 -translate-x-1/2 pt-3 transition-all duration-200",
@@ -231,15 +238,6 @@ export default function Header({
                     )}
                   >
                     <div className="bg-warm-white shadow-lg min-w-[180px]">
-                      {link.href && (
-                        <Link
-                          href={link.href}
-                          className="block px-5 py-2.5 text-[11px] tracking-[1px] uppercase font-light text-dark-stone hover:text-brand hover:bg-warm-gray transition-colors duration-200"
-                          onClick={() => setOpenDropdown(null)}
-                        >
-                          {link.name}
-                        </Link>
-                      )}
                       {link.children!.map((child) => (
                         <Link
                           key={child.name}
@@ -259,40 +257,64 @@ export default function Header({
 
           {/* Right Actions */}
           <div className="flex items-center gap-6">
-            {(["table", "stay"] as Array<"table" | "stay">)
-              .sort((a, b) =>
-                a === primaryCtaButton ? 1 : b === primaryCtaButton ? -1 : 0,
-              )
-              .map((which) => {
-                const isPrimary = which === primaryCtaButton;
-                const href = which === "table" ? resolvedTableUrl : resolvedStayUrl;
-                const label = which === "table" ? ctaBookTableLabel : ctaBookStayLabel;
-                return (
-                  <Link
-                    key={which}
-                    href={href}
-                    target={isExternal(href) ? "_blank" : undefined}
-                    rel={isExternal(href) ? "noopener noreferrer" : undefined}
-                    className={
-                      isPrimary
-                        ? "hidden lg:flex items-center text-[11px] tracking-[1.2px] uppercase font-light text-white px-6 py-3 hover:opacity-90 transition-opacity bg-[linear-gradient(165deg,var(--brand)_0%,var(--brand-mid)_100%)]"
-                        : cn(
-                            "hidden lg:block text-[11px] tracking-[1.2px] uppercase font-light transition-colors duration-300 hover:opacity-60",
-                            !isHome || scrolled ? "text-dark-stone" : "text-white/90",
-                          )
-                    }
-                  >
-                    {label}
-                  </Link>
-                );
-              })}
+            {resolvedGiftCardUrl && (
+              <>
+                <Link
+                  href={resolvedGiftCardUrl}
+                  target={isExternal(resolvedGiftCardUrl) ? "_blank" : undefined}
+                  rel={isExternal(resolvedGiftCardUrl) ? "noopener noreferrer" : undefined}
+                  className={cn(
+                    "hidden xl:flex items-center gap-1.5 text-[11px] tracking-[1.2px] uppercase font-light transition-colors duration-300 hover:opacity-60",
+                    !isHome || scrolled ? "text-dark-stone" : "text-white/90",
+                  )}
+                >
+                  <Gift className="w-[13px] h-[13px]" strokeWidth={1.5} />
+                  {resolvedGiftCardLabel}
+                </Link>
+                <div
+                  className={cn(
+                    "hidden xl:block h-4 w-px",
+                    !isHome || scrolled ? "bg-dark-stone/15" : "bg-white/25",
+                  )}
+                />
+              </>
+            )}
 
+            <div className="hidden xl:flex items-center gap-6">
+              {(["table", "stay"] as Array<"table" | "stay">)
+                .sort((a, b) =>
+                  a === primaryCtaButton ? 1 : b === primaryCtaButton ? -1 : 0,
+                )
+                .map((which) => {
+                  const isPrimary = which === primaryCtaButton;
+                  const href = which === "table" ? resolvedTableUrl : resolvedStayUrl;
+                  const label = which === "table" ? ctaBookTableLabel : ctaBookStayLabel;
+                  return (
+                    <Link
+                      key={which}
+                      href={href}
+                      target={isExternal(href) ? "_blank" : undefined}
+                      rel={isExternal(href) ? "noopener noreferrer" : undefined}
+                      className={
+                        isPrimary
+                          ? "flex items-center text-[11px] tracking-[1.2px] uppercase font-light text-white px-6 py-3 hover:opacity-90 transition-opacity bg-[linear-gradient(165deg,var(--brand)_0%,var(--brand-mid)_100%)]"
+                          : cn(
+                              "text-[11px] tracking-[1.2px] uppercase font-light transition-colors duration-300 hover:opacity-60",
+                              !isHome || scrolled ? "text-dark-stone" : "text-white/90",
+                            )
+                      }
+                    >
+                      {label}
+                    </Link>
+                  );
+                })}
+            </div>
 
             {/* Mobile hamburger */}
             <button
               onClick={() => setDrawerOpen(true)}
               className={cn(
-                "lg:hidden hover:opacity-70 focus:outline-none transition-opacity",
+                "xl:hidden hover:opacity-70 focus:outline-none transition-opacity",
                 !isHome || scrolled ? "text-dark-stone" : "text-white",
               )}
               aria-label={menuOpenLabel}
@@ -306,7 +328,7 @@ export default function Header({
       {/* Mobile Backdrop */}
       <div
         className={cn(
-          "fixed inset-0 z-50 bg-black/40 backdrop-blur-sm transition-opacity duration-300 lg:hidden",
+          "fixed inset-0 z-50 bg-black/40 backdrop-blur-sm transition-opacity duration-300 xl:hidden",
           drawerOpen ? "opacity-100" : "opacity-0 pointer-events-none",
         )}
         onClick={() => setDrawerOpen(false)}
@@ -315,7 +337,7 @@ export default function Header({
       {/* Mobile Drawer */}
       <div
         className={cn(
-          "fixed top-0 right-0 z-50 h-full w-full max-w-sm flex flex-col shadow-2xl transition-transform duration-300 ease-in-out lg:hidden",
+          "fixed top-0 right-0 z-50 h-full w-full max-w-sm flex flex-col shadow-2xl transition-transform duration-300 ease-in-out xl:hidden",
           "bg-warm-white",
           drawerOpen ? "translate-x-0" : "translate-x-full",
         )}
@@ -366,41 +388,95 @@ export default function Header({
           {mobileNavLinks.map((link) => {
             const active = isActive(link.href);
             const hasChildren = link.children && link.children.length > 0;
+            const isSubmenuOpen = openMobileSubmenu === link.name;
             return (
               <div key={link.name}>
-                <Link
-                  href={link.href ?? "/"}
-                  onClick={() => setDrawerOpen(false)}
-                  className={cn(
-                    "flex items-center px-4 py-3.5 text-[11px] font-light tracking-[1.2px] uppercase hover:text-dark-stone hover:bg-warm-gray rounded-lg transition-all duration-200",
-                    active
-                      ? "text-dark-stone underline underline-offset-4 decoration-brand/40"
-                      : "text-warm-brown",
-                  )}
-                >
-                  {link.name}
-                </Link>
-                {hasChildren && link.children!.map((child) => (
+                <div className="flex items-center">
                   <Link
-                    key={child.name}
-                    href={child.href ?? "/"}
+                    href={link.href ?? "/"}
                     onClick={() => setDrawerOpen(false)}
                     className={cn(
-                      "flex items-center pl-8 pr-4 py-2.5 text-[10px] font-light tracking-[1px] uppercase hover:text-dark-stone hover:bg-warm-gray rounded-lg transition-all duration-200",
-                      isActive(child.href)
-                        ? "text-dark-stone"
-                        : "text-warm-brown/70",
+                      "px-4 py-3.5 text-[11px] font-light tracking-[1.2px] uppercase hover:text-dark-stone hover:bg-warm-gray rounded-lg transition-all duration-200",
+                      active
+                        ? "text-dark-stone underline underline-offset-4 decoration-brand/40"
+                        : "text-warm-brown",
                     )}
                   >
-                    {child.name}
+                    {link.name}
                   </Link>
-                ))}
+                  {hasChildren && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setOpenMobileSubmenu(isSubmenuOpen ? null : link.name)
+                      }
+                      aria-expanded={isSubmenuOpen}
+                      aria-label={
+                        isSubmenuOpen ? "Luk undermenu" : "Åbn undermenu"
+                      }
+                      className="flex-1 flex items-center justify-end px-4 py-3.5 text-warm-brown hover:text-dark-stone hover:bg-warm-gray rounded-lg transition-colors duration-200"
+                    >
+                      <svg
+                        width="9"
+                        height="6"
+                        viewBox="0 0 8 5"
+                        fill="none"
+                        className={cn(
+                          "transition-transform duration-300",
+                          isSubmenuOpen && "rotate-180",
+                        )}
+                      >
+                        <path d="M1 1L4 4L7 1" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+                {hasChildren && (
+                  <div
+                    className={cn(
+                      "grid transition-[grid-template-rows] duration-300 ease-in-out",
+                      isSubmenuOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+                    )}
+                  >
+                    <div className="overflow-hidden">
+                      {link.children!.map((child) => (
+                        <Link
+                          key={child.name}
+                          href={child.href ?? "/"}
+                          onClick={() => setDrawerOpen(false)}
+                          className={cn(
+                            "flex items-center pl-8 pr-4 py-2.5 text-[10px] font-light tracking-[1px] uppercase hover:text-dark-stone hover:bg-warm-gray rounded-lg transition-all duration-200",
+                            isActive(child.href)
+                              ? "text-dark-stone"
+                              : "text-warm-brown/70",
+                          )}
+                        >
+                          {child.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}
         </nav>
 
-        <div className="px-8 flex flex-col gap-3 mt-auto pb-10 pt-6">
+        <div className="flex flex-col mt-auto pt-6 pb-[env(safe-area-inset-bottom)]">
+          {resolvedGiftCardUrl && (
+            <Link
+              href={resolvedGiftCardUrl}
+              target={isExternal(resolvedGiftCardUrl) ? "_blank" : undefined}
+              rel={
+                isExternal(resolvedGiftCardUrl) ? "noopener noreferrer" : undefined
+              }
+              onClick={() => setDrawerOpen(false)}
+              className="flex items-center justify-center gap-2 px-5 py-3 text-center text-[11px] font-light tracking-[1.2px] uppercase text-warm-brown hover:text-dark-stone transition-colors duration-300"
+            >
+              <Gift className="w-[14px] h-[14px]" strokeWidth={1.5} />
+              {resolvedGiftCardLabel}
+            </Link>
+          )}
           <Link
             href={resolvedTableUrl}
             target={isExternal(resolvedTableUrl) ? "_blank" : undefined}
@@ -408,7 +484,7 @@ export default function Header({
               isExternal(resolvedTableUrl) ? "noopener noreferrer" : undefined
             }
             onClick={() => setDrawerOpen(false)}
-            className="px-5 py-3 text-center text-[11px] font-light tracking-[1.2px] uppercase text-dark-stone border border-border-warm rounded-full hover:border-brand transition-all duration-300"
+            className="px-5 py-3 text-center text-[11px] font-light tracking-[1.2px] uppercase text-dark-stone border-t border-border-warm hover:bg-warm-gray transition-colors duration-300"
           >
             {ctaBookTableLabel}
           </Link>
@@ -419,7 +495,7 @@ export default function Header({
               isExternal(resolvedStayUrl) ? "noopener noreferrer" : undefined
             }
             onClick={() => setDrawerOpen(false)}
-            className="px-5 py-3 text-center text-[11px] font-light tracking-[1.2px] uppercase text-white rounded-full hover:opacity-90 transition-all duration-300 bg-[linear-gradient(165deg,var(--brand)_0%,var(--brand-mid)_100%)]"
+            className="px-5 py-3 text-center text-[11px] font-light tracking-[1.2px] uppercase text-white hover:opacity-90 transition-opacity duration-300 bg-[linear-gradient(165deg,var(--brand)_0%,var(--brand-mid)_100%)]"
           >
             {ctaBookStayLabel}
           </Link>
