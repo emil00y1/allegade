@@ -180,6 +180,21 @@ export const siteSettingsType = defineType({
       group: 'navigation',
     }),
     defineField({
+      name: 'ctaGiftCardLabel',
+      title: 'Gavekort link tekst',
+      description: 'Teksten på gavekort-linket i menuen (desktop og mobil).',
+      type: 'string',
+      initialValue: 'Gavekort',
+      group: 'navigation',
+    }),
+    defineField({
+      name: 'ctaGiftCardUrl',
+      title: 'Gavekort link (URL)',
+      description: 'Link til gavekort-siden/-shoppen (ofte en ekstern udbyder). Lad stå tomt for at skjule gavekort-linket i menuen.',
+      type: 'string',
+      group: 'navigation',
+    }),
+    defineField({
       name: 'primaryCtaButton',
       title: 'Primær booking-knap',
       description: 'Vælg hvilken booking-knap der vises som den primære knap (med baggrundsfarve) i navigationen.',
